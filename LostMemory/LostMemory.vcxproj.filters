@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\world">
+      <UniqueIdentifier>{4f3f29ac-e8d0-4685-8317-655330ad6c3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\citizen">
+      <UniqueIdentifier>{f0b12bd9-b7ac-4da5-b1e0-2e2bccc10494}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\citizen">
+      <UniqueIdentifier>{46e837a2-df99-4480-9e20-92877013ab00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\world">
+      <UniqueIdentifier>{d086eff0-23c9-473f-a330-2f50b43a0baa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\interaction">
+      <UniqueIdentifier>{32798fba-4ba4-497f-807d-fb013211ec6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\interaction">
+      <UniqueIdentifier>{f788e7b1-5b97-47a7-b425-e70f069eb1fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\common">
+      <UniqueIdentifier>{b9fbbf58-97fc-417b-9b7f-e3207aebcfee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\common">
+      <UniqueIdentifier>{98197fdb-c5c4-4b54-99fc-888834bc2897}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>源文件\common</Filter>
+    </ClCompile>
+    <ClCompile Include="person.cpp">
+      <Filter>源文件\citizen</Filter>
+    </ClCompile>
+    <ClCompile Include="building.cpp">
+      <Filter>源文件\world</Filter>
+    </ClCompile>
+    <ClCompile Include="map.cpp">
+      <Filter>源文件\world</Filter>
+    </ClCompile>
+    <ClCompile Include="area.cpp">
+      <Filter>源文件\world</Filter>
+    </ClCompile>
+    <ClCompile Include="organization.cpp">
+      <Filter>源文件\world</Filter>
+    </ClCompile>
+    <ClCompile Include="zone.cpp">
+      <Filter>源文件\world</Filter>
+    </ClCompile>
+    <ClCompile Include="room.cpp">
+      <Filter>源文件\world</Filter>
+    </ClCompile>
+    <ClCompile Include="job.cpp">
+      <Filter>源文件\citizen</Filter>
+    </ClCompile>
+    <ClCompile Include="experience.cpp">
+      <Filter>源文件\citizen</Filter>
+    </ClCompile>
+    <ClCompile Include="assets.cpp">
+      <Filter>源文件\citizen</Filter>
+    </ClCompile>
+    <ClCompile Include="populace.cpp">
+      <Filter>源文件\citizen</Filter>
+    </ClCompile>
+    <ClCompile Include="item.cpp">
+      <Filter>源文件\interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="storage.cpp">
+      <Filter>源文件\interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>源文件\citizen</Filter>
+    </ClCompile>
+    <ClCompile Include="relation.cpp">
+      <Filter>源文件\citizen</Filter>
+    </ClCompile>
+    <ClCompile Include="phone.cpp">
+      <Filter>源文件\interaction</Filter>
+    </ClCompile>
+    <ClCompile Include="plot.cpp">
+      <Filter>源文件\world</Filter>
+    </ClCompile>
+    <ClCompile Include="util.cpp">
+      <Filter>源文件\common</Filter>
+    </ClCompile>
+    <ClCompile Include="commodity.cpp">
+      <Filter>源文件\interaction</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="parser.h">
+      <Filter>头文件\common</Filter>
+    </ClInclude>
+    <ClInclude Include="area.h">
+      <Filter>头文件\world</Filter>
+    </ClInclude>
+    <ClInclude Include="building.h">
+      <Filter>头文件\world</Filter>
+    </ClInclude>
+    <ClInclude Include="person.h">
+      <Filter>头文件\citizen</Filter>
+    </ClInclude>
+    <ClInclude Include="zone.h">
+      <Filter>头文件\world</Filter>
+    </ClInclude>
+    <ClInclude Include="organization.h">
+      <Filter>头文件\world</Filter>
+    </ClInclude>
+    <ClInclude Include="room.h">
+      <Filter>头文件\world</Filter>
+    </ClInclude>
+    <ClInclude Include="job.h">
+      <Filter>头文件\citizen</Filter>
+    </ClInclude>
+    <ClInclude Include="experience.h">
+      <Filter>头文件\citizen</Filter>
+    </ClInclude>
+    <ClInclude Include="asset.h">
+      <Filter>头文件\citizen</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>头文件\world</Filter>
+    </ClInclude>
+    <ClInclude Include="populace.h">
+      <Filter>头文件\citizen</Filter>
+    </ClInclude>
+    <ClInclude Include="item.h">
+      <Filter>头文件\interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="storage.h">
+      <Filter>头文件\interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="character.h">
+      <Filter>头文件\citizen</Filter>
+    </ClInclude>
+    <ClInclude Include="relation.h">
+      <Filter>头文件\citizen</Filter>
+    </ClInclude>
+    <ClInclude Include="phone.h">
+      <Filter>头文件\interaction</Filter>
+    </ClInclude>
+    <ClInclude Include="plot.h">
+      <Filter>头文件\world</Filter>
+    </ClInclude>
+    <ClInclude Include="util.h">
+      <Filter>头文件\common</Filter>
+    </ClInclude>
+    <ClInclude Include="commodity.h">
+      <Filter>头文件\interaction</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="todo.txt" />
+  </ItemGroup>
+</Project>
