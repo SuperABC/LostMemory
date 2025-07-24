@@ -126,9 +126,100 @@ public:
 	Map() = default;
 	~Map();
 
+	// 初始化全部静态地图
 	int Init(int blockX, int blockY);
+
+	// 市民入驻
+	void Checkin(std::vector<Person*> citizens, int year);
+
+	// 释放空间
 	void Destroy();
 
-private:
+	// 时钟前进
+	void Tick();
 
+	// 输出当前地图
+	void Print();
+
+	//保存/加载地图
+	void Load(std::string path);
+	void Save(std::string path);
+
+	// 获取地图尺寸
+	std::pair<int, int> GetSize();
+
+	//检查全局坐标是否在地图内
+	bool CheckXY(int x, int y);
+
+	// 获取地块
+	Block* GetBlock(int x, int y);
+
+	// 获取元素
+	Element* GetElement(int x, int y);
+
+	// 获取所有区域
+	std::vector<Area*>& GetAreas();
+
+	// 获取所有园区
+	std::vector<Zone*>& GetZones();
+
+	// 获取所有建筑
+	std::vector<Building*>& GetBuildings();
+
+	// 为园区范围内元素标记区域
+	void SetPlot(Zone* zone, int area);
+
+	// 为建筑范围内元素标记区域
+	void SetPlot(Building* building, int area);
+
+private:
+	int width = 0, height = 0;
+	std::vector<std::vector<Block*>> blocks;
+
+	std::vector<Area*> areas;
+	std::vector<Zone*> zones;
+	std::vector<Building*> buildings;
+
+	Roadnet roadnet;
+
+	std::vector<int> dx = { -1, 1, 0, 0 };
+	std::vector<int> dy = { 0, 0, -1, 1 };
+
+	// 判断当前坐标是否是某个地形的边界
+	bool CheckBoundary(int x, int y,
+		TERRAIN_TYPE terrainType, bool overwrite);
+
+	// 将当前坐标的四周加入填充队列
+	void UpdateBoundary(int x, int y, std::vector<std::pair<int, int>>& q,
+		TERRAIN_TYPE terrainType, bool overwrite);
+
+	// 随机填充一类地形
+	int FloodTerrain(int x, int y, int num,
+		TERRAIN_TYPE terrainType, bool overwrite);
+
+	// 正方形滤波平滑地形边界
+	void ShapeFilter(int x, int y, int side, TERRAIN_TYPE terrainType);
+
+	// 确定市中心
+	void FindCenter();
+
+	// 填充地形
+	void FloodSea();
+	void FloodMountain();
+	void FloodLake();
+	void FloodRiver();
+	void FloodDesert();
+
+	// 构建路网
+	void StraightHighway();
+	void CircumRoad();
+	void PublicRoad();
+	void DrawRoad();
+
+	//分配园区/建筑/房间
+	void DistributeZone();
+	void DistributeBuilding();
+	void ArrangeArea();
+	void ArrangeZone();
+	void RoomLayout();
 };

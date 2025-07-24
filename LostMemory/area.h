@@ -19,3 +19,7 @@ enum AREA_TYPE {
 	AREA_INDUSTRY, //工业区
 	AREA_GREEN //绿化区
 };
+
+class Area {
+
+};
