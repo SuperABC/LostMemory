@@ -1,11 +1,9 @@
-﻿#pragma warning(disable:4244)
-#pragma warning(disable:4267)
-
-#include <iostream>
-
+﻿#include "util.h"
 #include "parser.h"
 #include "map.h"
 #include "populace.h"
+
+#include <iostream>
 
 using namespace std;
 
