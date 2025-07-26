@@ -48,7 +48,7 @@ public:
 	int GetBuildingId();
 
 private:
-	TERRAIN_TYPE terrainType = TERRAIN_NONE;
+	TERRAIN_TYPE terrainType = TERRAIN_PLAIN;
 	AREA_TYPE areaType = AREA_NONE;
 	int areaId = -1;
 	int zoneId = -1;
@@ -85,21 +85,22 @@ public:
 		center = { -1, -1 };
 		highwayX = highwayY = { -1, 1 };
 		radiuses.clear();
-		midX.clear();
-		midY.clear();
+		roads.clear();
+		posX.clear();
+		posY.clear();
 		intersections.clear();
+		overpasses.clear();
 	}
 
-	std::pair<int, int> highwayX = { -1, 1 };
-	std::pair<int, int> highwayY = { -1, 1 };
+	std::pair<int, int> highwayX = { -1, 1 }; // <pos, width>
+	std::pair<int, int> highwayY = { -1, 1 }; // <pos, width>
 
 	std::pair<int, int> center = { -1, -1 };
-	std::vector<std::pair<int, int>> radiuses;
+	std::vector<std::pair<int, int>> radiuses; // <radius, width>
 
-	std::vector<std::pair<std::pair<std::pair<int, int>, std::pair<int, int>>, int>> roads;
+	std::vector<std::pair<std::pair<std::pair<int, int>, std::pair<int, int>>, int>> roads; // <<begin, end>, width>
 
-private:
-	std::vector<int> midX, midY;
+	std::vector<int> posX, posY;
 	std::vector<std::vector<int>> intersections;
 	std::vector<std::pair<int, int>> overpasses;
 };
@@ -185,20 +186,14 @@ private:
 	std::vector<int> dx = { -1, 1, 0, 0 };
 	std::vector<int> dy = { 0, 0, -1, 1 };
 
-	// 判断当前坐标是否是某个地形的边界
+	// 地形填充，若ovewrite为true，则全图填充，否则只填充平原
 	bool CheckBoundary(int x, int y,
 		TERRAIN_TYPE terrainType, bool overwrite);
-
-	// 将当前坐标的四周加入填充队列
 	void UpdateBoundary(int x, int y, std::vector<std::pair<int, int>>& q,
 		TERRAIN_TYPE terrainType, bool overwrite);
-
-	// 随机填充一类地形
 	int FloodTerrain(int x, int y, int num,
 		TERRAIN_TYPE terrainType, bool overwrite);
-
-	// 正方形滤波平滑地形边界
-	void ShapeFilter(int x, int y, int side, TERRAIN_TYPE terrainType);
+	void ShapeFilter(int x, int y, TERRAIN_TYPE terrainType, int side, float threshold);
 
 	// 确定市中心
 	void FindCenter();

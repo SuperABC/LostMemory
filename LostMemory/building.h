@@ -1,5 +1,7 @@
 ﻿#pragma once
 
-class Building {
+#include "plot.h"
+
+class Building : public Plot {
 
 };

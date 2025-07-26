@@ -1,5 +1,7 @@
 ﻿#pragma once
 
-class Zone {
+#include "plot.h"
+
+class Zone : public Plot {
 
 };

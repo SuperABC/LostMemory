@@ -28,7 +28,158 @@ int cameraX, cameraY;
 int zoom = 0;
 
 void updateGraph(int x, int y, int zoom, int left = 0, int right = sizeX, int top = 0, int bottom = sizeY) {
+	if (dispMode == 0) {
+		for (int i = top; i < bottom; i++) {
+			for (int j = left; j < right; j++) {
+				rgb color = { 0, 0, 0 };
 
+				int posX = x + (j - sizeX / 2) / (8 / steps[zoom]);
+				int posY = y + (i - sizeY / 2) / (8 / steps[zoom]);
+
+				if (!map->CheckXY(posX, posY)) {
+					setColor(color.r, color.g, color.b);
+					putPixel(j, i);
+					continue;
+				}
+
+				if (map->GetElement(posX, posY)->GetAreaType() == AREA_ROAD) {
+					color = { 255, 255, 255 };
+				}
+				else {
+					switch (map->GetElement(posX, posY)->GetTerrainType()) {
+					case TERRAIN_PLAIN:
+						color = { 127, 127, 127 };
+						break;
+					case TERRAIN_RIVER:
+						color = { 0, 255, 255 };
+						break;
+					case TERRAIN_SEA:
+						color = { 0, 0, 255 };
+						break;
+					case TERRAIN_LAKE:
+						color = { 0, 127, 127 };
+						break;
+					case TERRAIN_MOUNTAIN:
+						color = { 0, 127, 0 };
+						break;
+					case TERRAIN_DESERT:
+						color = { 127, 127, 0 };
+						break;
+					default:
+						break;
+					}
+				}
+				setColor(color.r, color.g, color.b);
+				putPixel(j, i);
+			}
+		}
+	}
+	else if (dispMode == 1) {
+		for (int i = top; i < bottom; i++) {
+			for (int j = left; j < right; j++) {
+				rgb color = { 0, 0, 0 };
+
+				int posX = x + (j - sizeX / 2) / (8 / steps[zoom]);
+				int posY = y + (i - sizeY / 2) / (8 / steps[zoom]);
+
+				if (!map->CheckXY(posX, posY)) {
+					setColor(color.r, color.g, color.b);
+					putPixel(j, i);
+					continue;
+				}
+
+				if (map->GetElement(posX, posY)->GetAreaType() == AREA_ROAD) {
+					color = { 255, 255, 255 };
+				}
+				else {
+					switch (map->GetElement(posX, posY)->GetAreaType())
+					{
+					case AREA_NONE:
+						color = { 0, 0, 0 };
+						break;
+					case AREA_ROAD:
+						color = { 255, 255, 255 };
+						break;
+					case AREA_CENTER:
+						color = { 255, 0, 0 };
+						break;
+					case AREA_RESIDENTH:
+						color = { 0, 63, 0 };
+						break;
+					case AREA_RESIDENTM:
+						color = { 0, 127, 0 };
+						break;
+					case AREA_RESIDENTL:
+						color = { 0, 191, 0 };
+						break;
+					case AREA_COMMERCEH:
+						color = { 0, 127, 127 };
+						break;
+					case AREA_COMMERCEL:
+						color = { 0, 255, 255 };
+						break;
+					case AREA_INDUSTRY:
+						color = { 127, 127, 0 };
+						break;
+					case AREA_OFFICEH:
+						color = { 127, 0, 127 };
+						break;
+					case AREA_OFFICEL:
+						color = { 255, 0, 255 };
+						break;
+					case AREA_GREEN:
+						color = { 255, 255, 0 };
+						break;
+					default:
+						break;
+					}
+				}
+				setColor(color.r, color.g, color.b);
+				putPixel(j, i);
+			}
+		}
+	}
+	else if (dispMode == 2) {
+		setColor(0, 0, 0);
+		putQuad(left, top, right, bottom, SOLID_FILL);
+
+		int off = 0;
+		for (auto area : map->GetAreas()) {
+			int idx = 0;
+			for (auto plot : area->GetPlots()) {
+				if (plot->GetAcreage() == 0)continue;
+
+				srand(idx + off * 100);
+				setColor(64 + rand() % 192, 64 + rand() % 192, 64 + rand() % 192);
+				putQuad(max(left, min(right, (plot->GetLeft() - x) * (8 / steps[zoom]) + sizeX / 2 + 1)),
+					max(top, min(bottom, (plot->GetTop() - y) * (8 / steps[zoom]) + sizeY / 2 + 1)),
+					max(left, min(right, (plot->GetRight() - x) * (8 / steps[zoom]) + sizeX / 2 - 1)),
+					max(top, min(bottom, (plot->GetBottom() - y) * (8 / steps[zoom]) + sizeY / 2 - 1)), SOLID_FILL);
+
+				idx++;
+			}
+			off++;
+		}
+
+		for (int i = top; i < bottom; i++) {
+			for (int j = left; j < right; j++) {
+				rgb color = { 0, 0, 0 };
+
+				int posX = x + (j - sizeX / 2) / (8 / steps[zoom]);
+				int posY = y + (i - sizeY / 2) / (8 / steps[zoom]);
+
+				if (!map->CheckXY(posX, posY)) {
+					continue;
+				}
+
+				if (map->GetElement(posX, posY)->GetAreaType() == AREA_ROAD) {
+					color = { 255, 255, 255 };
+					setColor(color.r, color.g, color.b);
+					putPixel(j, i);
+				}
+			}
+		}
+	}
 }
 
 void resize(int x, int y) {

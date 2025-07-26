@@ -20,6 +20,59 @@ enum AREA_TYPE {
 	AREA_GREEN //绿化区
 };
 
+class Zone;
+class Building;
 class Area {
+public:
+	Area() = delete;
+	Area(int x, int y, int sx, int sy, int wrap, AREA_TYPE type = AREA_NONE);
 
+	// 获取边界
+	int GetLeft();
+	int GetRight();
+	int GetTop();
+	int GetBottom();
+
+	// 获取路网包围情况
+	int GetWrap();
+
+	// 获取/设置距离市中心的距离
+	int GetDistance();
+	void SetDistance(float distance);
+
+	// 获取面积
+	int GetAcreage();
+
+	// 获取区域中的所有地块
+	std::vector<Plot*>& GetPlots();
+
+	// 区域中添加地块
+	bool AddPlot(Plot* plot);
+
+	// 获取/设置区域类型
+	AREA_TYPE GetType();
+	void SetType(AREA_TYPE type);
+
+	// 获取/设置标识符
+	int GetId();
+	void SetId(int type);
+
+	// 是否为空区域
+	bool Empty();
+
+private:
+	AREA_TYPE type;
+	int id;
+
+	int left;
+	int right;
+	int top;
+	int bottom;
+
+	int wrap;
+
+	int distance = -1;
+	int acreage = -1;
+
+	std::vector<Plot*> plots;
 };
