@@ -212,9 +212,79 @@ private:
 	void DrawRoad();
 
 	//分配园区/建筑/房间
+	template<class T>
+	bool AddPlot(int avg);
 	void DistributeZone();
 	void DistributeBuilding();
 	void ArrangeArea();
 	void ArrangeZone();
 	void RoomLayout();
 };
+
+template<class T>
+bool Map::AddPlot(int avg) {
+	if (avg < 1)return false;
+
+	if (avg == 1) {
+		T* plot = new T();
+
+		for (auto area : areas) {
+			
+			if (plot->plotType == PLOT_ZONE && !area->Empty())continue;
+			if (area->GetDistance() < plot->GetDistanceRange().first)continue;
+			if (plot->GetDistanceRange().second > 0 && area->GetDistance() > plot->GetDistanceRange().second)continue;
+
+			if (GetRandom(64) == 0) {
+				if (area->CalcAcreage(plot)) {
+					if (plot->plotType == PLOT_ZONE) {
+						plot->SetId(zones.size());
+						zones.push_back(reinterpret_cast<Zone*>(plot));
+						zones.back()->SetAreaType(area->GetType());
+					}
+					else if (plot->plotType == PLOT_BUILDING) {
+						plot->SetId(buildings.size());
+						buildings.push_back(reinterpret_cast<Building*>(plot));
+						buildings.back()->SetAreaType(area->GetType());
+					}
+					return true;
+				}
+				else continue;
+			}
+		}
+		delete plot;
+	}
+	else if (avg > 1) {
+		int count = 0;
+		int fail = 0;
+		while (true) {
+			if (fail > areas.size() / 2)break;
+
+			T* plot = new T();
+			auto area = areas[GetRandom(areas.size())];
+			if (plot->plotType == PLOT_ZONE && !area->Empty())continue;
+			if (area->GetDistance() < plot->GetDistanceRange().first)continue;
+			if (plot->GetDistanceRange().second > 0 && area->GetDistance() > plot->GetDistanceRange().second)continue;
+
+			if (area->AddPlot(plot)) {
+				if (plot->plotType == PLOT_ZONE) {
+					plot->SetId(zones.size());
+					zones.push_back(reinterpret_cast<Zone*>(plot));
+				}
+				else if (plot->plotType == PLOT_BUILDING) {
+					plot->SetId(buildings.size());
+					buildings.push_back(reinterpret_cast<Building*>(plot));
+				}
+				count++;
+			}
+			else {
+				fail++;
+				delete plot;
+				continue;
+			}
+
+			if (count > avg * 2 || count > avg / 2 && GetRandom(2 * avg - count) == 0)break;
+		}
+		return true;
+	}
+	return false;
+}
