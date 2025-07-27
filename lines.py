@@ -51,7 +51,7 @@ def count_code_lines(extensions=None, ignore_dirs=None):
 
 if __name__ == '__main__':
     total, details = count_code_lines()
-    print(f"总代码行数: {total}")
     print("\n详细统计:")
     for file, lines in details.items():
         print(f"{file}: {lines} 行")
+    print(f"总代码行数: {total}")

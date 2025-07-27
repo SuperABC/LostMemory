@@ -132,7 +132,52 @@ int Map::Init(int blockX, int blockY) {
 }
 
 void Map::Checkin(vector<Person*> citizens, int year) {
+	if (citizens.size() == 0)return;
 
+	int idx = 0;
+	std::vector<Room*> rooms;
+	for (auto building : buildings) {
+		if (building->GetStatus() != CONSTRUCTION_USING)continue;
+		if (building->GetType() == BUILDING_RESIDENT || building->GetType() == BUILDING_VILLA) {
+			for (auto room : building->GetRooms()) {
+				int id = GetRandom(citizens.size());
+				room->SetOwner(id);
+				citizens[id]->AddAsset(new EstateAsset(room));
+				rooms.push_back(room);
+			}
+		}
+	}
+
+	for (auto citizen : citizens) {
+		if (citizen->GetAddresses().size())continue;
+
+		int id = GetRandom(rooms.size());
+		citizen->AddAddress(rooms[id]);
+		auto childs = citizen->GetChilds();
+		if (childs.size() == 0) {
+			if (GetRandom(2)) {
+				citizen->GetSpouse()->AddAddress(rooms[id]);
+			}
+		}
+		else {
+			if (GetRandom(4)) {
+				citizen->GetSpouse()->AddAddress(rooms[id]);
+			}
+			for (auto child : childs) {
+				if (year - child->GetBirthday().GetYear() <= 18) {
+					child->AddAddress(rooms[id]);
+				}
+				else {
+					if (GetRandom(year - child->GetBirthday().GetYear() - 18) == 0) {
+						child->AddAddress(rooms[id]);
+					}
+				}
+			}
+		}
+
+		rooms[id] = rooms.back();
+		rooms.pop_back();
+	}
 }
 
 void Map::Destroy() {

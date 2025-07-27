@@ -72,7 +72,7 @@
     <ClCompile Include="experience.cpp">
       <Filter>源文件\citizen</Filter>
     </ClCompile>
-    <ClCompile Include="assets.cpp">
+    <ClCompile Include="asset.cpp">
       <Filter>源文件\citizen</Filter>
     </ClCompile>
     <ClCompile Include="populace.cpp">

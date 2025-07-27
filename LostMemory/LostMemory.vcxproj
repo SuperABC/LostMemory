@@ -143,7 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="assets.cpp" />
+    <ClCompile Include="asset.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="commodity.cpp" />
     <ClCompile Include="phone.cpp" />
