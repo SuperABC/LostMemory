@@ -30,6 +30,7 @@ int main() {
 				parser.AddOption("--block", 'b', "Block num both horizontally and vertically.", true, "4");
 				parser.ParseCmd(cmd);
 				populace->Init(map->Init(4, 4));
+				map->Checkin(populace->GetCitizens(), populace->GetTime().GetYear());
 				break;
 			case CMD_PASS:
 				parser.AddOption("--tick", 't', "Tick num to pass.", true, "1");
@@ -40,6 +41,7 @@ int main() {
 				parser.AddOption("--populace", 'p', "Whether to print the populace.", false);
 				parser.ParseCmd(cmd);
 				map->Print();
+				populace->Print();
 				break;
 			default:
 				parser.ParseCmd(cmd);

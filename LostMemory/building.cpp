@@ -1350,7 +1350,7 @@ void ResidentBuilding::DistributeInside() {
 
     for (int layer = 0; layer < layers; layer++) {
         for (int i = 0; i < acreages[layer] / standard; i++) {
-            property->AddRoom(CreateRoom<OfficeRoom>(layer + 1, standard));
+            property->AddRoom(CreateRoom<HomeRoom>(layer + 1, standard));
         }
     }
 }

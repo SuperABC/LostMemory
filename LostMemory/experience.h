@@ -46,6 +46,10 @@ public:
     bool operator<=(const Time& other) const;
     bool operator>=(const Time& other) const;
     bool operator!=(const Time& other) const;
+    Time operator+(const Time& other) const;
+    Time operator-(const Time& other) const;
+    Time& operator+=(const Time& other);
+    Time& operator-=(const Time& other);
 
     static int DaysInMonth(int year, int month);
     double DifferenceInSeconds(const Time& other) const;

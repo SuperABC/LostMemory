@@ -20,6 +20,8 @@ Person* Person::GetSpouse() {
 	for (auto relative : relatives) {
 		if (relative.first == RELATIVE_WIFE || relative.first == RELATIVE_HUSBAND)return relative.second;
 	}
+
+	return nullptr;
 }
 
 std::vector<Person*> Person::GetChilds() {

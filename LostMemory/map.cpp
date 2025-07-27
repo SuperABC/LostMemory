@@ -128,7 +128,40 @@ int Map::Init(int blockX, int blockY) {
 	ArrangeZone();
 	RoomLayout();
 
-	return 0;
+	int accomodation = 0;
+	for (auto building : buildings) {
+		if (building->GetStatus() != CONSTRUCTION_USING)continue;
+		if (building->GetType() == BUILDING_RESIDENT) {
+			for (auto room : building->GetRooms()) {
+				if (room->GetAcreage() <= 60)
+					accomodation += 1;
+				else if (room->GetAcreage() <= 100)
+					accomodation += 2;
+				else if (room->GetAcreage() <= 160)
+					accomodation += 4;
+				else if (room->GetAcreage() <= 240)
+					accomodation += 6;
+				else
+					accomodation += 8;
+			}
+		}
+		if (building->GetType() == BUILDING_VILLA) {
+			for (auto room : building->GetRooms()) {
+				if (room->GetLayer() > 1)continue;
+				if (room->GetAcreage() <= 120)
+					accomodation += 2;
+				else if (room->GetAcreage() <= 160)
+					accomodation += 4;
+				else if (room->GetAcreage() <= 240)
+					accomodation += 6;
+				else if (room->GetAcreage() <= 320)
+					accomodation += 8;
+				else
+					accomodation += 10;
+			}
+		}
+	}
+	return accomodation;
 }
 
 void Map::Checkin(vector<Person*> citizens, int year) {
@@ -140,6 +173,8 @@ void Map::Checkin(vector<Person*> citizens, int year) {
 		if (building->GetStatus() != CONSTRUCTION_USING)continue;
 		if (building->GetType() == BUILDING_RESIDENT || building->GetType() == BUILDING_VILLA) {
 			for (auto room : building->GetRooms()) {
+				if (room->GetType() != ROOM_HOME && room->GetType() != ROOM_VILLA)continue;
+
 				int id = GetRandom(citizens.size());
 				room->SetOwner(id);
 				citizens[id]->AddAsset(new EstateAsset(room));
@@ -155,12 +190,12 @@ void Map::Checkin(vector<Person*> citizens, int year) {
 		citizen->AddAddress(rooms[id]);
 		auto childs = citizen->GetChilds();
 		if (childs.size() == 0) {
-			if (GetRandom(2)) {
+			if (GetRandom(2) && citizen->GetSpouse()) {
 				citizen->GetSpouse()->AddAddress(rooms[id]);
 			}
 		}
 		else {
-			if (GetRandom(4)) {
+			if (GetRandom(4) && citizen->GetSpouse()) {
 				citizen->GetSpouse()->AddAddress(rooms[id]);
 			}
 			for (auto child : childs) {
@@ -212,7 +247,7 @@ void Map::Tick() {
 }
 
 void Map::Print() {
-	if (width == 0 || height == 0)return;
+	if (width <= 0 || height <= 0)return;
 
 	int scaleX = width / PRINT_SCALE;
 	int scaleY = height / PRINT_SCALE;
@@ -578,13 +613,14 @@ void Map::FloodMountain() {
 	int num = scalar > 1 ? (4 + GetRandom(scalar * 2)) : 0;
 	debugf("generate mountain %d\n", num);
 
+	Counter counter(100);
 	for (int i = 0; i < num; i++) {
 		int x = width / 4 + GetRandom(width / 2);
 		int y = height / 4 + GetRandom(height / 2);
 
 		if (GetElement(x, y)->GetTerrainType() != TERRAIN_PLAIN ||
 			sqrt(pow(x - roadnet.center.first, 2) + pow(y - roadnet.center.second, 2)) < 256) {
-			i--;
+			if(!counter.count())i--;
 			continue;
 		}
 		FloodTerrain(x, y, 64 * 64 + scalar * 0.5f * ((GetRandom(4) ? 0 : 1) * GetRandom(512 * 512)) + GetRandom(128 * 128), TERRAIN_MOUNTAIN, false);

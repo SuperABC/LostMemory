@@ -103,6 +103,9 @@ class Room {
 public:
 	Room(ROOM_TYPE type) : type(type) {}
 
+	ROOM_TYPE GetType();
+	void SetType(ROOM_TYPE type);
+
 	int GetOwner() { return owner; }
 	void SetOwner(int owner) { this->owner = owner; }
 	int GetLayer() { return layer; }

@@ -4,6 +4,7 @@
 #include "populace.h"
 
 #include <stdexcept>
+#include <algorithm>
 
 #pragma comment(lib, SG_LIB("lostmemory"))
 
@@ -33,6 +34,8 @@ bool buildingInfo = false;
 Zone* currentZone = NULL;
 int zoneWindow = 0;
 bool zoneInfo = false;
+int populaceWindow = 0;
+bool populaceInfo = false;
 
 void updateBuilding(int floor) {
 
@@ -139,6 +142,67 @@ void zoneLoop() {
 				buildingWindow = createParamWindow(building->GetSizeX() * 16 + 200, building->GetSizeY() * 16, buildingText[building->GetType()].data(), BIT_MAP, buildingSetup, buildingLoop, building);
 			}
 		}
+	}
+}
+
+void updatePopulace(int scroll) {
+	setColor(255, 255, 255);
+	clearScreen();
+	setColor(0, 0, 0);
+
+	string text;
+	text += "总人口 " + to_string(populace->GetCitizens().size()) + "\n";
+
+	int female = 0;
+	int male = 0;
+	vector<int> ageList(120, 0);
+	for (auto citizen : populace->GetCitizens()) {
+		if (citizen->GetGender() == GENDER_FEMALE)female++;
+		else male++;
+
+		ageList[(populace->GetTime() + Time(2001, 1, 1) - citizen->GetBirthday()).GetYear()]++;
+	}
+	for (int age = 0; age < ageList.size(); age++) {
+		text += to_string(age) + "岁人数 " + to_string(ageList[age]) + "\n";
+	}
+
+	int idx = 0;
+	while (scroll > 0 && idx < text.length()) {
+		if (text[idx++] == '\n')scroll--;
+	}
+
+	putString(text.data() + idx, 0, 0);
+}
+
+void populaceSetup() {
+	windowFinish([]() {
+		populaceWindow = 0;
+		populaceInfo = false;
+		});
+}
+
+void populaceLoop() {
+	static int scroll = 0;
+	if (!populaceInfo) {
+		populaceInfo = true;
+
+		updatePopulace(scroll);
+	}
+
+	vec3i mouse;
+	setColor(0, 0, 0);
+	if (biosMouse(1).z) {
+		mouse = biosMouse(0);
+		if (mouse.z == SG_MIDDLE_BUTTON_UP) {
+			scroll--;
+			scroll = max(0, scroll);
+			updatePopulace(scroll);
+		}
+		if (mouse.z == SG_MIDDLE_BUTTON_DOWN) {
+			scroll++;
+			updatePopulace(scroll);
+		}
+
 	}
 }
 
@@ -310,6 +374,7 @@ void sgSetup() {
 
 	try {
 		populace->Init(map->Init(3, 3));
+		map->Checkin(populace->GetCitizens(), populace->GetTime().GetYear());
 	}
 	catch (exception e) {
 		debugf("%s", e.what());
@@ -376,6 +441,14 @@ void sgLoop() {
 				dispMode = (dispMode + 1) % DISP_END;
 				updateGraph(cameraX, cameraY, zoom);
 				break;
+			case 'p':
+				if (populaceWindow) {
+					closeWindow(populaceWindow);
+				}
+				populaceWindow = createWindow(640, 480, "人口总览", BIT_MAP, populaceSetup, populaceLoop);
+				break;
+			default:
+				break;
 			}
 		}
 		if (bmp->data)free(bmp->data);
@@ -426,7 +499,7 @@ void sgLoop() {
 					zoom++;
 				if (mouse.z == SG_MIDDLE_BUTTON_DOWN)
 					zoom--;
-				zoom = max(0, min(3, zoom));
+				zoom = clamp(zoom, 0, 3);
 				updateGraph(cameraX, cameraY, zoom);
 			}
 		}

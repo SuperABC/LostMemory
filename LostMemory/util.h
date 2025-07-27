@@ -11,4 +11,16 @@ int GetRandom(int range);
 // 判断(x, y)是否在矩形中
 bool InBox(int x, int y, int left, int right, int top, int bottom);
 
+// 调试控制台输出
 void debugf(LPCSTR format, ...);
+
+// 计数器
+class Counter {
+public:
+	Counter(int count);
+
+	bool count();
+
+private:
+	int num;
+};

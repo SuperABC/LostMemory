@@ -25,3 +25,11 @@ void debugf(LPCSTR format, ...) {
 	StringCchVPrintfA(buf, 1023, format, args);
 	OutputDebugStringA(buf);
 }
+
+Counter::Counter(int count) : num(count) {
+
+}
+
+bool Counter::count() {
+	return --num <= 0;
+}

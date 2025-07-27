@@ -27,5 +27,5 @@ private:
 
 	std::vector<Person*> citizens;
 
-	std::unordered_map<std::string, Person*> phoneRoll;
+	std::unordered_map<int, Person*> phoneRoll;
 };

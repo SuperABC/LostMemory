@@ -92,7 +92,6 @@ void Time::SetToCurrentTime() {
 
 void Time::AddYears(int years) {
     year += years;
-    Validate();
 }
 
 void Time::AddMonths(int months) {
@@ -105,7 +104,6 @@ void Time::AddMonths(int months) {
         month += 12;
         year--;
     }
-    Validate();
 }
 
 void Time::AddDays(int days) {
@@ -224,6 +222,40 @@ bool Time::operator>(const Time& other) const { return other < *this; }
 bool Time::operator<=(const Time& other) const { return !(*this > other); }
 bool Time::operator>=(const Time& other) const { return !(*this < other); }
 bool Time::operator!=(const Time& other) const { return !(*this == other); }
+
+Time Time::operator+(const Time& other) const {
+    Time result = *this;
+    result.AddYears(other.year);
+    result.AddMonths(other.month);
+    result.AddDays(other.day);
+    result.AddHours(other.hour);
+    result.AddMinutes(other.minute);
+    result.AddSeconds(other.second);
+    result.AddMilliseconds(other.millisecond);
+    return result;
+}
+
+Time Time::operator-(const Time& other) const {
+    Time result = *this;
+    result.AddYears(-other.year);
+    result.AddMonths(-other.month);
+    result.AddDays(-other.day);
+    result.AddHours(-other.hour);
+    result.AddMinutes(-other.minute);
+    result.AddSeconds(-other.second);
+    result.AddMilliseconds(-other.millisecond);
+    return result;
+}
+
+Time& Time::operator+=(const Time& other) {
+    *this = *this + other;
+    return *this;
+}
+
+Time& Time::operator-=(const Time& other) {
+    *this = *this - other;
+    return *this;
+}
 
 double Time::DifferenceInSeconds(const Time& other) const {
     int daysDiff = OrdinalDate() - other.OrdinalDate();

@@ -1,5 +1,6 @@
 ﻿#include "populace.h"
 
+#include <iostream>
 #include <algorithm>
 
 
@@ -85,7 +86,7 @@ void Populace::Init(int accomodation) {
 					females[event.first].life = LIFE_MARRY;
 					males[selectId].spouse = event.first;
 					males[selectId].life = LIFE_MARRY;
-					int childs = ((GetRandom(3) == 0) ? 0 : (1 + GetRandom(4)));
+					int childs = ((GetRandom(8) == 0) ? 0 : (1 + GetRandom(6)));
 					int interval = 1 + GetRandom(3);
 					for (int i = 0; i < childs; i++) {
 						if (year + interval - females[event.first].birth > 45)break;
@@ -140,7 +141,7 @@ void Populace::Init(int accomodation) {
 	time.SetYear(year);
 
 	for (int i = 0; i < females.size(); i++) {
-		if (females[i].life != LIFE_DEAD) {
+		if (females[i].life != LIFE_DEAD && GetRandom(20) > 0) {
 			Person* person = new Person();
 			person->SetId(citizens.size());
 			females[i].idx = citizens.size();
@@ -151,7 +152,7 @@ void Populace::Init(int accomodation) {
 		}
 	}
 	for (int i = 0; i < males.size(); i++) {
-		if (males[i].life != LIFE_DEAD) {
+		if (males[i].life != LIFE_DEAD && GetRandom(20) > 0) {
 			Person* person = new Person();
 			person->SetId(citizens.size());
 			males[i].idx = citizens.size();
@@ -165,9 +166,9 @@ void Populace::Init(int accomodation) {
 	for (auto female : females) {
 		if (female.idx >= 0) {
 			Person* person = citizens[female.idx];
-			if (females[female.mother].idx >= 0)
+			if (female.mother >= 0 && females[female.mother].idx >= 0)
 				person->AddRelative(RELATIVE_MOTHER, citizens[females[female.mother].idx]);
-			if (males[female.father].idx >= 0)
+			if (female.father >= 0 && males[female.father].idx >= 0)
 				person->AddRelative(RELATIVE_FATHER, citizens[males[female.father].idx]);
 			if (female.spouse >= 0 && males[female.spouse].idx >= 0) {
 				person->AddRelative(RELATIVE_HUSBAND, citizens[males[female.spouse].idx]);
@@ -184,9 +185,9 @@ void Populace::Init(int accomodation) {
 	for (auto male : males) {
 		if (male.idx >= 0) {
 			Person* person = citizens[male.idx];
-			if (females[male.mother].idx >= 0)
+			if (male.mother >= 0 && females[male.mother].idx >= 0)
 				person->AddRelative(RELATIVE_MOTHER, citizens[females[male.mother].idx]);
-			if (males[male.father].idx >= 0)
+			if (male.father >= 0 && males[male.father].idx >= 0)
 				person->AddRelative(RELATIVE_FATHER, citizens[males[male.father].idx]);
 			if (male.spouse >= 0 && females[male.spouse].idx >= 0) {
 				person->AddRelative(RELATIVE_WIFE, citizens[females[male.spouse].idx]);
@@ -201,16 +202,16 @@ void Populace::Init(int accomodation) {
 	}
 
 	for (auto citizen : citizens) {
-		std::string number;
+		int number;
 		do {
-			number = "1";
-			for (int i = 0; i < 10; i++) {
-				number += std::to_string(GetRandom(10));
+			number = pow(10, 9);
+			for (int i = 0; i < 9; i++) {
+				number += GetRandom(10) * pow(10, i);
 			}
 		} while (phoneRoll.find(number) != phoneRoll.end() && phoneRoll[number] != citizen);
 
 		phoneRoll[number] = citizen;
-		citizen->AddPhone(number);
+		citizen->AddPhone(to_string(number));
 	}
 }
 
@@ -226,7 +227,22 @@ void Populace::Tick() {
 }
 
 void Populace::Print() {
+	if (citizens.size() == 0)return;
 
+	cout << "总人口 " << citizens.size() << endl;
+
+	int female = 0;
+	int male = 0;
+	vector<int> ageList(120, 0);
+	for (auto citizen : citizens) {
+		if (citizen->GetGender() == GENDER_FEMALE)female++;
+		else male++;
+
+		ageList[(time - citizen->GetBirthday()).GetYear()]++;
+	}
+	for (int age = 0; age < ageList.size(); age++) {
+		cout << age << "岁人数 " << ageList[age] << endl;
+	}
 }
 
 void Populace::Load(std::string path) {

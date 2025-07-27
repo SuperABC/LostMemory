@@ -5,3 +5,11 @@
 
 
 using namespace std;
+
+ROOM_TYPE Room::GetType() {
+	return type;
+}
+
+void Room::SetType(ROOM_TYPE type) {
+	this->type = type;
+}
