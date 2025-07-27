@@ -29,23 +29,23 @@ public:
 	Element() = default;
 	~Element() = default;
 
-	//设置/获取地形类型
-	void SetTerrainType(TERRAIN_TYPE terrainType);
+	//获取/设置地形类型
 	TERRAIN_TYPE GetTerrainType();
+	void SetTerrainType(TERRAIN_TYPE terrainType);
 
-	//设置/获取区域类型/标识
-	void SetAreaType(AREA_TYPE areaType);
+	//获取/设置区域类型/标识
 	AREA_TYPE GetAreaType();
-	void SetAreaId(int areaId);
+	void SetAreaType(AREA_TYPE areaType);
 	int GetAreaId();
+	void SetAreaId(int areaId);
 
-	//设置/获取园区标识
-	void SetZoneId(int zoneId);
+	//获取/设置园区标识
 	int GetZoneId();
+	void SetZoneId(int zoneId);
 
-	//设置/获取建筑标识
-	void SetBuildingId(int buildingId);
+	//获取/设置建筑标识
 	int GetBuildingId();
+	void SetBuildingId(int buildingId);
 
 private:
 	TERRAIN_TYPE terrainType = TERRAIN_PLAIN;
@@ -235,7 +235,7 @@ bool Map::AddPlot(int avg) {
 			if (plot->GetDistanceRange().second > 0 && area->GetDistance() > plot->GetDistanceRange().second)continue;
 
 			if (GetRandom(64) == 0) {
-				if (area->CalcAcreage(plot)) {
+				if (area->AddPlot(plot)) {
 					if (plot->plotType == PLOT_ZONE) {
 						plot->SetId(zones.size());
 						zones.push_back(reinterpret_cast<Zone*>(plot));

@@ -39,6 +39,7 @@ int main() {
 				parser.AddOption("--map", 'm', "Whether to print the map.", false);
 				parser.AddOption("--populace", 'p', "Whether to print the populace.", false);
 				parser.ParseCmd(cmd);
+				map->Print();
 				break;
 			default:
 				parser.ParseCmd(cmd);

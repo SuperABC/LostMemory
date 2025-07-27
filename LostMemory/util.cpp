@@ -6,6 +6,8 @@
 using namespace std;
 
 int GetRandom(int range) {
+	if (range <= 0)return 0;
+
 	mt19937 rng(std::random_device{}());
 	uniform_int_distribution<int> dist(0, range - 1);
 	return dist(rng);

@@ -167,7 +167,111 @@ void Map::Tick() {
 }
 
 void Map::Print() {
+	if (width == 0 || height == 0)return;
 
+	int scaleX = width / PRINT_SCALE;
+	int scaleY = height / PRINT_SCALE;
+
+	for (int y = 0; y < PRINT_SCALE; y++) {
+		for (int x = 0; x < PRINT_SCALE; x++) {
+			switch (GetElement(x * scaleX, y * scaleY)->GetTerrainType()) {
+			case TERRAIN_PLAIN:
+			case TERRAIN_RIVER:
+				std::cout << "□";
+				break;
+			case TERRAIN_SEA:
+			case TERRAIN_LAKE:
+				std::cout << "■";
+				break;
+			case TERRAIN_MOUNTAIN:
+				std::cout << "▲";
+				break;
+			case TERRAIN_DESERT:
+				std::cout << "::";
+				break;
+			default:
+				break;
+			}
+		}
+		std::cout << std::endl;
+	}
+
+	int residenceHigh = 0;
+	int recidenceMiddle = 0;
+	int recidenceLow = 0;
+	int commercialHigh = 0;
+	int commercialLow = 0;
+	int officeHigh = 0;
+	int officeLow = 0;
+	int industryAll = 0;
+	int greenAll = 0;
+	for (auto area : areas) {
+		switch (area->GetType()) {
+		case AREA_RESIDENTH:
+			residenceHigh += area->GetAcreage();
+			break;
+		case AREA_RESIDENTM:
+			recidenceMiddle += area->GetAcreage();
+			break;
+		case AREA_RESIDENTL:
+			recidenceLow += area->GetAcreage();
+			break;
+		case AREA_COMMERCEH:
+			commercialHigh += area->GetAcreage();
+			break;
+		case AREA_COMMERCEL:
+			commercialLow += area->GetAcreage();
+			break;
+		case AREA_OFFICEH:
+			officeHigh += area->GetAcreage();
+			break;
+		case AREA_OFFICEL:
+			officeLow += area->GetAcreage();
+			break;
+		case AREA_INDUSTRY:
+			industryAll += area->GetAcreage();
+			break;
+		case AREA_GREEN:
+			greenAll += area->GetAcreage();
+			break;
+		default:
+			break;
+		}
+	}
+	std::cout << "高级住宅区 " << residenceHigh / 1000000.0f << " km2" << std::endl;
+	std::cout << "中级住宅区 " << recidenceMiddle / 1000000.0f << " km2" << std::endl;
+	std::cout << "低级住宅区 " << recidenceLow / 1000000.0f << " km2" << std::endl;
+	std::cout << "高级商业区 " << commercialHigh / 1000000.0f << " km2" << std::endl;
+	std::cout << "低级商业区 " << commercialLow / 1000000.0f << " km2" << std::endl;
+	std::cout << "高级办公区 " << officeHigh / 1000000.0f << " km2" << std::endl;
+	std::cout << "低级办公区 " << officeLow / 1000000.0f << " km2" << std::endl;
+	std::cout << "普通工业区 " << industryAll / 1000000.0f << " km2" << std::endl;
+	std::cout << "普通绿化区 " << greenAll / 1000000.0f << " km2" << std::endl;
+
+	int zoneSize[ZONE_END] = { 0 };
+	int zoneNum[ZONE_END] = { 0 };
+	int buildingSize[BUILDING_END] = { 0 };
+	int buildingNum[BUILDING_END] = { 0 };
+	for (auto area : areas) {
+		for (auto p : area->GetPlots()) {
+			if (p->plotType == PLOT_ZONE) {
+				Zone* zone = static_cast<Zone*>(p);
+				zoneSize[zone->GetType()] += zone->GetAcreage();
+				zoneNum[zone->GetType()]++;
+			}
+			else if (p->plotType == PLOT_BUILDING) {
+				Building* building = static_cast<Building*>(p);
+				buildingSize[building->GetType()] += building->GetAcreage();
+				buildingNum[building->GetType()]++;
+			}
+		}
+	}
+	for (int i = 1; i < ZONE_END; i++) {
+		std::cout << zoneText[i] << " " << zoneNum[i] << "个，" << zoneSize[i] << " m2" << std::endl;
+	}
+	for (int i = 1; i < BUILDING_END; i++) {
+		std::cout << buildingText[i] << " " << buildingNum[i] << "个，" << buildingSize[i] << " m2" << std::endl;
+	}
 }
 
 void Map::Load(string path) {
@@ -425,7 +529,8 @@ void Map::FloodSea() {
 }
 
 void Map::FloodMountain() {
-	int num = 4 + GetRandom(width * height / (512 * 512) * 2);
+	float scalar = width * height / (512 * 512);
+	int num = scalar > 1 ? (4 + GetRandom(scalar * 2)) : 0;
 	debugf("generate mountain %d\n", num);
 
 	for (int i = 0; i < num; i++) {
@@ -437,7 +542,7 @@ void Map::FloodMountain() {
 			i--;
 			continue;
 		}
-		FloodTerrain(x, y, 64 * 64 + (GetRandom(4) ? 0 : 1) * GetRandom(512 * 512) + GetRandom(256 * 256), TERRAIN_MOUNTAIN, false);
+		FloodTerrain(x, y, 64 * 64 + scalar * 0.5f * ((GetRandom(4) ? 0 : 1) * GetRandom(512 * 512)) + GetRandom(128 * 128), TERRAIN_MOUNTAIN, false);
 	}
 	for (int i = 2; i < width - 2; i++) {
 		for (int j = 2; j < height - 2; j++) {
@@ -447,7 +552,8 @@ void Map::FloodMountain() {
 }
 
 void Map::FloodLake() {
-	int num = 1 + GetRandom(width * height / (512 * 512));
+	float scalar = width * height / (512 * 512);
+	int num = 1 + GetRandom(scalar);
 	debugf("generate lake %d\n", num);
 
 	for (int i = 0; i < num; i++) {
@@ -459,7 +565,7 @@ void Map::FloodLake() {
 			i--;
 			continue;
 		}
-		FloodTerrain(x, y, 64 * 64 + (GetRandom(8) ? 0 : 1) * GetRandom(256 * 256) + GetRandom(128 * 128), TERRAIN_LAKE, true);
+		FloodTerrain(x, y, 64 * 64 + scalar * 0.5f * ((GetRandom(8) ? 0 : 1) * GetRandom(256 * 256)) + GetRandom(128 * 128), TERRAIN_LAKE, true);
 	}
 	for (int i = 3; i < width - 3; i++) {
 		for (int j = 3; j < height - 3; j++) {
@@ -589,7 +695,8 @@ void Map::FloodRiver() {
 }
 
 void Map::FloodDesert() {
-	int num = 1 + GetRandom(width * height / (512 * 512));
+	float scalar = width * height / (512 * 512);
+	int num = 1 + GetRandom(scalar);
 	debugf("generate desert %d\n", num);
 
 	for (int i = 0; i < num; i++) {
@@ -602,7 +709,7 @@ void Map::FloodDesert() {
 			i--;
 			continue;
 		}
-		FloodTerrain(x, y, 64 * 64 + (GetRandom(4) ? 0 : 1) * GetRandom(256 * 256) + GetRandom(128 * 128), TERRAIN_DESERT, false);
+		FloodTerrain(x, y, 64 * 64 + scalar * 0.5f * ((GetRandom(4) ? 0 : 1) * GetRandom(256 * 256)) + GetRandom(128 * 128), TERRAIN_DESERT, false);
 	}
 	for (int i = 3; i < width - 3; i++) {
 		for (int j = 3; j < height - 3; j++) {
@@ -1286,22 +1393,365 @@ void Map::DrawRoad() {
 }
 
 void Map::DistributeZone() {
+	// 固定分配园区
+	AddPlot<SpaceZone>(1);
+	AddPlot<ArmyZone>(1);
+	AddPlot<PrisonZone>(1);
+	AddPlot<GeneratorZone>(3);
+	AddPlot<WaterZone>(2);
+	AddPlot<GarbageZone>(3);
+	AddPlot<HospitalZone>(4);
+	AddPlot<FilmZone>(2);
+	AddPlot<SportZone>(8);
+	AddPlot<CampusZone>(20);
 
+	// 其他园区
+	for (auto area : areas) {
+		float prob = GetRandom(1000) / 1000.0f;
+		Zone* tmp = CreateZone(RandomZone(area->GetType(), prob));
+		if (tmp) {
+			if (!area->AddPlot(tmp))delete tmp;
+			else {
+				tmp->SetId(zones.size());
+				zones.push_back(tmp);
+			}
+		}
+	}
 }
 
 void Map::DistributeBuilding() {
+	// 固定分配建筑
+	AddPlot<RoadfixBuilding>(4);
+	AddPlot<ParkingBuilding>(32);
+	AddPlot<BankBuilding>(8);
+	AddPlot<LibraryBuilding>(4);
+	AddPlot<HospitalBuilding>(8);
+	AddPlot<SanatoriumBuilding>(4);
+	AddPlot<PoliceBuilding>(8);
+	AddPlot<FireBuilding>(6);
+	AddPlot<SchoolBuilding>(16);
+	AddPlot<CrematoriumBuilding>(4);
+	AddPlot<CemetryBuilding>(4);
+	AddPlot<TVStationBuilding>(2);
+	AddPlot<GasolineBuilding>(32);
+	AddPlot<ToiletBuilding>(32);
+	AddPlot<SubstationBuilding>(16);
+	AddPlot<PostBuilding>(16);
 
+	// 其他建筑
+	for (auto area : areas) {
+		while (true) {
+			float prob = GetRandom(1000) / 1000.0f;
+			Building* tmp = CreateBuilding(RandomBuilding(area->GetType(), prob));
+			if (tmp) {
+				if (!area->AddPlot(tmp)) {
+					delete tmp;
+					break;
+				}
+				else {
+					tmp->SetId(buildings.size());
+					buildings.push_back(tmp);
+					continue;
+				}
+			}
+			else break;
+		}
+	}
+
+	for (auto zone : zones) {
+		zone->ArrangeBuilding();
+		buildings.insert(buildings.end(), zone->GetBuildings().begin(), zone->GetBuildings().end());
+	}
+
+	for (auto building : buildings) {
+		building->InitBuilding();
+	}
 }
 
 void Map::ArrangeArea() {
+	// 二分治布局区域
+	for (auto area : areas) {
+		auto plots = std::vector<Plot*>(area->GetPlots());
+		if (plots.size() == 0)continue;
 
+		std::sort(plots.begin(), plots.end(), [](Plot* a, Plot* b) {
+			return a->GetAcreage() > b->GetAcreage();
+			});
+
+		if (plots.size() == 1) {
+			plots[0]->SetPosition(area->GetLeft(), area->GetRight(), area->GetTop(), area->GetBottom());
+		}
+		else {
+			while (plots.size() > 2) {
+				Chunk* tmp = new Chunk(plots[plots.size() - 1], plots[plots.size() - 2]);
+				plots.pop_back();
+				int i = plots.size() - 2;
+				for (; i >= 0; i--) {
+					if (tmp->GetAcreage() > plots[i]->GetAcreage()) {
+						plots[i + 1] = plots[i];
+					}
+					else {
+						plots[i + 1] = tmp;
+						break;
+					}
+				}
+				if (i < 0)plots[0] = tmp;
+			}
+
+			if (area->GetRight() - area->GetLeft() > area->GetBottom() - area->GetTop()) {
+				if (GetRandom(2)) {
+					int divX = area->GetLeft() +
+						(area->GetRight() - area->GetLeft()) * plots[0]->GetAcreage() / area->GetAcreage();
+					if (abs(divX - area->GetLeft()) < 2)divX = area->GetLeft();
+					if (abs(divX - area->GetRight()) < 2)divX = area->GetRight();
+					plots[0]->SetPosition(area->GetLeft(), divX, area->GetTop(), area->GetBottom());
+					plots[1]->SetPosition(divX, area->GetRight(), area->GetTop(), area->GetBottom());
+				}
+				else {
+					int divX = area->GetLeft() +
+						(area->GetRight() - area->GetLeft()) * plots[1]->GetAcreage() / area->GetAcreage();
+					if (abs(divX - area->GetLeft()) < 2)divX = area->GetLeft();
+					if (abs(divX - area->GetRight()) < 2)divX = area->GetRight();
+					plots[1]->SetPosition(area->GetLeft(), divX, area->GetTop(), area->GetBottom());
+					plots[0]->SetPosition(divX, area->GetRight(), area->GetTop(), area->GetBottom());
+				}
+			}
+			else {
+				if (GetRandom(2)) {
+					int divY = area->GetTop() +
+						(area->GetBottom() - area->GetTop()) * plots[0]->GetAcreage() / area->GetAcreage();
+					if (abs(divY - area->GetTop()) < 2)divY = area->GetTop();
+					if (abs(divY - area->GetBottom()) < 2)divY = area->GetBottom();
+					plots[0]->SetPosition(area->GetLeft(), area->GetRight(), area->GetTop(), divY);
+					plots[1]->SetPosition(area->GetLeft(), area->GetRight(), divY, area->GetBottom());
+				}
+				else {
+					int divY = area->GetTop() +
+						(area->GetBottom() - area->GetTop()) * plots[1]->GetAcreage() / area->GetAcreage();
+					if (abs(divY - area->GetTop()) < 2)divY = area->GetTop();
+					if (abs(divY - area->GetBottom()) < 2)divY = area->GetBottom();
+					plots[1]->SetPosition(area->GetLeft(), area->GetRight(), area->GetTop(), divY);
+					plots[0]->SetPosition(area->GetLeft(), area->GetRight(), divY, area->GetBottom());
+				}
+			}
+
+			while (plots.size() > 0) {
+				auto tmp = plots.back();
+				plots.pop_back();
+				if (tmp->plotType == PLOT_OTHER) {
+					Chunk* block = static_cast<Chunk*>(tmp);
+					Plot* plot1, * plot2;
+					if (block->blocks.size() > 0) {
+						plot1 = block->blocks[0];
+						if (block->blocks.size() > 1) {
+							plot2 = block->blocks[1];
+						}
+						else {
+							plot2 = block->plots[0];
+						}
+					}
+					else {
+						plot1 = block->plots[0];
+						plot2 = block->plots[1];
+					}
+
+					if (tmp->GetAcreage() > 0) {
+						if (tmp->GetSizeX() > tmp->GetSizeY()) {
+							if (GetRandom(2)) {
+								int divX = tmp->GetLeft() +
+									tmp->GetSizeX() * plot1->GetAcreage() / tmp->GetAcreage();
+								if (abs(divX - tmp->GetLeft()) < 2)divX = tmp->GetLeft();
+								if (abs(divX - tmp->GetRight()) < 2)divX = tmp->GetRight();
+								plot1->SetPosition(tmp->GetLeft(), divX, tmp->GetTop(), tmp->GetBottom());
+								plot2->SetPosition(divX, tmp->GetRight(), tmp->GetTop(), tmp->GetBottom());
+							}
+							else {
+								int divX = tmp->GetOffsetX() +
+									tmp->GetSizeX() * plot2->GetAcreage() / tmp->GetAcreage();
+								if (abs(divX - tmp->GetLeft()) < 2)divX = tmp->GetLeft();
+								if (abs(divX - tmp->GetRight()) < 2)divX = tmp->GetRight();
+								plot2->SetPosition(tmp->GetLeft(), divX, tmp->GetTop(), tmp->GetBottom());
+								plot1->SetPosition(divX, tmp->GetRight(), tmp->GetTop(), tmp->GetBottom());
+							}
+						}
+						else {
+							if (GetRandom(2)) {
+								int divY = tmp->GetTop() +
+									tmp->GetSizeY() * plot1->GetAcreage() / tmp->GetAcreage();
+								if (abs(divY - tmp->GetTop()) < 2)divY = tmp->GetTop();
+								if (abs(divY - tmp->GetBottom()) < 2)divY = tmp->GetBottom();
+								plot1->SetPosition(tmp->GetLeft(), tmp->GetRight(), tmp->GetTop(), divY);
+								plot2->SetPosition(tmp->GetLeft(), tmp->GetRight(), divY, tmp->GetBottom());
+							}
+							else {
+								int divY = tmp->GetTop() +
+									tmp->GetSizeY() * plot2->GetAcreage() / tmp->GetAcreage();
+								if (abs(divY - tmp->GetTop()) < 2)divY = tmp->GetTop();
+								if (abs(divY - tmp->GetBottom()) < 2)divY = tmp->GetBottom();
+								plot2->SetPosition(tmp->GetLeft(), tmp->GetRight(), tmp->GetTop(), divY);
+								plot1->SetPosition(tmp->GetLeft(), tmp->GetRight(), divY, tmp->GetBottom());
+							}
+						}
+						if (plot1->plotType == PLOT_OTHER)plots.push_back(plot1);
+						if (plot2->plotType == PLOT_OTHER)plots.push_back(plot2);
+					}
+					delete tmp;
+				}
+			}
+		}
+		for (auto plot : area->GetPlots()) {
+			if (plot->plotType == PLOT_ZONE) {
+				SetPlot((Zone*)plot, area->GetId());
+			}
+			if (plot->plotType == PLOT_BUILDING) {
+				SetPlot((Building*)plot, area->GetId());
+			}
+		}
+	}
 }
 
 void Map::ArrangeZone() {
+	// 二分治布局园区
+	for (auto zone : zones) {
+		auto plots = zone->GetPlots();
+		if (plots.size() == 0)continue;
 
+		std::sort(plots.begin(), plots.end(), [](Plot* a, Plot* b) {
+			return a->GetAcreage() > b->GetAcreage();
+			});
+
+		if (plots.size() == 1) {
+			plots[0]->SetPosition(zone->GetLeft(), zone->GetRight(), zone->GetTop(), zone->GetBottom());
+		}
+		else {
+			while (plots.size() > 2) {
+				Chunk* tmp = new Chunk(plots[plots.size() - 1], plots[plots.size() - 2]);
+				plots.pop_back();
+				int i = plots.size() - 2;
+				for (; i >= 0; i--) {
+					if (tmp->GetAcreage() > plots[i]->GetAcreage()) {
+						plots[i + 1] = plots[i];
+					}
+					else {
+						plots[i + 1] = tmp;
+						break;
+					}
+				}
+				if (i < 0)plots[0] = tmp;
+			}
+
+			if (zone->GetRight() - zone->GetLeft() > zone->GetBottom() - zone->GetTop()) {
+				if (GetRandom(2)) {
+					int divX = zone->GetLeft() +
+						(zone->GetRight() - zone->GetLeft()) * plots[0]->GetAcreage() / zone->GetAcreage();
+					if (abs(divX - zone->GetLeft()) < 2)divX = zone->GetLeft();
+					if (abs(divX - zone->GetRight()) < 2)divX = zone->GetRight();
+					plots[0]->SetPosition(zone->GetLeft(), divX, zone->GetTop(), zone->GetBottom());
+					plots[1]->SetPosition(divX, zone->GetRight(), zone->GetTop(), zone->GetBottom());
+				}
+				else {
+					int divX = zone->GetLeft() +
+						(zone->GetRight() - zone->GetLeft()) * plots[1]->GetAcreage() / zone->GetAcreage();
+					if (abs(divX - zone->GetLeft()) < 2)divX = zone->GetLeft();
+					if (abs(divX - zone->GetRight()) < 2)divX = zone->GetRight();
+					plots[1]->SetPosition(zone->GetLeft(), divX, zone->GetTop(), zone->GetBottom());
+					plots[0]->SetPosition(divX, zone->GetRight(), zone->GetTop(), zone->GetBottom());
+				}
+			}
+			else {
+				if (GetRandom(2)) {
+					int divY = zone->GetTop() +
+						(zone->GetBottom() - zone->GetTop()) * plots[0]->GetAcreage() / zone->GetAcreage();
+					if (abs(divY - zone->GetTop()) < 2)divY = zone->GetTop();
+					if (abs(divY - zone->GetBottom()) < 2)divY = zone->GetBottom();
+					plots[0]->SetPosition(zone->GetLeft(), zone->GetRight(), zone->GetTop(), divY);
+					plots[1]->SetPosition(zone->GetLeft(), zone->GetRight(), divY, zone->GetBottom());
+				}
+				else {
+					int divY = zone->GetTop() +
+						(zone->GetBottom() - zone->GetTop()) * plots[1]->GetAcreage() / zone->GetAcreage();
+					if (abs(divY - zone->GetTop()) < 2)divY = zone->GetTop();
+					if (abs(divY - zone->GetBottom()) < 2)divY = zone->GetBottom();
+					plots[1]->SetPosition(zone->GetLeft(), zone->GetRight(), zone->GetTop(), divY);
+					plots[0]->SetPosition(zone->GetLeft(), zone->GetRight(), divY, zone->GetBottom());
+				}
+			}
+
+			while (plots.size() > 0) {
+				auto tmp = plots.back();
+				plots.pop_back();
+				if (tmp->plotType == PLOT_OTHER) {
+					Chunk* block = static_cast<Chunk*>(tmp);
+					Plot* plot1, * plot2;
+					if (block->blocks.size() > 0) {
+						plot1 = block->blocks[0];
+						if (block->blocks.size() > 1) {
+							plot2 = block->blocks[1];
+						}
+						else {
+							plot2 = block->plots[0];
+						}
+					}
+					else {
+						plot1 = block->plots[0];
+						plot2 = block->plots[1];
+					}
+
+					if (tmp->GetAcreage() > 0) {
+						if (tmp->GetSizeX() > tmp->GetSizeY()) {
+							if (GetRandom(2)) {
+								int divX = tmp->GetLeft() +
+									tmp->GetSizeX() * plot1->GetAcreage() / tmp->GetAcreage();
+								if (abs(divX - tmp->GetLeft()) < 2)divX = tmp->GetLeft();
+								if (abs(divX - tmp->GetRight()) < 2)divX = tmp->GetRight();
+								plot1->SetPosition(tmp->GetLeft(), divX, tmp->GetTop(), tmp->GetBottom());
+								plot2->SetPosition(divX, tmp->GetRight(), tmp->GetTop(), tmp->GetBottom());
+							}
+							else {
+								int divX = tmp->GetOffsetX() +
+									tmp->GetSizeX() * plot2->GetAcreage() / tmp->GetAcreage();
+								if (abs(divX - tmp->GetLeft()) < 2)divX = tmp->GetLeft();
+								if (abs(divX - tmp->GetRight()) < 2)divX = tmp->GetRight();
+								plot2->SetPosition(tmp->GetLeft(), divX, tmp->GetTop(), tmp->GetBottom());
+								plot1->SetPosition(divX, tmp->GetRight(), tmp->GetTop(), tmp->GetBottom());
+							}
+						}
+						else {
+							if (GetRandom(2)) {
+								int divY = tmp->GetTop() +
+									tmp->GetSizeY() * plot1->GetAcreage() / tmp->GetAcreage();
+								if (abs(divY - tmp->GetTop()) < 2)divY = tmp->GetTop();
+								if (abs(divY - tmp->GetBottom()) < 2)divY = tmp->GetBottom();
+								plot1->SetPosition(tmp->GetLeft(), tmp->GetRight(), tmp->GetTop(), divY);
+								plot2->SetPosition(tmp->GetLeft(), tmp->GetRight(), divY, tmp->GetBottom());
+							}
+							else {
+								int divY = tmp->GetTop() +
+									tmp->GetSizeY() * plot2->GetAcreage() / tmp->GetAcreage();
+								if (abs(divY - tmp->GetTop()) < 2)divY = tmp->GetTop();
+								if (abs(divY - tmp->GetBottom()) < 2)divY = tmp->GetBottom();
+								plot2->SetPosition(tmp->GetLeft(), tmp->GetRight(), tmp->GetTop(), divY);
+								plot1->SetPosition(tmp->GetLeft(), tmp->GetRight(), divY, tmp->GetBottom());
+							}
+						}
+						if (plot1->plotType == PLOT_OTHER)plots.push_back(plot1);
+						if (plot2->plotType == PLOT_OTHER)plots.push_back(plot2);
+					}
+					delete tmp;
+				}
+			}
+		}
+		for (auto building : zone->GetBuildings()) {
+			SetPlot(building, -1);
+		}
+	}
 }
 
 void Map::RoomLayout() {
-
+	// 布局室内
+	for (auto building : buildings) {
+		building->DistributeInside();
+		building->ArrangeLayout();
+	}
 }
 
