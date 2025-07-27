@@ -1,6 +1,4 @@
 ﻿#pragma once
-#include <vector>
-#include <string>
 
 #include "util.h"
 #include "area.h"
@@ -9,6 +7,9 @@
 #include "organization.h"
 #include "room.h"
 #include "person.h"
+
+#include <vector>
+#include <string>
 
 #define BLOCK_SIZE 256
 #define PRINT_SCALE 64

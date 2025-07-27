@@ -5,6 +5,7 @@
 
 #include <stdexcept>
 #include <algorithm>
+#include <unordered_map>
 
 #pragma comment(lib, SG_LIB("lostmemory"))
 
@@ -37,8 +38,36 @@ bool zoneInfo = false;
 int populaceWindow = 0;
 bool populaceInfo = false;
 
-void updateBuilding(int floor) {
+void updateBuilding(int floor, int scroll) {
+	setColor(255, 255, 255);
+	clearScreen();
+	setColor(0, 0, 0);
 
+	string text = buildingText[currentBuilding->GetType()] + "\n" +
+		"宽" + std::to_string(currentBuilding->GetSizeX() * 10) + "m" + "\n" +
+		"高" + std::to_string(currentBuilding->GetSizeY() * 10) + "m" + "\n" +
+		"面积" + std::to_string(currentBuilding->GetAcreage()) + "m2" + "\n" +
+		"地面层高" + std::to_string(currentBuilding->GetLayers()) + "层" + "\n" +
+		"地下层高" + std::to_string(currentBuilding->GetBasements()) + "层" + "\n";
+
+	text += "\n";
+	for (auto organization : currentBuilding->GetOrganizations()) {
+		text += organizationText[organization->GetType()] + ": " + "共" + to_string(organization->GetRooms().size()) + "房间\n";
+
+		unordered_map<int, int> roomMap;
+		for (auto room : organization->GetRooms()) {
+			roomMap[room->GetType()]++;
+		}
+		for (auto room : roomMap) {
+			text += roomText[room.first] + " " + to_string(room.second) + "个.\n";
+		}
+	}
+
+	int idx = 0;
+	while (scroll > 0 && idx < text.length()) {
+		if (text[idx++] == '\n')scroll--;
+	}
+	putString(text.data() + idx, currentBuilding->GetSizeX() * 16, 0);
 }
 
 void buildingSetup(void* b) {
@@ -52,21 +81,12 @@ void buildingSetup(void* b) {
 
 void buildingLoop() {
 	static int floor = 0;
+	static int scroll = 0;
 
 	if (!buildingInfo) {
 		buildingInfo = true;
-		setColor(0, 0, 0);
-		putString((std::string() +
-			buildingText[currentBuilding->GetType()] + "\n" +
-			"宽" + std::to_string(currentBuilding->GetSizeX() * 10) + "m" + "\n" +
-			"高" + std::to_string(currentBuilding->GetSizeY() * 10) + "m" + "\n" +
-			"面积" + std::to_string(currentBuilding->GetAcreage()) + "m2" + "\n" +
-			"地面层高" + std::to_string(currentBuilding->GetLayers()) + "层" + "\n" +
-			"地下层高" + std::to_string(currentBuilding->GetBasements()) + "层" + "\n" +
-			"").data(), currentBuilding->GetSizeX() * 16, 0);
 
-		floor = 0;
-		updateBuilding(floor);
+		updateBuilding(floor, scroll);
 	}
 
 	int key;
@@ -80,9 +100,24 @@ void buildingLoop() {
 			floor--;
 			break;
 		}
-		floor = max(-currentBuilding->GetBasements(), min(currentBuilding->GetLayers(), floor));
+		floor = clamp(floor, -currentBuilding->GetBasements(), currentBuilding->GetLayers());
 
-		updateBuilding(floor);
+		updateBuilding(floor, scroll);
+	}
+
+	vec3i mouse;
+	setColor(0, 0, 0);
+	if (biosMouse(1).z) {
+		mouse = biosMouse(0);
+		if (mouse.z == SG_MIDDLE_BUTTON_UP) {
+			scroll--;
+			scroll = max(0, scroll);
+			updateBuilding(floor, scroll);
+		}
+		if (mouse.z == SG_MIDDLE_BUTTON_DOWN) {
+			scroll++;
+			updateBuilding(floor, scroll);
+		}
 	}
 }
 

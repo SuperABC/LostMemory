@@ -1,14 +1,15 @@
 ﻿#pragma once
-#include <vector>
-#include <string>
 
 #include "building.h"
 #include "room.h"
 
+#include <vector>
+#include <string>
+
 class Building;
 
 enum ORGANIZATION_TYPE {
-	ORGANIZATION_NONE,
+	ORGANIZATION_NONE, //无
 	ORGANIZATION_ROADFIX, //路政
 	ORGANIZATION_PARKING, //停车场
 	ORGANIZATION_BANK, //银行
@@ -163,14 +164,176 @@ enum ORGANIZATION_TYPE {
 	ORGANIZATION_NET, //网吧
 	ORGANIZATION_KTV, //歌厅
 	ORGANIZATION_VENDOR, //小摊
+	ORGANIZATION_END
+};
+
+static std::string organizationText[ORGANIZATION_END] = {
+	"无",
+	"路政",
+	"停车场",
+	"银行",
+	"图书馆",
+	"诊所",
+	"医院",
+	"住院部",
+	"疗养院",
+	"警察局",
+	"消防局",
+	"幼儿园",
+	"小学",
+	"中学",
+	"大学",
+	"职业学校",
+	"火葬场",
+	"墓地",
+	"电视台",
+	"加油站",
+	"公厕",
+	"设备",
+	"邮局",
+	"交通站",
+	"社区",
+	"售楼处",
+	"物业",
+	"快递站",
+	"酒店",
+	"传统餐馆",
+	"快餐店",
+	"自助餐店",
+	"咖啡厅",
+	"饮品店",
+	"商场",
+	"超市",
+	"琴行",
+	"菜市场",
+	"品牌店",
+	"租车行",
+	"剧院",
+	"博物馆",
+	"动物园",
+	"植物园",
+	"水族馆",
+	"电影院",
+	"酒吧",
+	"会所",
+	"游乐设施",
+	"装修公司",
+	"搬家公司",
+	"运营商",
+	"游戏公司",
+	"外包公司",
+	"金融公司",
+	"信贷公司",
+	"销售公司",
+	"医药公司",
+	"公关公司",
+	"电商",
+	"明星经纪公司",
+	"工程设计公司",
+	"建筑公司",
+	"艺术设计公司",
+	"出版社",
+	"旅行社",
+	"自媒体",
+	"律所",
+	"剧组",
+	"保险公司",
+	"保安公司",
+	"保洁公司",
+	"绿化公司",
+	"房屋中介",
+	"证券交易所",
+	"法院",
+	"行政办公室",
+	"教育部",
+	"工信部",
+	"财政部",
+	"商务部",
+	"信访局",
+	"气象局",
+	"税务局",
+	"民政局",
+	"科学院",
+	"工程院",
+	"社科院",
+	"海关",
+	"反贪局",
+	"学术委员会",
+	"实验室",
+	"工厂",
+	"仓库",
+	"汽修厂",
+	"资源开采",
+	"公园",
+	"广场",
+	"雕像",
+	"健身房",
+	"运动场",
+	"足球场",
+	"篮球场",
+	"排球场",
+	"网球场",
+	"乒乓球场",
+	"羽毛球场",
+	"高尔夫球场",
+	"滑冰场",
+	"滑雪场",
+	"游泳池",
+	"度假村",
+	"遗迹",
+	"火箭发射塔",
+	"操场",
+	"监狱",
+	"保安亭",
+	"食堂",
+	"宿舍",
+	"数据中心",
+	"抽水站",
+	"污水处理厂",
+	"火电厂",
+	"风电机",
+	"核电厂",
+	"废品回收站",
+	"垃圾填埋场",
+	"焚烧厂",
+	"体检中心",
+	"牙科医院",
+	"精神医院",
+	"教务处",
+	"金库",
+	"杂货店",
+	"服装店",
+	"美容店",
+	"理发店",
+	"药店",
+	"烟酒茶专卖店",
+	"珠宝店",
+	"教培中心",
+	"棋牌室",
+	"宠物店",
+	"电子产品店",
+	"文印店",
+	"影音棚",
+	"洗车店",
+	"自行车店",
+	"五金店",
+	"书店",
+	"台球室",
+	"网吧",
+	"歌厅",
+	"小摊"
 };
 
 class Organization {
 public:
 	Organization(ORGANIZATION_TYPE type) : type(type) {}
 
+	ORGANIZATION_TYPE GetType();
+	void SetType(ORGANIZATION_TYPE type);
+
 	void AddRoom(Room* room) { rooms.push_back(room); }
 	int AutoRoom(int space) { return 100; }
+	std::vector<Room*>& GetRooms() { return rooms; }
 
 	std::string GetName() { return name; }
 
@@ -179,7 +342,6 @@ private:
 	int id;
 	std::string name;
 
-	std::vector<Building*> buildings;
 	std::vector<Room*> rooms;
 };
 

@@ -1,12 +1,13 @@
 ﻿#pragma once
-#include <string>
-#include <vector>
 
 #include "relation.h"
 #include "character.h"
 #include "job.h"
 #include "asset.h"
 #include "experience.h"
+
+#include <string>
+#include <vector>
 
 class Time;
 class JobExperience;

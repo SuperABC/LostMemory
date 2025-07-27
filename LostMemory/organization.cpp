@@ -6,6 +6,14 @@
 
 using namespace std;
 
+ORGANIZATION_TYPE Organization::GetType() {
+    return type;
+}
+
+void Organization::SetType(ORGANIZATION_TYPE type) {
+    this->type = type;
+}
+
 Organization* CreateOrganization(ORGANIZATION_TYPE type) {
     switch (type)
     {

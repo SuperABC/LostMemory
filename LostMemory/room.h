@@ -1,6 +1,9 @@
 ﻿#pragma once
 
+#include <string>
+
 enum ROOM_TYPE {
+	ROOM_NONE, //无
 	ROOM_DEVICE, //设备
 	ROOM_PARKING, //停车区
 	ROOM_GUARD, //保安室
@@ -55,7 +58,7 @@ enum ROOM_TYPE {
 	ROOM_BASKETBALL, //篮球室
 	ROOM_VOLLEYBALL, //排球室
 	ROOM_BADMINTON, //羽毛球室
-	ROOM_TATBLETENNIS, //乒乓球室
+	ROOM_TABLETENNIS, //乒乓球室
 	ROOM_TENNIS, //网球室
 	ROOM_SKATE, //滑冰室
 	ROOM_BOWLING, //保龄球室
@@ -96,7 +99,108 @@ enum ROOM_TYPE {
 	ROOM_FUNERAL, //灵堂
 	ROOM_CONDOLENCE, //吊唁室
 	ROOM_BOILER, //锅炉房
-	ROOM_GOLD //金库
+	ROOM_GOLD, //金库
+	ROOM_END
+};
+
+static std::string roomText[ROOM_END] = {
+	"无",
+	"设备",
+	"停车区",
+	"保安室",
+	"清洁室",
+	"高速收费站",
+	"加油区",
+	"住宅",
+	"别墅",
+	"仓库",
+	"售楼处",
+	"办公室",
+	"宿舍",
+	"餐厅",
+	"活动室",
+	"演出大厅",
+	"杂货店",
+	"琴行",
+	"公厕",
+	"超市",
+	"客房",
+	"服务大堂",
+	"菜市场",
+	"电影放映厅",
+	"酒吧",
+	"按摩室",
+	"桑拿房",
+	"洗浴堂",
+	"更衣室",
+	"卡座区",
+	"包间",
+	"厨房",
+	"办公区",
+	"会议室",
+	"机房",
+	"证券交易所",
+	"影音棚",
+	"化妆室",
+	"动物房间",
+	"植物温室",
+	"展览室",
+	"阅读室",
+	"法庭",
+	"实验室",
+	"车间",
+	"流水线",
+	"建筑工地",
+	"鸡舍",
+	"牛棚",
+	"猪圈",
+	"羊圈",
+	"足球室",
+	"篮球室",
+	"排球室",
+	"羽毛球室",
+	"乒乓球室",
+	"网球室",
+	"滑冰室",
+	"保龄球室",
+	"射箭室",
+	"靶场",
+	"游泳池",
+	"理发店",
+	"美容店",
+	"健身房",
+	"棋牌室",
+	"宠物店",
+	"文印店",
+	"洗车店",
+	"自行车棚",
+	"网吧",
+	"游戏厅",
+	"歌厅",
+	"台球室",
+	"家具城",
+	"自习室",
+	"急诊室",
+	"门诊室",
+	"手术室",
+	"重症监护室",
+	"诊室",
+	"化验室",
+	"教室",
+	"操场",
+	"牢房",
+	"地铁站台",
+	"火车站台",
+	"候机室",
+	"候船室",
+	"安检",
+	"售票处",
+	"海关",
+	"太平间",
+	"灵堂",
+	"吊唁室",
+	"锅炉房",
+	"金库"
 };
 
 class Room {
@@ -558,7 +662,7 @@ private:
 
 class TableTennisRoom : public Room {
 public:
-	TableTennisRoom() : Room(ROOM_TATBLETENNIS) {}
+	TableTennisRoom() : Room(ROOM_TABLETENNIS) {}
 
 private:
 
