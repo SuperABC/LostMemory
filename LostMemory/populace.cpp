@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <random>
 
 
 using namespace std;
@@ -33,6 +34,7 @@ void Populace::Init(int accomodation) {
 
 	int num = accomodation * 0.5 * exp(GetRandom(1000) / 1000.0f - 0.5f);
 
+	// 生成市民及亲属关系
 	std::vector<Human> females(1, { -1, 0, LIFE_DEAD });
 	std::vector<Human> males(1, { -1, 0, LIFE_DEAD });
 	std::vector<int> maleBirths(4096, -1);
@@ -138,7 +140,7 @@ void Populace::Init(int accomodation) {
 		}
 		year++;
 	}
-	time.SetYear(year);
+	time.SetYear(year + 2000);
 
 	for (int i = 0; i < females.size(); i++) {
 		if (females[i].life != LIFE_DEAD && GetRandom(20) > 0) {
@@ -201,6 +203,7 @@ void Populace::Init(int accomodation) {
 		}
 	}
 
+	// 生成手机号
 	for (auto citizen : citizens) {
 		int number;
 		do {
@@ -213,6 +216,338 @@ void Populace::Init(int accomodation) {
 		phoneRoll[number] = citizen;
 		citizen->AddPhone(to_string(number));
 	}
+
+	// 生成教育经历及同学师生关系
+	enum EducationLevel {
+		EDUCATION_PRIMARY,
+		EDUCATION_JUNIOR,
+		EDUCATION_SENIOR,
+		EDUCATION_COLLEGE,
+		EDUCATION_POST,
+		EDUCATION_END
+	};
+
+	struct SchoolClass {
+		std::string schoolName;
+		EducationLevel level;
+		int startYear;
+		int grade;
+		std::vector<Person*> students;
+		Person* teacher = nullptr;
+	};
+    std::vector<SchoolClass> levelClasses[EDUCATION_END];
+
+    std::mt19937 generator(std::random_device{}());
+    std::vector<Person*> levelPotentials[EDUCATION_END];
+    for (int year = time.GetYear() - 120; year <= time.GetYear(); year++) {
+		// 班级变动
+        for (int level = EDUCATION_PRIMARY; level <= EDUCATION_POST; level++) {
+			for (auto& cls : levelClasses[level]) {
+				Time begin(year - 1, 9, 1);
+				Time end(year, 6, 30);
+
+				for (auto student : cls.students) {
+					EducationExperience eduExp;
+					eduExp.SetSchool(cls.schoolName);
+					eduExp.SetTime(begin, end);
+					student->AddEducationExperience(eduExp);
+				}
+			}
+
+			for (auto& cls : levelClasses[level]) {
+				for (int i = 0; i < cls.students.size(); i++) {
+					int fate = GetRandom(100);
+
+					if (fate > 95) { // 转学
+						std::vector<SchoolClass*> targetClasses;
+						for (auto& target : levelClasses[level]) {
+							if (&target != &cls && target.grade == cls.grade &&
+								target.startYear == cls.startYear) {
+								targetClasses.push_back(&target);
+							}
+						}
+						if (!targetClasses.empty()) {
+							SchoolClass* targetClass = targetClasses[GetRandom(targetClasses.size())];
+							targetClass->students.push_back(cls.students[i]);
+							cls.students[i] = cls.students.back();
+							cls.students.pop_back();
+						}
+					}
+					else if (fate > 92) { // 留级
+						std::vector<SchoolClass*> targetClasses;
+						for (auto& target : levelClasses[level]) {
+							if (&target != &cls && target.grade == cls.grade - 1 &&
+								target.schoolName == cls.schoolName) {
+								targetClasses.push_back(&target);
+							}
+						}
+						if (!targetClasses.empty()) {
+							SchoolClass* targetClass = targetClasses[GetRandom(targetClasses.size())];
+							targetClass->students.push_back(cls.students[i]);
+							cls.students[i] = cls.students.back();
+							cls.students.pop_back();
+						}
+					}
+					else if (fate > 90) { // 跳级
+						bool valid = false;
+						if (level == EDUCATION_PRIMARY && cls.grade < 6) {
+							valid = true;
+						}
+						if (level == EDUCATION_JUNIOR && cls.grade < 3) {
+							valid = true;
+						}
+						if (level == EDUCATION_SENIOR && cls.grade < 3) {
+							valid = true;
+						}
+						if (level == EDUCATION_COLLEGE && cls.grade < 4) {
+							valid = true;
+						}
+
+						if (valid) {
+							std::vector<SchoolClass*> targetClasses;
+							for (auto& target : levelClasses[level]) {
+								if (target.grade == cls.grade + 1 &&
+									target.schoolName == cls.schoolName) {
+									targetClasses.push_back(&target);
+								}
+							}
+							if (!targetClasses.empty()) {
+								SchoolClass* targetClass = targetClasses[GetRandom(targetClasses.size())];
+								targetClass->students.push_back(cls.students[i]);
+								cls.students[i] = cls.students.back();
+								cls.students.pop_back();
+							}
+						}
+					}
+				}
+
+				cls.grade++;
+                if (level < EDUCATION_POST) {
+					int maxGrade;
+					float continueRatio;
+					float stayRatio;
+					if (level == EDUCATION_PRIMARY) {
+						maxGrade = 6;
+						continueRatio = 0.98f;
+						stayRatio = 0.99f;
+					}
+					if (level == EDUCATION_JUNIOR) {
+						maxGrade = 3;
+						continueRatio = 0.9f;
+						stayRatio = 0.98f;
+					}
+					if (level == EDUCATION_SENIOR) {
+						maxGrade = 3;
+						continueRatio = 0.7f;
+						stayRatio = 0.96f;
+					}
+					if (level == EDUCATION_COLLEGE) {
+						maxGrade = 4;
+						continueRatio = 0.3f;
+						stayRatio = 0.92f;
+					}
+
+                    if (cls.grade > maxGrade) {
+						cls.students.resize(cls.students.size()* continueRatio);
+						levelPotentials[level + 1].insert(levelPotentials[level + 1].end(), cls.students.begin(), cls.students.end());
+                        cls.students.clear();
+                    }
+					else {
+						float ratio = (100 - GetRandom((1.0f - stayRatio) * 100)) / 100.0f;
+						for (int j = cls.students.size() * ratio; j < cls.students.size(); j++) {
+							cls.students[j]->GetEducationExperiences().back().SetGraduate(false);
+						}
+						cls.students.resize(cls.students.size() * ratio);
+					}
+                }
+                else {
+					for (auto &student : cls.students) {
+						if (cls.grade > 2 && GetRandom(7 - cls.grade) == 0) {
+							student = cls.students.back();
+							cls.students.pop_back();
+						}
+					}
+                }
+            }
+
+            auto& classes = levelClasses[level];
+            classes.erase(
+                std::remove_if(classes.begin(), classes.end(),
+                    [](const SchoolClass& c) { return c.students.empty(); }),
+                classes.end());
+        }
+
+        // 适龄小学生
+        for (auto citizen : citizens) {
+            int birthYear = citizen->GetBirthday().GetYear();
+            if (birthYear < year - 5) {
+                if(GetRandom(9 + birthYear - year) == 0 && citizen->GetEducationExperiences().size() == 0)
+					levelPotentials[EDUCATION_PRIMARY].push_back(citizen);
+            }
+        }
+
+        // 小学入学
+        if (!levelPotentials[EDUCATION_PRIMARY].empty()) {
+            int classCount = max(1, levelPotentials[EDUCATION_PRIMARY].size() / (20 + GetRandom(20)));
+			if (classCount == 0)classCount = 1;
+
+            int schoolCount = max(1, classCount / 5);
+            std::vector<std::string> schoolNames;
+            for (int i = 0; i < schoolCount; i++) {
+                schoolNames.push_back("第" + std::to_string(i + 1) + "小学");
+            }
+            std::shuffle(levelPotentials[EDUCATION_PRIMARY].begin(), levelPotentials[EDUCATION_PRIMARY].end(), generator);
+            int studentsPerClass = levelPotentials[EDUCATION_PRIMARY].size() / classCount;
+
+            for (int i = 0; i < classCount; i++) {
+                SchoolClass newClass;
+                newClass.schoolName = schoolNames[i % schoolNames.size()];
+                newClass.startYear = year;
+                newClass.grade = 1;
+                newClass.level = EDUCATION_PRIMARY;
+
+                int startIdx = i * studentsPerClass;
+                int endIdx = (i == classCount - 1) ? levelPotentials[EDUCATION_PRIMARY].size() : (i + 1) * studentsPerClass;
+                for (int j = startIdx; j < endIdx; j++) {
+                    newClass.students.push_back(levelPotentials[EDUCATION_PRIMARY][j]);
+                }
+
+                levelClasses[EDUCATION_PRIMARY].push_back(newClass);
+            }
+			levelPotentials[EDUCATION_PRIMARY].clear();
+        }
+
+        // 初中入学
+        if (!levelPotentials[EDUCATION_JUNIOR].empty()) {
+            int classCount = max(1, levelPotentials[EDUCATION_JUNIOR].size() / (20 + GetRandom(20)));
+			if (classCount == 0)classCount = 1;
+
+            int schoolCount = max(1, classCount / 4);
+            std::vector<std::string> schoolNames;
+            for (int i = 0; i < schoolCount; i++) {
+                schoolNames.push_back("第" + std::to_string(i + 1) + "初中");
+            }
+
+            std::shuffle(levelPotentials[EDUCATION_JUNIOR].begin(), levelPotentials[EDUCATION_JUNIOR].end(), generator);
+            int studentsPerClass = levelPotentials[EDUCATION_JUNIOR].size() / classCount;
+
+            for (int i = 0; i < classCount; i++) {
+                SchoolClass newClass;
+                newClass.schoolName = schoolNames[i % schoolNames.size()];
+                newClass.startYear = year;
+                newClass.grade = 1;
+                newClass.level = EDUCATION_JUNIOR;
+
+                int startIdx = i * studentsPerClass;
+                int endIdx = (i == classCount - 1) ? levelPotentials[EDUCATION_JUNIOR].size() : (i + 1) * studentsPerClass;
+                for (int j = startIdx; j < endIdx; j++) {
+                    newClass.students.push_back(levelPotentials[EDUCATION_JUNIOR][j]);
+                }
+
+                levelClasses[EDUCATION_JUNIOR].push_back(newClass);
+            }
+			levelPotentials[EDUCATION_JUNIOR].clear();
+        }
+
+        // 高中入学
+        if (!levelPotentials[EDUCATION_SENIOR].empty()) {
+            int classCount = max(1, levelPotentials[EDUCATION_SENIOR].size() / (30 + GetRandom(20)));
+			if (classCount == 0)classCount = 1;
+
+            int schoolCount = max(1, classCount / 4);
+            std::vector<std::string> schoolNames;
+            for (int i = 0; i < schoolCount; i++) {
+                schoolNames.push_back("第" + std::to_string(i + 1) + "高中");
+            }
+
+            std::shuffle(levelPotentials[EDUCATION_SENIOR].begin(), levelPotentials[EDUCATION_SENIOR].end(), generator);
+            int studentsPerClass = levelPotentials[EDUCATION_SENIOR].size() / classCount;
+
+            for (int i = 0; i < classCount; i++) {
+                SchoolClass newClass;
+                newClass.schoolName = schoolNames[i % schoolNames.size()];
+                newClass.startYear = year;
+                newClass.grade = 1;
+                newClass.level = EDUCATION_SENIOR;
+
+                int startIdx = i * studentsPerClass;
+                int endIdx = (i == classCount - 1) ? levelPotentials[EDUCATION_SENIOR].size() : (i + 1) * studentsPerClass;
+                for (int j = startIdx; j < endIdx; j++) {
+                    newClass.students.push_back(levelPotentials[EDUCATION_SENIOR][j]);
+                }
+
+                levelClasses[EDUCATION_SENIOR].push_back(newClass);
+            }
+			levelPotentials[EDUCATION_SENIOR].clear();
+        }
+
+        // 大学入学
+        if (!levelPotentials[EDUCATION_COLLEGE].empty()) {
+            int majorCount = 5 + GetRandom(5);
+            std::vector<std::string> schoolNames;
+            for (int i = 0; i < majorCount; i++) {
+                schoolNames.push_back("第" + std::to_string(i + 1) + "大学");
+            }
+
+            std::shuffle(levelPotentials[EDUCATION_COLLEGE].begin(), levelPotentials[EDUCATION_COLLEGE].end(), generator);
+            int studentsPerMajor = levelPotentials[EDUCATION_COLLEGE].size() / majorCount;
+
+            for (int i = 0; i < majorCount; i++) {
+                SchoolClass newClass;
+                newClass.schoolName = schoolNames[i];
+                newClass.startYear = year;
+                newClass.grade = 1;
+                newClass.level = EDUCATION_COLLEGE;
+
+                int startIdx = i * studentsPerMajor;
+                int endIdx = (i == majorCount - 1) ? levelPotentials[EDUCATION_COLLEGE].size() : (i + 1) * studentsPerMajor;
+                for (int j = startIdx; j < endIdx; j++) {
+                    newClass.students.push_back(levelPotentials[EDUCATION_COLLEGE][j]);
+                }
+
+                levelClasses[EDUCATION_COLLEGE].push_back(newClass);
+            }
+			levelPotentials[EDUCATION_COLLEGE].clear();
+        }
+
+        // 研究生入学
+        if (!levelPotentials[EDUCATION_POST].empty()) {
+            int majorCount = 3 + GetRandom(3);
+            std::vector<std::string> schoolNames;
+            for (int i = 0; i < majorCount; i++) {
+                schoolNames.push_back("第" + std::to_string(i + 1) + "研究院");
+            }
+
+            std::shuffle(levelPotentials[EDUCATION_POST].begin(), levelPotentials[EDUCATION_POST].end(), generator);
+            int studentsPerMajor = levelPotentials[EDUCATION_POST].size() / majorCount;
+
+            for (int i = 0; i < majorCount; i++) {
+                SchoolClass newClass;
+                newClass.schoolName = schoolNames[i];
+                newClass.startYear = year;
+                newClass.grade = 1;
+                newClass.level = EDUCATION_POST;
+
+                int startIdx = i * studentsPerMajor;
+                int endIdx = (i == majorCount - 1) ? levelPotentials[EDUCATION_POST].size() : (i + 1) * studentsPerMajor;
+                for (int j = startIdx; j < endIdx; j++) {
+                    newClass.students.push_back(levelPotentials[EDUCATION_POST][j]);
+                }
+
+                levelClasses[EDUCATION_POST].push_back(newClass);
+            }
+			levelPotentials[EDUCATION_POST].clear();
+        }
+    }
+	for (auto citizen : citizens) {
+		citizen->ExpComposition();
+	}
+
+	// 生成情感经历和情侣关系
+
+	// 生成工作经历及同事关系
+
+	// 生成朋友关系
 }
 
 void Populace::Destroy() {

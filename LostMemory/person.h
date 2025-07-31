@@ -65,6 +65,19 @@ public:
 	void AddAddress(Room* room);
 	std::vector<Room*>& GetAddresses();
 
+	// 管理经验信息
+	void AddEducationExperience(const EducationExperience& exp);
+	void AddJobExperience(const JobExperience& exp);
+	void AddEmotionExperience(const EmotionExperience& exp);
+	std::vector<EducationExperience>& GetEducationExperiences();
+	std::vector<JobExperience>& GetJobExperiences();
+	std::vector<EmotionExperience>& GetEmotionExperiences();
+	void AddAcquaintance(Person* person, Relation relation);
+	std::vector<std::pair<Person*, Relation>>& GetAcquaintances();
+
+	// 组合相同经历
+	void ExpComposition();
+
 private:
 	int id;
 	std::string name;
@@ -79,8 +92,8 @@ private:
 	std::vector<std::string> phones;
 	std::vector<Asset*> assets;
 	std::vector<Room*> addresses;
-	std::vector<std::pair<Person*, Relation>> acquaintances;
 	std::vector<EducationExperience> educationExperiences;
 	std::vector<JobExperience> jobExperiences;
 	std::vector<EmotionExperience> emotionExperiences;
+	std::vector<std::pair<Person*, Relation>> acquaintances;
 };

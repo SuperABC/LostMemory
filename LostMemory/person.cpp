@@ -8,12 +8,14 @@ Person* Person::GetFather() {
 	for (auto relative : relatives) {
 		if (relative.first == RELATIVE_FATHER)return relative.second;
 	}
+	return nullptr;
 }
 
 Person* Person::GetMother() {
 	for (auto relative : relatives) {
 		if (relative.first == RELATIVE_MOTHER)return relative.second;
 	}
+	return nullptr;
 }
 
 Person* Person::GetSpouse() {
@@ -50,4 +52,56 @@ void Person::AddAsset(Asset* asset) {
 
 std::vector<Asset*>& Person::GetAssets() {
 	return assets;
+}
+
+void Person::AddEducationExperience(const EducationExperience& exp) {
+	educationExperiences.push_back(exp);
+}
+
+void Person::AddJobExperience(const JobExperience& exp) {
+	jobExperiences.push_back(exp);
+}
+
+void Person::AddEmotionExperience(const EmotionExperience& exp) {
+	emotionExperiences.push_back(exp);
+}
+
+std::vector<EducationExperience>& Person::GetEducationExperiences() {
+	return educationExperiences;
+}
+
+std::vector<JobExperience>& Person::GetJobExperiences() {
+	return jobExperiences;
+}
+
+std::vector<EmotionExperience>& Person::GetEmotionExperiences() {
+	return emotionExperiences;
+}
+
+void Person::AddAcquaintance(Person* person, Relation relation) {
+	acquaintances.push_back(std::make_pair(person, relation));
+}
+
+std::vector<std::pair<Person*, Relation>>& Person::GetAcquaintances() {
+	return acquaintances;
+}
+
+void Person::ExpComposition() {
+	if (educationExperiences.size() == 0)return;
+
+	int idx = 0;
+	EducationExperience education = educationExperiences[0];
+	for (int i = 1; i < educationExperiences.size(); i++) {
+		if (education.GetSchool() == educationExperiences[i].GetSchool() &&
+			education.GetEndTime().GetYear() == educationExperiences[i].GetBeginTime().GetYear()) {
+			education.SetTime(education.GetBeginTime(), educationExperiences[i].GetEndTime());
+			education.SetGraduate(educationExperiences[i].GetGraduate());
+		}
+		else {
+			educationExperiences[idx++] = education;
+			education = educationExperiences[i];
+		}
+	}
+	educationExperiences[idx++] = education;
+	educationExperiences.resize(idx);
 }
