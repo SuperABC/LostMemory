@@ -258,15 +258,35 @@ Time& Time::operator-=(const Time& other) {
 }
 
 double Time::DifferenceInSeconds(const Time& other) const {
-    int daysDiff = OrdinalDate() - other.OrdinalDate();
+    if (*this == other) return 0.0;
 
-    int timeDiff = (hour - other.hour) * 3600 +
-        (minute - other.minute) * 60 +
-        (second - other.second);
+    const Time* earlier = this;
+    const Time* later = &other;
+    bool inverted = false;
+    if (*this > other) {
+        earlier = &other;
+        later = this;
+        inverted = true;
+    }
 
-    double msDiff = (millisecond - other.millisecond) / 1000.0;
+    int yearDays = 0;
+    if (earlier->year != later->year) {
+        yearDays = DaysBetweenYears(earlier->year, later->year);
+    }
 
-    return daysDiff * 86400.0 + timeDiff + msDiff;
+    int earlierDayOfYear = earlier->OrdinalDate();
+    int laterDayOfYear = later->OrdinalDate();
+
+    int dayDifference = laterDayOfYear - earlierDayOfYear + yearDays;
+
+    int secondsEarlier = earlier->hour * 3600 + earlier->minute * 60 + earlier->second;
+    int secondsLater = later->hour * 3600 + later->minute * 60 + later->second;
+
+    double totalSeconds = dayDifference * 86400.0 + (secondsLater - secondsEarlier);
+
+    totalSeconds += (later->millisecond - earlier->millisecond) / 1000.0;
+
+    return inverted ? totalSeconds : -totalSeconds;
 }
 
 bool Time::IsLeapYear() const {
@@ -304,8 +324,6 @@ int Time::DayOfYear() const {
 }
 
 void Time::Validate() const {
-    if (year < 0)
-        throw std::out_of_range("Year cannot be negative");
     if (month < 1 || month > 12)
         throw std::out_of_range("Month must be between 1-12");
     if (day < 1 || day > DaysInMonth(year, month))
@@ -328,6 +346,43 @@ int Time::DaysInMonth(int year, int month) {
         return 29;
     }
     return days[month - 1];
+}
+
+int Time::DaysInYear(int year) {
+    return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 366 : 365;
+}
+
+int Time::DaysBetweenYears(int startYear, int endYear) {
+    if (startYear > endYear) return -DaysBetweenYears(endYear, startYear);
+
+    int totalDays = 0;
+    for (int year = startYear; year < endYear; year++) {
+        totalDays += DaysInYear(year);
+    }
+    return totalDays;
+}
+
+int Time::DaysBetween(const Time& start, const Time& end) {
+    // 确保开始日期不晚于结束日期
+    if (start > end) {
+        return -DaysBetween(end, start);
+    }
+
+    // 计算年份差的天数
+    int totalDays = 0;
+    for (int year = start.GetYear(); year < end.GetYear(); year++) {
+        totalDays += Time::DaysInYear(year);
+    }
+
+    // 计算开始日期在当年的天数
+    Time startYearStart(start.GetYear(), 1, 1);
+    int startDays = (start - startYearStart).GetDay();
+
+    // 计算结束日期在当年的天数
+    Time endYearStart(end.GetYear(), 1, 1);
+    int endDays = (end - endYearStart).GetDay();
+
+    return totalDays + endDays - startDays;
 }
 
 void Time::NormalizeTime() {
@@ -388,9 +443,34 @@ void Time::NormalizeTime() {
 }
 
 int Time::OrdinalDate() const {
-    int o = day;
+    int days = day;
     for (int m = 1; m < month; m++) {
-        o += DaysInMonth(year, m);
+        days += DaysInMonth(year, m);
     }
-    return o;
+    return days;
+}
+
+Time GetRandom(Time begin, Time end) {
+    if (begin > end) {
+        std::swap(begin, end);
+    }
+    else if (begin == end) {
+        return begin;
+    }
+
+    // 将时间归一化到当天0点
+    begin.SetTime(0, 0, 0, 0);
+    end.SetTime(0, 0, 0, 0);
+
+    // 计算总天数
+    int totalDays = Time::DaysBetween(begin, end) + 1; // +1 包含结束当天
+
+    // 生成随机偏移天数
+    int randomDays = GetRandom(totalDays);
+
+    // 创建结果时间
+    Time result = begin;
+    result.AddDays(randomDays);
+
+    return result;
 }

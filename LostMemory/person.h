@@ -44,6 +44,8 @@ public:
 	void SetWeight(int newWeight) { weight = newWeight; }
 	const Time& GetBirthday() const { return birthday; }
 	void SetBirthday(const Time& newBirthday) { birthday = newBirthday; }
+	const Time& GetMarryday() const { return marryday; }
+	void SetMarryday(const Time& newMarryday) { marryday = newMarryday; }
 	const Job& GetJob() const { return job; }
 	void SetJob(const Job& newJob) { job = newJob; }
 	const std::string& GetNick() const { return nick; }
@@ -67,11 +69,11 @@ public:
 
 	// 管理经验信息
 	void AddEducationExperience(const EducationExperience& exp);
-	void AddJobExperience(const JobExperience& exp);
 	void AddEmotionExperience(const EmotionExperience& exp);
+	void AddJobExperience(const JobExperience& exp);
 	std::vector<EducationExperience>& GetEducationExperiences();
-	std::vector<JobExperience>& GetJobExperiences();
 	std::vector<EmotionExperience>& GetEmotionExperiences();
+	std::vector<JobExperience>& GetJobExperiences();
 	void AddAcquaintance(Person* person, Relation relation);
 	std::vector<std::pair<Person*, Relation>>& GetAcquaintances();
 
@@ -83,6 +85,7 @@ private:
 	std::string name;
 	GENDER_TYPE gender;
 	Time birthday;
+	Time marryday;
 	int height, weight;
 	Job job;
 	std::string nick;
@@ -93,7 +96,7 @@ private:
 	std::vector<Asset*> assets;
 	std::vector<Room*> addresses;
 	std::vector<EducationExperience> educationExperiences;
-	std::vector<JobExperience> jobExperiences;
 	std::vector<EmotionExperience> emotionExperiences;
+	std::vector<JobExperience> jobExperiences;
 	std::vector<std::pair<Person*, Relation>> acquaintances;
 };

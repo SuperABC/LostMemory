@@ -52,6 +52,9 @@ public:
     Time& operator-=(const Time& other);
 
     static int DaysInMonth(int year, int month);
+    static int DaysInYear(int year);
+    static int DaysBetweenYears(int startYear, int endYear);
+    static int DaysBetween(const Time& start, const Time& end);
     double DifferenceInSeconds(const Time& other) const;
     bool IsLeapYear() const;
     int DayOfWeek() const;
@@ -71,6 +74,8 @@ private:
     void NormalizeTime();
     int OrdinalDate() const;
 };
+
+Time GetRandom(Time begin, Time end);
 
 class Experience {
 public:

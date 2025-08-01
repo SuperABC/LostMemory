@@ -26,6 +26,12 @@ private:
 	Time time;
 
 	std::vector<Person*> citizens;
-
 	std::unordered_map<int, Person*> phoneRoll;
+
+	void GenerateCitizens(int num);
+	void GeneratePhones();
+	void GenerateEducations();
+	void GenerateEmotions();
+	void GenerateJobs();
+	void GenerateAcquaintances();
 };

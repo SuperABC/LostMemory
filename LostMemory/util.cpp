@@ -5,12 +5,18 @@
 
 using namespace std;
 
-int GetRandom(int range) {
+int GetRandom(int range, float (*cdf)(float)) {
 	if (range <= 0)return 0;
 
 	mt19937 rng(std::random_device{}());
 	uniform_int_distribution<int> dist(0, range - 1);
-	return dist(rng);
+	int ret = dist(rng);
+
+	if (cdf == nullptr)
+		return ret;
+	else {
+		return range * cdf(float(ret) / range);
+	}
 }
 
 bool InBox(int x, int y, int left, int right, int top, int bottom) {

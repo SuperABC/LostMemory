@@ -132,33 +132,10 @@ int Map::Init(int blockX, int blockY) {
 	for (auto building : buildings) {
 		if (building->GetStatus() != CONSTRUCTION_USING)continue;
 		if (building->GetType() == BUILDING_RESIDENT) {
-			for (auto room : building->GetRooms()) {
-				if (room->GetAcreage() <= 60)
-					accomodation += 1;
-				else if (room->GetAcreage() <= 100)
-					accomodation += 2;
-				else if (room->GetAcreage() <= 160)
-					accomodation += 4;
-				else if (room->GetAcreage() <= 240)
-					accomodation += 6;
-				else
-					accomodation += 8;
-			}
+			accomodation += building->GetRooms().size();
 		}
 		if (building->GetType() == BUILDING_VILLA) {
-			for (auto room : building->GetRooms()) {
-				if (room->GetLayer() > 1)continue;
-				if (room->GetAcreage() <= 120)
-					accomodation += 2;
-				else if (room->GetAcreage() <= 160)
-					accomodation += 4;
-				else if (room->GetAcreage() <= 240)
-					accomodation += 6;
-				else if (room->GetAcreage() <= 320)
-					accomodation += 8;
-				else
-					accomodation += 10;
-			}
+			accomodation += building->GetRooms().size();
 		}
 	}
 	return accomodation;
@@ -185,6 +162,7 @@ void Map::Checkin(vector<Person*> citizens, int year) {
 
 	for (auto citizen : citizens) {
 		if (citizen->GetAddresses().size())continue;
+		if (rooms.size() <= 0)break;
 
 		int id = GetRandom(rooms.size());
 		citizen->AddAddress(rooms[id]);
@@ -514,7 +492,7 @@ void Map::FindCenter() {
 	roadnet.center.first = 3 * width / 8 + GetRandom(width / 4);
 	roadnet.center.second = 3 * height / 8 + GetRandom(height / 4);
 
-	debugf("center (%d, %d)\n", roadnet.center.first, roadnet.center.second);
+	debugf("center (%d, %d).\n", roadnet.center.first, roadnet.center.second);
 }
 
 void Map::FloodSea() {
@@ -525,7 +503,7 @@ void Map::FloodSea() {
 
 	if (distribute & 1) {
 		int distance = width / 16 + GetRandom(width / 16);
-		debugf("sea in the west %d\n", distance);
+		debugf("sea in the west %d.\n", distance);
 		float shift = 0.0f, slope = 0.0f;
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < distance + shift; x++) {
@@ -546,7 +524,7 @@ void Map::FloodSea() {
 
 	if (distribute & 2) {
 		int distance = width / 16 + GetRandom(width / 16);
-		debugf("sea in the east %d\n", distance);
+		debugf("sea in the east %d.\n", distance);
 		float shift = 0.0f, slope = 0.0f;
 		for (int y = 0; y < height; y++) {
 			for (int x = width - 1; x >= width - distance - shift; x--) {
@@ -567,7 +545,7 @@ void Map::FloodSea() {
 
 	if (distribute & 4) {
 		int distance = height / 16 + GetRandom(height / 16);
-		debugf("sea in the north %d\n", distance);
+		debugf("sea in the north %d.\n", distance);
 		float shift = 0.0f, slope = 0.0f;
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < distance + shift; y++) {
@@ -588,7 +566,7 @@ void Map::FloodSea() {
 
 	if (distribute & 8) {
 		int distance = height / 16 + GetRandom(height / 16);
-		debugf("sea in the south %d\n", distance);
+		debugf("sea in the south %d.\n", distance);
 		float shift = 0.0f, slope = 0.0f;
 		for (int x = 0; x < width; x++) {
 			for (int y = height - 1; y >= height - distance - shift; y--) {
@@ -611,7 +589,7 @@ void Map::FloodSea() {
 void Map::FloodMountain() {
 	float scalar = width * height / (512 * 512);
 	int num = scalar > 1 ? (4 + GetRandom(scalar * 2)) : 0;
-	debugf("generate mountain %d\n", num);
+	debugf("generate mountain %d.\n", num);
 
 	Counter counter(100);
 	for (int i = 0; i < num; i++) {
@@ -635,7 +613,7 @@ void Map::FloodMountain() {
 void Map::FloodLake() {
 	float scalar = width * height / (512 * 512);
 	int num = 1 + GetRandom(scalar);
-	debugf("generate lake %d\n", num);
+	debugf("generate lake %d.\n", num);
 
 	for (int i = 0; i < num; i++) {
 		int x = width / 4 + GetRandom(width / 2);
@@ -657,7 +635,7 @@ void Map::FloodLake() {
 
 void Map::FloodRiver() {
 	int num = 2 + GetRandom(2 * width * height / (512 * 512));
-	debugf("generate river %d\n", num);
+	debugf("generate river %d.\n", num);
 
 	int l = GetRandom((width + height) * 2);
 	for (int i = 0; i < num; i++) {
@@ -778,7 +756,7 @@ void Map::FloodRiver() {
 void Map::FloodDesert() {
 	float scalar = width * height / (512 * 512);
 	int num = 1 + GetRandom(scalar);
-	debugf("generate desert %d\n", num);
+	debugf("generate desert %d.\n", num);
 
 	for (int i = 0; i < num; i++) {
 		int x = GetRandom(width);
@@ -816,7 +794,7 @@ void Map::StraightHighway() {
 		}
 	}
 	roadnet.highwayX.second = 3;
-	debugf("generate vertical highway position %d\n", roadnet.highwayX.first);
+	debugf("generate vertical highway position %d.\n", roadnet.highwayX.first);
 
 	for (int j = height / 4; j < height * 3 / 4; j++) {
 		if (abs(j - roadnet.center.second) < height / 8)continue;
@@ -830,7 +808,7 @@ void Map::StraightHighway() {
 		}
 	}
 	roadnet.highwayY.second = 3;
-	debugf("generate horizontal highway position %d\n", roadnet.highwayY.first);
+	debugf("generate horizontal highway position %d.\n", roadnet.highwayY.first);
 }
 
 void Map::CircumRoad() {
@@ -881,7 +859,7 @@ void Map::CircumRoad() {
 		}
 		else {
 			roadnet.radiuses.push_back(make_pair(radius, 3));
-			debugf("generate circum road radius %d\n", radius);
+			debugf("generate circum road radius %d.\n", radius);
 		}
 	}
 }
@@ -1281,7 +1259,7 @@ void Map::PublicRoad() {
 	}
 
 	// 设置区域索引
-	debugf("generate area %d\n", areas.size());
+	debugf("generate area %d.\n", areas.size());
 	for (int i = 0; i < areas.size(); i++) {
 		areas[i]->SetId(i);
 	}
