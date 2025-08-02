@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int GetRandom(int range, float (*cdf)(float)) {
+int GetRandom(int range, int (*cdf)(int)) {
 	if (range <= 0)return 0;
 
 	mt19937 rng(std::random_device{}());
@@ -15,7 +15,7 @@ int GetRandom(int range, float (*cdf)(float)) {
 	if (cdf == nullptr)
 		return ret;
 	else {
-		return range * cdf(float(ret) / range);
+		return clamp(cdf(ret), 0, range - 1);
 	}
 }
 

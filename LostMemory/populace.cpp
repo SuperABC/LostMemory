@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 #include <random>
 
 
@@ -616,13 +617,24 @@ void Populace::GenerateEducations() {
 	debugf("generate educations.\n");
 }
 
+int relationCdf(int x) {
+	float y = log(log(x + 3)) / log(log(40000));
+	if (y < 0.5f) {
+		y = -0.75 / (4 * y + 1) + 0.75;
+	}
+	else {
+		y = -0.75 / (4 * y - 5) + 0.25;
+	}
+	return exp(exp(log(log(40000)) * y));
+}
+
 void Populace::GenerateEmotions() {
 	for (auto citizen : citizens) {
 		int birthYear = citizen->GetBirthday().GetYear();
 		int currentAge = time.GetYear() - birthYear;
 		if (currentAge < 16) continue;
 
-		Time startBound = citizen->GetBirthday() + Time(16, 1, 1); // 16岁生日
+		Time startBound = citizen->GetBirthday() + Time(16, 1, 1);
 		Time endBound;
 		Person* spouse = citizen->GetSpouse();
 		if (spouse) {
@@ -635,6 +647,7 @@ void Populace::GenerateEmotions() {
 
 		int maxRelationships = min(10, (endBound - startBound).GetYear() / 3 + 1);
 		int relationshipCount = GetRandom(maxRelationships + 1);
+		relationshipCount = max(relationshipCount - citizen->GetEmotionExperiences().size(), 0);
 
 		std::vector<EmotionExperience> newEmotions;
 		std::vector<std::pair<Time, Time>> allocatedPeriods;
@@ -650,8 +663,7 @@ void Populace::GenerateEmotions() {
 
 				int minDuration = 1;
 				int maxDuration = Time::DaysBetween(startTime, endBound) + 1;
-				int durationDays = minDuration + GetRandom(maxDuration - minDuration + 1);
-
+				int durationDays = minDuration + GetRandom(maxDuration - minDuration + 1, relationCdf);
 				endTime = startTime;
 				endTime.AddDays(durationDays - 1);
 				if (endTime > endBound) endTime = endBound;
@@ -729,6 +741,7 @@ void Populace::GenerateEmotions() {
 				partner = candidate;
 			}
 			if (!partner) continue;
+			if (startTime > endTime)continue;
 
 			EmotionExperience emotionExp;
 			emotionExp.SetPerson(partner);
@@ -750,10 +763,10 @@ void Populace::GenerateEmotions() {
 			Person* currentPartner = nullptr;
 			int candidateAttempts = 0;
 
-			Time marrigeBegin = Time();
-			for (auto exp : citizen->GetEmotionExperiences()) {
-				if (exp.GetEndTime() > marrigeBegin)
-					marrigeBegin = exp.GetEndTime();
+			Time marrigeBegin = citizen->GetBirthday() + Time(16, 1, 1);
+			for (auto experience : citizen->GetEmotionExperiences()) {
+				if (experience.GetEndTime() > marrigeBegin)
+					marrigeBegin = experience.GetEndTime();
 			}
 			Time marrigeTime = GetRandom(marrigeBegin, time);
 			while (!currentPartner && candidateAttempts < 100) {
@@ -791,7 +804,7 @@ void Populace::GenerateEmotions() {
 
 				bool timeAvailable = true;
 				for (const auto& exp : candidate->GetEmotionExperiences()) {
-					if (exp.GetEndTime() >= marrigeTime) { // 当前有情感关系
+					if (exp.GetEndTime() >= marrigeTime) {
 						timeAvailable = false;
 						break;
 					}

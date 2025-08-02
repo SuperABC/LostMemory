@@ -450,7 +450,7 @@ int Time::OrdinalDate() const {
     return days;
 }
 
-Time GetRandom(Time begin, Time end) {
+Time GetRandom(Time begin, Time end, int (*cdf)(int)) {
     if (begin > end) {
         std::swap(begin, end);
     }
@@ -466,7 +466,7 @@ Time GetRandom(Time begin, Time end) {
     int totalDays = Time::DaysBetween(begin, end) + 1; // +1 包含结束当天
 
     // 生成随机偏移天数
-    int randomDays = GetRandom(totalDays);
+    int randomDays = GetRandom(totalDays, cdf);
 
     // 创建结果时间
     Time result = begin;
@@ -474,3 +474,4 @@ Time GetRandom(Time begin, Time end) {
 
     return result;
 }
+

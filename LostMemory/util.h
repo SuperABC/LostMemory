@@ -6,7 +6,7 @@
 #include <strsafe.h>
 
 // 获取[0, range - 1]的随机整数
-int GetRandom(int range, float (*cdf)(float) = nullptr);
+int GetRandom(int range, int (*cdf)(int) = nullptr);
 
 // 判断(x, y)是否在矩形中
 bool InBox(int x, int y, int left, int right, int top, int bottom);

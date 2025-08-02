@@ -75,7 +75,7 @@ private:
     int OrdinalDate() const;
 };
 
-Time GetRandom(Time begin, Time end);
+Time GetRandom(Time begin, Time end, int (*cdf)(int) = nullptr);
 
 class Experience {
 public:
