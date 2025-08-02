@@ -1671,7 +1671,8 @@ void RestaurantBuilding::DistributeInside() {
     //Parking
     //Toilet
     //Kitchen
-    //Canteen
+    //PublicEat
+    //PrivateEat
 
     vector<int> acreages;
     if (zone == ZONE_NONE) {
@@ -1697,13 +1698,21 @@ void RestaurantBuilding::DistributeInside() {
         acreages[layer] -= 60;
     }
     restaurant->AddRoom(CreateRoom<KitchenRoom>(1, acreages[0] / 2));
-    restaurant->AddRoom(CreateRoom<CanteenRoom>(1, acreages[0] / 2));
     if (GetAcreage() > 4000 && layers > 1) {
+        restaurant->AddRoom(CreateRoom<PublicEatRoom>(1, acreages[0] / 2));
         restaurant->AddRoom(CreateRoom<MeetingRoom>(2, 400));
         acreages[1] -= 400;
     }
+    else {
+        restaurant->AddRoom(CreateRoom<PublicEatRoom>(1, acreages[0] / 3));
+        for (int i = 0; i < acreages[0] / 6 / 40; i++) {
+            restaurant->AddRoom(CreateRoom<PrivateEatRoom>(1, 40));
+        }
+    }
     for (int layer = 1; layer < layers; layer++) {
-        restaurant->AddRoom(CreateRoom<CanteenRoom>(layer + 1, acreages[layer]));
+        for (int i = 0; i < acreages[layer] / 40; i++) {
+            restaurant->AddRoom(CreateRoom<PrivateEatRoom>(layer + 1, 40));
+        }
     }
 }
 
@@ -1815,7 +1824,53 @@ void MarketBuilding::InitBuilding() {
 }
 
 void MarketBuilding::DistributeInside() {
+    //Parking
+    //Warehouse
+    //Reception
+    //Toilet
+    //Office
+    //Market
+    
+    vector<int> acreages;
+    if (zone == ZONE_NONE) {
+        acreages = vector<int>(layers, GetAcreage() * 0.36);
+    }
+    else {
+        acreages = vector<int>(layers, GetAcreage() * 0.64);
+    }
 
+    auto market = CreateOrganization<MarketOrganization>();
+
+    if (zone == ZONE_NONE) {
+        market->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.28));
+        if (basement > 0) {
+            for (int i = 0; i < basement; i++) {
+                market->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.64));
+            }
+        }
+    }
+    else {
+        if (basement > 0) {
+            market->AddRoom(CreateRoom<ParkingRoom>(-1, GetAcreage() * 0.32));
+            market->AddRoom(CreateRoom<WarehouseRoom>(-1, GetAcreage() * 0.32));
+            for (int i = 1; i < basement; i++) {
+                market->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.64));
+            }
+        }
+    }
+
+    market->AddRoom(CreateRoom<ReceptionRoom>(1, 120));
+    acreages[0] -= 120;
+    for (int layer = 0; layer < layers; layer++) {
+        market->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+        acreages[layer] -= 60;
+        market->AddRoom(CreateRoom<OfficeRoom>(1, 80));
+        acreages[layer] -= 80;
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        market->AddRoom(CreateRoom<MarketRoom>(1, acreages[0]));
+    }
 }
 
 void MarketBuilding::ArrangeLayout() {
@@ -1834,7 +1889,35 @@ void MusicBuilding::InitBuilding() {
 }
 
 void MusicBuilding::DistributeInside() {
+    //Warehouse
+    //Reception
+    //Toilet
+    //Music
+    //Class
 
+    vector<int> acreages = vector<int>(layers, GetAcreage() * 0.64);
+
+    auto music = CreateOrganization<MusicOrganization>();
+
+    music->AddRoom(CreateRoom<ReceptionRoom>(1, 40));
+    acreages[0] -= 40;
+    for (int layer = 0; layer < layers; layer++) {
+        music->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+        acreages[layer] -= 60;
+    }
+    music->AddRoom(CreateRoom<WarehouseRoom>(1, acreages[0] / 2));
+    music->AddRoom(CreateRoom<MusicRoom>(1, acreages[0] / 2));
+
+    for (int layer = 1; layer < layers; layer++) {
+        if (layer == layers - 1) {
+            for (int i = 0; i < acreages[layer] / 40; i++) {
+                music->AddRoom(CreateRoom<ClassRoom>(layer + 1, 40));
+            }
+        }
+        else {
+            music->AddRoom(CreateRoom<MusicRoom>(1, acreages[0]));
+        }
+    }
 }
 
 void MusicBuilding::ArrangeLayout() {
@@ -1858,7 +1941,14 @@ void IngredientBuilding::InitBuilding() {
 }
 
 void IngredientBuilding::DistributeInside() {
+    // Market
 
+    vector<int> acreages = vector<int>(layers, GetAcreage() * 64);
+    auto ingredient = CreateOrganization<IngredientOrganization>();
+
+    for (int layer = 0; layer < layers; layer++) {
+        ingredient->AddRoom(CreateRoom<MarketRoom>(1, acreages[0]));
+    }
 }
 
 void IngredientBuilding::ArrangeLayout() {
@@ -1882,7 +1972,47 @@ void BrandBuilding::InitBuilding() {
 }
 
 void BrandBuilding::DistributeInside() {
+    //Parking
+    //Warehouse
+    //Reception
+    //Toilet
+    //Sale
 
+    vector<int> acreages;
+    if (zone == ZONE_NONE) {
+        acreages = vector<int>(layers, GetAcreage() * 0.36);
+    }
+    else {
+        acreages = vector<int>(layers, GetAcreage() * 0.64);
+    }
+
+    auto brand = CreateOrganization<BrandOrganization>();
+
+    if (zone == ZONE_NONE) {
+        brand->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.28));
+        if (basement > 0) {
+            for (int i = 0; i < basement; i++) {
+                brand->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.64));
+            }
+        }
+    }
+    else {
+        if (basement > 0) {
+            brand->AddRoom(CreateRoom<ParkingRoom>(-1, GetAcreage() * 0.32));
+            brand->AddRoom(CreateRoom<WarehouseRoom>(-1, GetAcreage() * 0.32));
+            for (int i = 1; i < basement; i++) {
+                brand->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.64));
+            }
+        }
+    }
+
+    brand->AddRoom(CreateRoom<ReceptionRoom>(1, 40));
+    acreages[0] -= 40;
+    for (int layer = 0; layer < layers; layer++) {
+        brand->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+        acreages[layer] -= 60;
+        brand->AddRoom(CreateRoom<SaleRoom>(layer + 1, acreages[layer]));
+    }
 }
 
 void BrandBuilding::ArrangeLayout() {

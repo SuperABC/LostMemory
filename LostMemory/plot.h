@@ -11,12 +11,7 @@ class Plot {
 public:
 	PLOT_TYPE plotType;
 
-	void SetId(int id);
-	void SetAcreage(int acreage);
-	void SetDistance(int distance);
-	void SetPosition(int left, int right, int top, int bottom);
-	void SetPosition(Plot* plot);
-
+	// 获取属性
 	std::pair<int, int>& GetAcreageRange();
 	std::pair<int, int>& GetDistanceRange();
 	int GetId();
@@ -29,6 +24,13 @@ public:
 	int GetRight();
 	int GetTop();
 	int GetBottom();
+
+	// 设置属性
+	void SetId(int id);
+	void SetAcreage(int acreage);
+	void SetDistance(int distance);
+	void SetPosition(int left, int right, int top, int bottom);
+	void SetPosition(Plot* plot);
 
 protected:
 	std::pair<int, int> acreageRange = std::make_pair(-1, -1);

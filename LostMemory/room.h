@@ -26,6 +26,7 @@ enum ROOM_TYPE {
 	ROOM_BUNK, //客房
 	ROOM_RECEPTION, //服务大堂
 	ROOM_INGREDIENT, //菜市场
+	ROOM_SALE, //商店
 	ROOM_MOVIE, //电影放映厅
 	ROOM_PUB, //酒吧
 	ROOM_MASAGE, //按摩室
@@ -35,7 +36,6 @@ enum ROOM_TYPE {
 	ROOM_PUBLICEAT, //卡座区
 	ROOM_PRIVATEEAT, //包间
 	ROOM_KITCHEN, //厨房
-	ROOM_STAFF, //办公区
 	ROOM_MEETING, //会议室
 	ROOM_COMPUTER, //机房
 	ROOM_STOCK, //证券交易所
@@ -127,6 +127,7 @@ static std::string roomText[ROOM_END] = {
 	"客房",
 	"服务大堂",
 	"菜市场",
+	"商店",
 	"电影放映厅",
 	"酒吧",
 	"按摩室",
@@ -136,7 +137,6 @@ static std::string roomText[ROOM_END] = {
 	"卡座区",
 	"包间",
 	"厨房",
-	"办公区",
 	"会议室",
 	"机房",
 	"证券交易所",
@@ -207,9 +207,11 @@ class Room {
 public:
 	Room(ROOM_TYPE type) : type(type) {}
 
+	// 获取/设置类型
 	ROOM_TYPE GetType();
 	void SetType(ROOM_TYPE type);
 
+	// 获取/设置属性
 	int GetOwner() { return owner; }
 	void SetOwner(int owner) { this->owner = owner; }
 	int GetLayer() { return layer; }
@@ -404,6 +406,14 @@ private:
 
 };
 
+class SaleRoom : public Room {
+public:
+	SaleRoom() : Room(ROOM_SALE) {}
+
+private:
+
+};
+
 class MovieRoom : public Room {
 public:
 	MovieRoom() : Room(ROOM_MOVIE) {}
@@ -471,14 +481,6 @@ private:
 class KitchenRoom : public Room {
 public:
 	KitchenRoom() : Room(ROOM_KITCHEN) {}
-
-private:
-
-};
-
-class StaffRoom : public Room {
-public:
-	StaffRoom() : Room(ROOM_STAFF) {}
 
 private:
 

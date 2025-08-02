@@ -143,14 +143,14 @@ public:
 	// 输出当前地图
 	void Print();
 
-	//保存/加载地图
+	// 保存/加载地图
 	void Load(std::string path);
 	void Save(std::string path);
 
 	// 获取地图尺寸
 	std::pair<int, int> GetSize();
 
-	//检查全局坐标是否在地图内
+	// 检查全局坐标是否在地图内
 	bool CheckXY(int x, int y);
 
 	// 获取地块
@@ -224,13 +224,14 @@ private:
 
 template<class T>
 bool Map::AddPlot(int avg) {
+	// 如果均值小于1，则跳过
 	if (avg < 1)return false;
 
+	// 若均值为1，则只尝试添加一次
 	if (avg == 1) {
 		T* plot = new T();
 
 		for (auto area : areas) {
-			
 			if (plot->plotType == PLOT_ZONE && !area->Empty())continue;
 			if (area->GetDistance() < plot->GetDistanceRange().first)continue;
 			if (plot->GetDistanceRange().second > 0 && area->GetDistance() > plot->GetDistanceRange().second)continue;
@@ -254,6 +255,7 @@ bool Map::AddPlot(int avg) {
 		}
 		delete plot;
 	}
+	// 若均值大于1，则添加的数量在(avg/2+1)到(avg*2)之间
 	else if (avg > 1) {
 		int count = 0;
 		int fail = 0;

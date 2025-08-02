@@ -206,6 +206,7 @@ public:
 		plotType = PLOT_BUILDING;
 	}
 
+	// 获取/设置类型
 	BUILDING_TYPE GetType();
 	void SetType(BUILDING_TYPE type);
 	CONSTRUCTION_TYPE GetStatus();
@@ -214,23 +215,34 @@ public:
 	ZONE_TYPE GetZoneType();
 	void SetZoneType(ZONE_TYPE type);
 
+	// 获取/设置属性
 	std::string GetName() { return name; }
 	int GetLayers() { return layers; }
 	int GetBasements() { return basement; }
+
+	// 获取/设置组织/房间
 	std::vector<Organization*>& GetOrganizations() { return organizations; }
 	std::vector<Room*>& GetRooms() { return rooms; }
 
+	// 指定建筑属性
 	virtual void InitBuilding() = 0;
+
+	// 分配组织与房间
 	virtual void DistributeInside() = 0;
+	
+	// 布局房间位置
 	virtual void ArrangeLayout() = 0;
 
 protected:
+	// 在建筑中添加组织
 	template<class T>
 	T* CreateOrganization() {
 		T* organization = new T();
 		organizations.push_back(organization);
 		return organization;
 	}
+
+	// 在建筑中添加房间
 	template<class T>
 	T* CreateRoom(int layer, int acreage) {
 		T* room = new T();

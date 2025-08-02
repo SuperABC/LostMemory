@@ -499,6 +499,7 @@ class Commodity {
 public:
 	Commodity(COMMODITY_TYPE type) : type(type) {};
 
+	// 获取/设置类型
 	COMMODITY_TYPE GetType();
 	void SetType(COMMODITY_TYPE type);
 

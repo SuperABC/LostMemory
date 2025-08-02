@@ -6,6 +6,8 @@
 
 Area::Area(int left, int top, int right, int bottom, int wrap, AREA_TYPE type) :
 	left(left), top(top), right(right), bottom(bottom), wrap(wrap), type(type) {
+	
+	// 地图一格边长代表10m，面积代表100m2
 	acreage = (right - left) * (bottom - top) * 100;
 }
 
@@ -66,9 +68,12 @@ bool Area::Empty() {
 }
 
 bool Area::AddPlot(Plot* plot) {
+	// 不存在的地块无法添加到区域
 	if (!plot)return false;
+	// 市中心区域不可添加区块
 	if (type == AREA_CENTER)return false;
 
+	// 对于全占地块，若区域为空则填满区域，否则放弃
 	if (plot->GetAcreageRange().first < 0) {
 		if (plots.size() == 0) {
 			plot->SetAcreage(acreage);
@@ -80,16 +85,20 @@ bool Area::AddPlot(Plot* plot) {
 		}
 	}
 
+	// 计算区域剩余面积
 	int content = 0;
 	for (auto p : plots) {
 		content += p->GetAcreage();
 	}
 	int rest = acreage - content;
 
+	// 如果剩余面积小于待添加区块的最小面积，则放弃
 	if (rest < plot->GetAcreageRange().first) {
 		return false;
 	}
 
+	// 则根据剩余面积随机分配面积
+	// TODO: 重写随机分配逻辑
 	if (plot->GetAcreageRange().second < 0) {
 		if (rest > plot->GetAcreageRange().first * 2) {
 			if (GetRandom(2)) {
@@ -128,8 +137,10 @@ bool Area::AddPlot(Plot* plot) {
 		}
 	}
 
+	// 写入地块与市中心的距离
 	plot->SetDistance(distance);
 
+	// 将分配好面积与写入距离的地块加入区域的地块列表
 	plots.push_back(plot);
 	return true;
 }

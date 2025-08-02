@@ -8,6 +8,8 @@
 
 using namespace std;
 
+// TODO: 当前仍在持续的经历截止时间设为-1
+
 Populace::~Populace() {
 	for (auto citizen : citizens) {
 		if (citizen)delete citizen;
@@ -15,12 +17,18 @@ Populace::~Populace() {
 }
 
 void Populace::Init(int accomodation) {
+	// 生成市民
 	GenerateCitizens(accomodation * exp(GetRandom(1000) / 1000.0f - 0.5f));
+
+	// 生成手机号
 	GeneratePhones();
 
+	// 生成经历
 	GenerateEducations();
 	GenerateEmotions();
 	GenerateJobs();
+
+	// 生成朋友
 	GenerateAcquaintances();
 }
 
@@ -90,13 +98,14 @@ void Populace::GenerateCitizens(int num) {
 		std::vector<std::pair<GENDER_TYPE, int>> childs;
 	};
 
-	// 生成市民及亲属关系
+	// 临时男女数组及年表
 	std::vector<Human> females(1, { -1, 0, LIFE_DEAD });
 	std::vector<Human> males(1, { -1, 0, LIFE_DEAD });
 	std::vector<int> maleBirths(4096, -1);
 	int currentBirth = 0;
 	std::vector<std::vector<std::pair<int, LIFE_TYPE>>> chronology(4096);
 
+	// 初始添加100男100女
 	int year = 1;
 	for (int i = 1; i <= 100; i++) {
 		females.push_back({ -1, GetRandom(20), -1, LIFE_SINGLE, GENDER_FEMALE, -1, -1, -1, {} });
@@ -118,6 +127,7 @@ void Populace::GenerateCitizens(int num) {
 		chronology[males[i].birth + 60 + GetRandom(40)].push_back(std::make_pair(-i, LIFE_DEAD));
 	}
 
+	// 自动迭代繁殖最多4096年
 	while (year < 4096 && females.size() + males.size() < num) {
 		for (auto event : chronology[year]) {
 			if (event.first >= 0) {
@@ -199,6 +209,7 @@ void Populace::GenerateCitizens(int num) {
 	}
 	time.SetYear(year + 2000);
 
+	// 将活着的男女加入市民列表
 	for (int i = 1; i < females.size(); i++) {
 		if (females[i].life != LIFE_DEAD && GetRandom(20) > 0) {
 			Person* person = new Person();
@@ -221,6 +232,8 @@ void Populace::GenerateCitizens(int num) {
 			citizens.push_back(person);
 		}
 	}
+
+	// 记录有配偶的市民的结婚日期
 	for (int i = 1; i < females.size(); i++) {
 		if (females[i].spouse >= 0 && females[i].idx >= 0 && males[females[i].spouse].idx >= 0) {
 			int month = GetRandom(12) + 1;
@@ -230,6 +243,7 @@ void Populace::GenerateCitizens(int num) {
 		}
 	}
 
+	// 记录亲属关系
 	for (auto female : females) {
 		if (female.idx >= 0) {
 			Person* person = citizens[female.idx];
@@ -248,7 +262,6 @@ void Populace::GenerateCitizens(int num) {
 			}
 		}
 	}
-
 	for (auto male : males) {
 		if (male.idx >= 0) {
 			Person* person = citizens[male.idx];
@@ -267,6 +280,7 @@ void Populace::GenerateCitizens(int num) {
 			}
 		}
 	}
+
 	debugf("generate %d citizens.\n", citizens.size());
 }
 
@@ -289,7 +303,6 @@ void Populace::GeneratePhones() {
 }
 
 void Populace::GenerateEducations() {
-	// 生成教育经历及同学师生关系
 	enum EducationLevel {
 		EDUCATION_PRIMARY,
 		EDUCATION_JUNIOR,
@@ -309,6 +322,7 @@ void Populace::GenerateEducations() {
 	};
 	std::vector<SchoolClass> levelClasses[EDUCATION_END];
 
+	// 从120年前开始模拟
 	std::mt19937 generator(std::random_device{}());
 	std::vector<Person*> levelPotentials[EDUCATION_END];
 	for (int year = time.GetYear() - 120; year <= time.GetYear(); year++) {
@@ -631,6 +645,7 @@ int relationCdf(int x) {
 
 void Populace::GenerateEmotions() {
 	for (auto citizen : citizens) {
+		// 计算本人情感经历范围
 		int birthYear = citizen->GetBirthday().GetYear();
 		int currentAge = time.GetYear() - birthYear;
 		if (currentAge < 16) continue;
@@ -650,6 +665,7 @@ void Populace::GenerateEmotions() {
 		int relationshipCount = GetRandom(maxRelationships + 1);
 		relationshipCount = max(relationshipCount - citizen->GetEmotionExperiences().size(), 0);
 
+		// 随机生成指定段数的经历
 		std::vector<EmotionExperience> newEmotions;
 		std::vector<std::pair<Time, Time>> allocatedPeriods;
 		for (int i = 0; i < relationshipCount; i++) {
@@ -657,6 +673,7 @@ void Populace::GenerateEmotions() {
 			bool validPeriod = false;
 			int attempts = 0;
 
+			// 首先生成一段符合本人时间段的经历
 			while (!validPeriod && attempts < 100) {
 				attempts++;
 
@@ -688,6 +705,7 @@ void Populace::GenerateEmotions() {
 			}
 			if (!validPeriod) continue;
 
+			// 随机寻找伴侣并判断该经历是否符合其时间段
 			Person* partner = nullptr;
 			int candidateAttempts = 0;
 			while (!partner && candidateAttempts < 100) {
@@ -744,10 +762,10 @@ void Populace::GenerateEmotions() {
 			if (!partner) continue;
 			if (startTime > endTime)continue;
 
+			// 写入经历
 			EmotionExperience emotionExp;
 			emotionExp.SetPerson(partner);
 			emotionExp.SetTime(startTime, endTime);
-
 			newEmotions.push_back(emotionExp);
 			allocatedPeriods.emplace_back(startTime, endTime);
 
@@ -756,10 +774,13 @@ void Populace::GenerateEmotions() {
 			partnerExp.SetTime(startTime, endTime);
 			partner->AddEmotionExperience(partnerExp);
 		}
+
+		// 将临时经历全部写入本人经历
 		for (const auto& exp : newEmotions) {
 			citizen->AddEmotionExperience(exp);
 		}
 
+		// 四成未婚市民存在正在进行的恋爱
 		if (!spouse && GetRandom(100) < 40) {
 			Person* currentPartner = nullptr;
 			int candidateAttempts = 0;

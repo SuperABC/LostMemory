@@ -89,18 +89,20 @@ Map::~Map() {
 }
 
 int Map::Init(int blockX, int blockY) {
+	// 清除已有内容
 	Destroy();
 
+	// 地图尺寸需要为正
 	if (blockX < 1 || blockY < 1) {
 		throw invalid_argument("Invalid map size.");
 		return 0;
 	}
 
-	roadnet.Reset();
-
+	// 计算地图实际长宽
 	width = blockX * BLOCK_SIZE;
 	height = blockY * BLOCK_SIZE;
 
+	// 构建区块
 	blocks = vector<vector<Block*>>(blockY,
 		vector<Block*>(blockX, nullptr));
 	for (int i = 0; i < blockX; i++) {
@@ -109,25 +111,30 @@ int Map::Init(int blockX, int blockY) {
 		}
 	}
 
+	// 随机设定中心点
 	FindCenter();
 
+	// 随机生成地形
 	FloodSea();
 	FloodMountain();
 	FloodDesert();
 	FloodRiver();
 	FloodLake();
 
+	// 随机生成道路与区域
 	StraightHighway();
 	CircumRoad();
 	PublicRoad();
 	DrawRoad();
 
+	// 随机生成园区与建筑
 	DistributeZone();
 	DistributeBuilding();
 	ArrangeArea();
 	ArrangeZone();
 	RoomLayout();
 
+	// 计算城市人口容纳量
 	int accomodation = 0;
 	for (auto building : buildings) {
 		if (building->GetStatus() != CONSTRUCTION_USING)continue;
@@ -142,8 +149,10 @@ int Map::Init(int blockX, int blockY) {
 }
 
 void Map::Checkin(vector<Person*> citizens, int year) {
+	// 若无市民则跳过
 	if (citizens.size() == 0)return;
 
+	// 为所有居住房产指定拥有者
 	int idx = 0;
 	std::vector<Room*> rooms;
 	for (auto building : buildings) {
@@ -160,6 +169,7 @@ void Map::Checkin(vector<Person*> citizens, int year) {
 		}
 	}
 
+	// 为市民指定住所
 	for (auto citizen : citizens) {
 		if (citizen->GetAddresses().size())continue;
 		if (rooms.size() <= 0)break;
@@ -225,11 +235,12 @@ void Map::Tick() {
 }
 
 void Map::Print() {
+	// 若地图尺寸非正则跳过
 	if (width <= 0 || height <= 0)return;
 
+	// 符号输出建议地形图
 	int scaleX = width / PRINT_SCALE;
 	int scaleY = height / PRINT_SCALE;
-
 	for (int y = 0; y < PRINT_SCALE; y++) {
 		for (int x = 0; x < PRINT_SCALE; x++) {
 			switch (GetElement(x * scaleX, y * scaleY)->GetTerrainType()) {
@@ -254,6 +265,7 @@ void Map::Print() {
 		std::cout << std::endl;
 	}
 
+	// 统计并输出区域类型
 	int residenceHigh = 0;
 	int recidenceMiddle = 0;
 	int recidenceLow = 0;
@@ -306,6 +318,7 @@ void Map::Print() {
 	std::cout << "普通工业区 " << industryAll / 1000000.0f << " km2" << std::endl;
 	std::cout << "普通绿化区 " << greenAll / 1000000.0f << " km2" << std::endl;
 
+	// 统计园区与建筑
 	int zoneSize[ZONE_END] = { 0 };
 	int zoneNum[ZONE_END] = { 0 };
 	int buildingSize[BUILDING_END] = { 0 };
@@ -496,11 +509,13 @@ void Map::FindCenter() {
 }
 
 void Map::FloodSea() {
+	// 随机生成四个方向是否临海，并保证至少有一面临海
 	int distribute = 0;
 	while (distribute == 0) {
 		distribute = GetRandom(16);
 	}
 
+	// 处理西面海面区域
 	if (distribute & 1) {
 		int distance = width / 16 + GetRandom(width / 16);
 		debugf("sea in the west %d.\n", distance);
@@ -522,6 +537,7 @@ void Map::FloodSea() {
 		}
 	}
 
+	// 处理东面海面区域
 	if (distribute & 2) {
 		int distance = width / 16 + GetRandom(width / 16);
 		debugf("sea in the east %d.\n", distance);
@@ -543,6 +559,7 @@ void Map::FloodSea() {
 		}
 	}
 
+	// 处理北面海面区域
 	if (distribute & 4) {
 		int distance = height / 16 + GetRandom(height / 16);
 		debugf("sea in the north %d.\n", distance);
@@ -564,6 +581,7 @@ void Map::FloodSea() {
 		}
 	}
 
+	// 处理南面海面区域
 	if (distribute & 8) {
 		int distance = height / 16 + GetRandom(height / 16);
 		debugf("sea in the south %d.\n", distance);
