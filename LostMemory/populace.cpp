@@ -267,6 +267,7 @@ void Populace::GenerateCitizens(int num) {
 			}
 		}
 	}
+	debugf("generate %d citizens.\n", citizens.size());
 }
 
 void Populace::GeneratePhones() {
@@ -284,7 +285,7 @@ void Populace::GeneratePhones() {
 		citizen->AddPhone(to_string(number));
 	}
 
-	debugf("generate %d citizens.\n", citizens.size());
+	debugf("generate phones.\n", citizens.size());
 }
 
 void Populace::GenerateEducations() {

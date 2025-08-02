@@ -1,1 +1,1 @@
-﻿
+﻿#include "storage.h"
