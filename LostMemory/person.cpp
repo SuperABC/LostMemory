@@ -1,7 +1,16 @@
 ﻿#include "person.h"
 
+
+using namespace std;
+
+Person::~Person() {
+	for (auto asset : assets) {
+		delete asset;
+	}
+}
+
 void Person::AddRelative(RELATIVE_TYPE type, Person* person) {
-	relatives.push_back(std::make_pair(type, person));
+	relatives.push_back(make_pair(type, person));
 }
 
 Person* Person::GetFather() {
@@ -26,15 +35,15 @@ Person* Person::GetSpouse() {
 	return nullptr;
 }
 
-std::vector<Person*> Person::GetChilds() {
-	std::vector<Person*>childs;
+vector<Person*> Person::GetChilds() {
+	vector<Person*>childs;
 	for (auto relative : relatives) {
 		if (relative.first == RELATIVE_SON || relative.first == RELATIVE_DAUGHTER)childs.push_back(relative.second);
 	}
 	return childs;
 }
 
-void Person::AddPhone(std::string phone) {
+void Person::AddPhone(string phone) {
 	phones.push_back(phone);
 }
 
@@ -42,7 +51,7 @@ void Person::AddAddress(Room* room) {
 	addresses.push_back(room);
 }
 
-std::vector<Room*>& Person::GetAddresses() {
+vector<Room*>& Person::GetAddresses() {
 	return addresses;
 }
 
@@ -50,7 +59,7 @@ void Person::AddAsset(Asset* asset) {
 	assets.push_back(asset);
 }
 
-std::vector<Asset*>& Person::GetAssets() {
+vector<Asset*>& Person::GetAssets() {
 	return assets;
 }
 
@@ -66,23 +75,23 @@ void Person::AddEmotionExperience(const EmotionExperience& exp) {
 	emotionExperiences.push_back(exp);
 }
 
-std::vector<EducationExperience>& Person::GetEducationExperiences() {
+vector<EducationExperience>& Person::GetEducationExperiences() {
 	return educationExperiences;
 }
 
-std::vector<JobExperience>& Person::GetJobExperiences() {
+vector<JobExperience>& Person::GetJobExperiences() {
 	return jobExperiences;
 }
 
-std::vector<EmotionExperience>& Person::GetEmotionExperiences() {
+vector<EmotionExperience>& Person::GetEmotionExperiences() {
 	return emotionExperiences;
 }
 
 void Person::AddAcquaintance(Person* person, Relation relation) {
-	acquaintances.push_back(std::make_pair(person, relation));
+	acquaintances.push_back(make_pair(person, relation));
 }
 
-std::vector<std::pair<Person*, Relation>>& Person::GetAcquaintances() {
+vector<pair<Person*, Relation>>& Person::GetAcquaintances() {
 	return acquaintances;
 }
 

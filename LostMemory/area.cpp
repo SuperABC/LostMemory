@@ -4,6 +4,9 @@
 #include "area.h"
 #include "util.h"
 
+
+using namespace std;
+
 Area::Area(int left, int top, int right, int bottom, int wrap, AREA_TYPE type) :
 	left(left), top(top), right(right), bottom(bottom), wrap(wrap), type(type) {
 	
@@ -43,7 +46,7 @@ int Area::GetAcreage() {
 	return acreage;
 }
 
-std::vector<Plot*>& Area::GetPlots() {
+vector<Plot*>& Area::GetPlots() {
 	return plots;
 }
 

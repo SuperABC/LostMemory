@@ -1,4 +1,6 @@
-﻿#include "util.h"
+﻿#define _CRT_SECURE_NO_WARNINGS
+
+#include "util.h"
 
 #include <ctime>
 #include <chrono>

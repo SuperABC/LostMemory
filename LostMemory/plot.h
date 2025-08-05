@@ -1,5 +1,32 @@
 ﻿#pragma once
+
+#include "util.h"
+
 #include <vector>
+
+
+class Rect {
+public:
+	Rect() : offsetX(0), offsetY(0), sizeX(-1), sizeY(-1) {}
+	Rect(float x, float y, float w, float h) : offsetX(x), offsetY(y), sizeX(w), sizeY(h) {}
+
+	// 获取属性
+	float GetSizeX();
+	float GetSizeY();
+	float GetOffsetX();
+	float GetOffsetY();
+	float GetLeft();
+	float GetRight();
+	float GetTop();
+	float GetBottom();
+
+	// 设置位置
+	void SetPosition(float left, float right, float top, float bottom);
+
+protected:
+	float offsetX, offsetY;
+	float sizeX, sizeY;
+};
 
 enum PLOT_TYPE {
 	PLOT_BUILDING,
@@ -7,7 +34,7 @@ enum PLOT_TYPE {
 	PLOT_OTHER
 };
 
-class Plot {
+class Plot : public Rect {
 public:
 	PLOT_TYPE plotType;
 
@@ -16,14 +43,6 @@ public:
 	std::pair<int, int>& GetDistanceRange();
 	int GetId();
 	int GetAcreage();
-	int GetSizeX();
-	int GetSizeY();
-	int GetOffsetX();
-	int GetOffsetY();
-	int GetLeft();
-	int GetRight();
-	int GetTop();
-	int GetBottom();
 
 	// 设置属性
 	void SetId(int id);
@@ -41,7 +60,4 @@ private:
 
 	int acreage = -1;
 	int distance = -1;
-
-	int offsetX, offsetY;
-	int sizeX, sizeY;
 };

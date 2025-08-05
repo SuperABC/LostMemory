@@ -154,7 +154,7 @@ void Map::Checkin(vector<Person*> citizens, int year) {
 
 	// 为所有居住房产指定拥有者
 	int idx = 0;
-	std::vector<Room*> rooms;
+	vector<Room*> rooms;
 	for (auto building : buildings) {
 		if (building->GetStatus() != CONSTRUCTION_USING)continue;
 		if (building->GetType() == BUILDING_RESIDENT || building->GetType() == BUILDING_VILLA) {
@@ -246,23 +246,23 @@ void Map::Print() {
 			switch (GetElement(x * scaleX, y * scaleY)->GetTerrainType()) {
 			case TERRAIN_PLAIN:
 			case TERRAIN_RIVER:
-				std::cout << "□";
+				cout << "□";
 				break;
 			case TERRAIN_SEA:
 			case TERRAIN_LAKE:
-				std::cout << "■";
+				cout << "■";
 				break;
 			case TERRAIN_MOUNTAIN:
-				std::cout << "▲";
+				cout << "▲";
 				break;
 			case TERRAIN_DESERT:
-				std::cout << "::";
+				cout << "::";
 				break;
 			default:
 				break;
 			}
 		}
-		std::cout << std::endl;
+		cout << endl;
 	}
 
 	// 统计并输出区域类型
@@ -308,15 +308,15 @@ void Map::Print() {
 			break;
 		}
 	}
-	std::cout << "高级住宅区 " << residenceHigh / 1000000.0f << " km2" << std::endl;
-	std::cout << "中级住宅区 " << recidenceMiddle / 1000000.0f << " km2" << std::endl;
-	std::cout << "低级住宅区 " << recidenceLow / 1000000.0f << " km2" << std::endl;
-	std::cout << "高级商业区 " << commercialHigh / 1000000.0f << " km2" << std::endl;
-	std::cout << "低级商业区 " << commercialLow / 1000000.0f << " km2" << std::endl;
-	std::cout << "高级办公区 " << officeHigh / 1000000.0f << " km2" << std::endl;
-	std::cout << "低级办公区 " << officeLow / 1000000.0f << " km2" << std::endl;
-	std::cout << "普通工业区 " << industryAll / 1000000.0f << " km2" << std::endl;
-	std::cout << "普通绿化区 " << greenAll / 1000000.0f << " km2" << std::endl;
+	cout << "高级住宅区 " << residenceHigh / 1000000.0f << " km2" << endl;
+	cout << "中级住宅区 " << recidenceMiddle / 1000000.0f << " km2" << endl;
+	cout << "低级住宅区 " << recidenceLow / 1000000.0f << " km2" << endl;
+	cout << "高级商业区 " << commercialHigh / 1000000.0f << " km2" << endl;
+	cout << "低级商业区 " << commercialLow / 1000000.0f << " km2" << endl;
+	cout << "高级办公区 " << officeHigh / 1000000.0f << " km2" << endl;
+	cout << "低级办公区 " << officeLow / 1000000.0f << " km2" << endl;
+	cout << "普通工业区 " << industryAll / 1000000.0f << " km2" << endl;
+	cout << "普通绿化区 " << greenAll / 1000000.0f << " km2" << endl;
 
 	// 统计园区与建筑
 	int zoneSize[ZONE_END] = { 0 };
@@ -338,10 +338,10 @@ void Map::Print() {
 		}
 	}
 	for (int i = 1; i < ZONE_END; i++) {
-		std::cout << zoneText[i] << " " << zoneNum[i] << "个，" << zoneSize[i] << " m2" << std::endl;
+		cout << zoneText[i] << " " << zoneNum[i] << "个，" << zoneSize[i] << " m2" << endl;
 	}
 	for (int i = 1; i < BUILDING_END; i++) {
-		std::cout << buildingText[i] << " " << buildingNum[i] << "个，" << buildingSize[i] << " m2" << std::endl;
+		cout << buildingText[i] << " " << buildingNum[i] << "个，" << buildingSize[i] << " m2" << endl;
 	}
 }
 
@@ -1354,7 +1354,7 @@ void Map::PublicRoad() {
 	}
 
 	// 给地图每点赋值功能区信息
-	std::sort(areas.begin(), areas.end(), [&](Area* a, Area* b) {return a->GetAcreage() > b->GetAcreage(); });
+	sort(areas.begin(), areas.end(), [&](Area* a, Area* b) {return a->GetAcreage() > b->GetAcreage(); });
 	for (int k = 0; k < areas.size(); k++) {
 		for (int i = areas[k]->GetLeft(); i <= areas[k]->GetRight(); i++) {
 			for (int j = areas[k]->GetTop(); j <= areas[k]->GetBottom(); j++) {
@@ -1367,12 +1367,12 @@ void Map::PublicRoad() {
 
 void Map::DrawRoad() {
 	// 加宽公路
-	std::vector<std::pair<int, int>> extensions;
+	vector<pair<int, int>> extensions;
 	for (int i = 0; i < width; i++) {
 		for (int j = 0; j < height; j++) {
 			if (GetElement(i, j)->GetAreaType() == AREA_ROAD) {
-				extensions.push_back(std::make_pair(i + 1, j));
-				extensions.push_back(std::make_pair(i, j + 1));
+				extensions.push_back(make_pair(i + 1, j));
+				extensions.push_back(make_pair(i, j + 1));
 			}
 		}
 	}
@@ -1548,10 +1548,10 @@ void Map::DistributeBuilding() {
 void Map::ArrangeArea() {
 	// 二分治布局区域
 	for (auto area : areas) {
-		auto plots = std::vector<Plot*>(area->GetPlots());
+		auto plots = vector<Plot*>(area->GetPlots());
 		if (plots.size() == 0)continue;
 
-		std::sort(plots.begin(), plots.end(), [](Plot* a, Plot* b) {
+		sort(plots.begin(), plots.end(), [](Plot* a, Plot* b) {
 			return a->GetAcreage() > b->GetAcreage();
 			});
 
@@ -1693,7 +1693,7 @@ void Map::ArrangeZone() {
 		auto plots = zone->GetPlots();
 		if (plots.size() == 0)continue;
 
-		std::sort(plots.begin(), plots.end(), [](Plot* a, Plot* b) {
+		sort(plots.begin(), plots.end(), [](Plot* a, Plot* b) {
 			return a->GetAcreage() > b->GetAcreage();
 			});
 

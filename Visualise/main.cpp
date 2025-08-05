@@ -44,11 +44,11 @@ void updateBuilding(int floor, int scroll) {
 	setColor(0, 0, 0);
 
 	string text = buildingText[currentBuilding->GetType()] + "\n" +
-		"宽" + std::to_string(currentBuilding->GetSizeX() * 10) + "m" + "\n" +
-		"高" + std::to_string(currentBuilding->GetSizeY() * 10) + "m" + "\n" +
-		"面积" + std::to_string(currentBuilding->GetAcreage()) + "m2" + "\n" +
-		"地面层高" + std::to_string(currentBuilding->GetLayers()) + "层" + "\n" +
-		"地下层高" + std::to_string(currentBuilding->GetBasements()) + "层" + "\n";
+		"宽" + to_string(currentBuilding->GetSizeX() * 10) + "m" + "\n" +
+		"高" + to_string(currentBuilding->GetSizeY() * 10) + "m" + "\n" +
+		"面积" + to_string(currentBuilding->GetAcreage()) + "m2" + "\n" +
+		"地面层高" + to_string(currentBuilding->GetLayers()) + "层" + "\n" +
+		"地下层高" + to_string(currentBuilding->GetBasements()) + "层" + "\n";
 
 	text += "\n";
 	for (auto organization : currentBuilding->GetOrganizations()) {
@@ -152,11 +152,11 @@ void zoneLoop() {
 	if (!zoneInfo) {
 		zoneInfo = true;
 		setColor(0, 0, 0);
-		putString((std::string() +
+		putString((string() +
 			zoneText[currentZone->GetType()] + "\n" +
-			"宽" + std::to_string(currentZone->GetSizeX() * 10) + "m" + "\n" +
-			"高" + std::to_string(currentZone->GetSizeY() * 10) + "m" + "\n" +
-			"面积" + std::to_string(currentZone->GetAcreage()) + "m2" + "\n" +
+			"宽" + to_string(currentZone->GetSizeX() * 10) + "m" + "\n" +
+			"高" + to_string(currentZone->GetSizeY() * 10) + "m" + "\n" +
+			"面积" + to_string(currentZone->GetAcreage()) + "m2" + "\n" +
 			"").data(), currentZone->GetSizeX() * 16, 0);
 
 		updateZone();

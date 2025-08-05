@@ -62,11 +62,11 @@ void Populace::Print() {
 	}
 }
 
-void Populace::Load(std::string path) {
+void Populace::Load(string path) {
 
 }
 
-void Populace::Save(std::string path) {
+void Populace::Save(string path) {
 
 }
 
@@ -74,7 +74,7 @@ Time Populace::GetTime() {
 	return time;
 }
 
-std::vector<Person*>& Populace::GetCitizens() {
+vector<Person*>& Populace::GetCitizens() {
 	return citizens;
 }
 
@@ -95,27 +95,27 @@ void Populace::GenerateCitizens(int num) {
 		int father;
 		int mother;
 		int spouse;
-		std::vector<std::pair<GENDER_TYPE, int>> childs;
+		vector<pair<GENDER_TYPE, int>> childs;
 	};
 
 	// 临时男女数组及年表
-	std::vector<Human> females(1, { -1, 0, LIFE_DEAD });
-	std::vector<Human> males(1, { -1, 0, LIFE_DEAD });
-	std::vector<int> maleBirths(4096, -1);
+	vector<Human> females(1, { -1, 0, LIFE_DEAD });
+	vector<Human> males(1, { -1, 0, LIFE_DEAD });
+	vector<int> maleBirths(4096, -1);
 	int currentBirth = 0;
-	std::vector<std::vector<std::pair<int, LIFE_TYPE>>> chronology(4096);
+	vector<vector<pair<int, LIFE_TYPE>>> chronology(4096);
 
 	// 初始添加100男100女
 	int year = 1;
 	for (int i = 1; i <= 100; i++) {
 		females.push_back({ -1, GetRandom(20), -1, LIFE_SINGLE, GENDER_FEMALE, -1, -1, -1, {} });
-		chronology[females.back().birth + 20 + GetRandom(15)].push_back(std::make_pair(females.size() - 1, LIFE_MARRY));
-		chronology[females.back().birth + 60 + GetRandom(40)].push_back(std::make_pair(females.size() - 1, LIFE_DEAD));
+		chronology[females.back().birth + 20 + GetRandom(15)].push_back(make_pair(females.size() - 1, LIFE_MARRY));
+		chronology[females.back().birth + 60 + GetRandom(40)].push_back(make_pair(females.size() - 1, LIFE_DEAD));
 	}
 	for (int i = 1; i <= 100; i++) {
 		males.push_back({ -1, GetRandom(20), -1, LIFE_SINGLE, GENDER_MALE, -1, -1, -1, {} });
 	}
-	std::sort(males.begin(), males.end(), [](Human x, Human y) {return x.birth < y.birth; });
+	sort(males.begin(), males.end(), [](Human x, Human y) {return x.birth < y.birth; });
 	maleBirths[0] = 0;
 	for (int i = 1; i <= 100; i++) {
 		if (males[i].birth > currentBirth) {
@@ -124,7 +124,7 @@ void Populace::GenerateCitizens(int num) {
 			}
 			currentBirth = males[i].birth;
 		}
-		chronology[males[i].birth + 60 + GetRandom(40)].push_back(std::make_pair(-i, LIFE_DEAD));
+		chronology[males[i].birth + 60 + GetRandom(40)].push_back(make_pair(-i, LIFE_DEAD));
 	}
 
 	// 自动迭代繁殖最多4096年
@@ -159,7 +159,7 @@ void Populace::GenerateCitizens(int num) {
 					int interval = 1 + GetRandom(3);
 					for (int i = 0; i < childs; i++) {
 						if (year + interval - females[event.first].birth > 45)break;
-						chronology[year + interval].push_back(std::make_pair(event.first, LIFE_BIRTH));
+						chronology[year + interval].push_back(make_pair(event.first, LIFE_BIRTH));
 						interval += 1 + GetRandom(3);
 					}
 					break;
@@ -167,16 +167,16 @@ void Populace::GenerateCitizens(int num) {
 				case LIFE_BIRTH: {
 					int gender = GetRandom(2);
 					if (gender == GENDER_FEMALE) {
-						females[event.first].childs.push_back(std::make_pair(GENDER_FEMALE, females.size()));
-						males[females[event.first].spouse].childs.push_back(std::make_pair(GENDER_FEMALE, females.size()));
+						females[event.first].childs.push_back(make_pair(GENDER_FEMALE, females.size()));
+						males[females[event.first].spouse].childs.push_back(make_pair(GENDER_FEMALE, females.size()));
 						females.push_back({ -1, year, -1, LIFE_SINGLE, GENDER_FEMALE, females[event.first].spouse, event.first, -1, {} });
 						if (GetRandom(10) > 0)
-							chronology[females.back().birth + 20 + GetRandom(15)].push_back(std::make_pair(females.size() - 1, LIFE_MARRY));
-						chronology[females.back().birth + 60 + GetRandom(40)].push_back(std::make_pair(females.size() - 1, LIFE_DEAD));
+							chronology[females.back().birth + 20 + GetRandom(15)].push_back(make_pair(females.size() - 1, LIFE_MARRY));
+						chronology[females.back().birth + 60 + GetRandom(40)].push_back(make_pair(females.size() - 1, LIFE_DEAD));
 					}
 					else {
-						females[event.first].childs.push_back(std::make_pair(GENDER_MALE, males.size()));
-						males[females[event.first].spouse].childs.push_back(std::make_pair(GENDER_MALE, males.size()));
+						females[event.first].childs.push_back(make_pair(GENDER_MALE, males.size()));
+						males[females[event.first].spouse].childs.push_back(make_pair(GENDER_MALE, males.size()));
 						males.push_back({ -1, year, -1, LIFE_SINGLE, GENDER_MALE, females[event.first].spouse, event.first, -1, {} });
 						if (males.back().birth > currentBirth) {
 							for (int j = currentBirth + 1; j <= males.back().birth; j++) {
@@ -184,7 +184,7 @@ void Populace::GenerateCitizens(int num) {
 							}
 							currentBirth = males.back().birth;
 						}
-						chronology[males.back().birth + 60 + GetRandom(40)].push_back(std::make_pair(-((int)males.size() - 1), LIFE_DEAD));
+						chronology[males.back().birth + 60 + GetRandom(40)].push_back(make_pair(-((int)males.size() - 1), LIFE_DEAD));
 					}
 					break;
 				}
@@ -313,18 +313,18 @@ void Populace::GenerateEducations() {
 	};
 
 	struct SchoolClass {
-		std::string schoolName;
+		string schoolName;
 		EducationLevel level;
 		int startYear;
 		int grade;
-		std::vector<Person*> students;
+		vector<Person*> students;
 		Person* teacher = nullptr;
 	};
-	std::vector<SchoolClass> levelClasses[EDUCATION_END];
+	vector<SchoolClass> levelClasses[EDUCATION_END];
 
 	// 从120年前开始模拟
-	std::mt19937 generator(std::random_device{}());
-	std::vector<Person*> levelPotentials[EDUCATION_END];
+	mt19937 generator(random_device{}());
+	vector<Person*> levelPotentials[EDUCATION_END];
 	for (int year = time.GetYear() - 120; year <= time.GetYear(); year++) {
 		// 班级变动
 		for (int level = EDUCATION_PRIMARY; level <= EDUCATION_POST; level++) {
@@ -345,7 +345,7 @@ void Populace::GenerateEducations() {
 					int fate = GetRandom(100);
 
 					if (fate > 95) { // 转学
-						std::vector<SchoolClass*> targetClasses;
+						vector<SchoolClass*> targetClasses;
 						for (auto& target : levelClasses[level]) {
 							if (&target != &cls && target.grade == cls.grade &&
 								target.startYear == cls.startYear) {
@@ -360,7 +360,7 @@ void Populace::GenerateEducations() {
 						}
 					}
 					else if (fate > 92) { // 留级
-						std::vector<SchoolClass*> targetClasses;
+						vector<SchoolClass*> targetClasses;
 						for (auto& target : levelClasses[level]) {
 							if (&target != &cls && target.grade == cls.grade - 1 &&
 								target.schoolName == cls.schoolName) {
@@ -390,7 +390,7 @@ void Populace::GenerateEducations() {
 						}
 
 						if (valid) {
-							std::vector<SchoolClass*> targetClasses;
+							vector<SchoolClass*> targetClasses;
 							for (auto& target : levelClasses[level]) {
 								if (target.grade == cls.grade + 1 &&
 									target.schoolName == cls.schoolName) {
@@ -458,7 +458,7 @@ void Populace::GenerateEducations() {
 
 			auto& classes = levelClasses[level];
 			classes.erase(
-				std::remove_if(classes.begin(), classes.end(),
+				remove_if(classes.begin(), classes.end(),
 					[](const SchoolClass& c) { return c.students.empty(); }),
 				classes.end());
 		}
@@ -478,11 +478,11 @@ void Populace::GenerateEducations() {
 			if (classCount == 0)classCount = 1;
 
 			int schoolCount = max(1, classCount / 5);
-			std::vector<std::string> schoolNames;
+			vector<string> schoolNames;
 			for (int i = 0; i < schoolCount; i++) {
-				schoolNames.push_back("第" + std::to_string(i + 1) + "小学");
+				schoolNames.push_back("第" + to_string(i + 1) + "小学");
 			}
-			std::shuffle(levelPotentials[EDUCATION_PRIMARY].begin(), levelPotentials[EDUCATION_PRIMARY].end(), generator);
+			shuffle(levelPotentials[EDUCATION_PRIMARY].begin(), levelPotentials[EDUCATION_PRIMARY].end(), generator);
 			int studentsPerClass = levelPotentials[EDUCATION_PRIMARY].size() / classCount;
 
 			for (int i = 0; i < classCount; i++) {
@@ -509,12 +509,12 @@ void Populace::GenerateEducations() {
 			if (classCount == 0)classCount = 1;
 
 			int schoolCount = max(1, classCount / 4);
-			std::vector<std::string> schoolNames;
+			vector<string> schoolNames;
 			for (int i = 0; i < schoolCount; i++) {
-				schoolNames.push_back("第" + std::to_string(i + 1) + "初中");
+				schoolNames.push_back("第" + to_string(i + 1) + "初中");
 			}
 
-			std::shuffle(levelPotentials[EDUCATION_JUNIOR].begin(), levelPotentials[EDUCATION_JUNIOR].end(), generator);
+			shuffle(levelPotentials[EDUCATION_JUNIOR].begin(), levelPotentials[EDUCATION_JUNIOR].end(), generator);
 			int studentsPerClass = levelPotentials[EDUCATION_JUNIOR].size() / classCount;
 
 			for (int i = 0; i < classCount; i++) {
@@ -541,12 +541,12 @@ void Populace::GenerateEducations() {
 			if (classCount == 0)classCount = 1;
 
 			int schoolCount = max(1, classCount / 4);
-			std::vector<std::string> schoolNames;
+			vector<string> schoolNames;
 			for (int i = 0; i < schoolCount; i++) {
-				schoolNames.push_back("第" + std::to_string(i + 1) + "高中");
+				schoolNames.push_back("第" + to_string(i + 1) + "高中");
 			}
 
-			std::shuffle(levelPotentials[EDUCATION_SENIOR].begin(), levelPotentials[EDUCATION_SENIOR].end(), generator);
+			shuffle(levelPotentials[EDUCATION_SENIOR].begin(), levelPotentials[EDUCATION_SENIOR].end(), generator);
 			int studentsPerClass = levelPotentials[EDUCATION_SENIOR].size() / classCount;
 
 			for (int i = 0; i < classCount; i++) {
@@ -570,12 +570,12 @@ void Populace::GenerateEducations() {
 		// 大学入学
 		if (!levelPotentials[EDUCATION_COLLEGE].empty()) {
 			int majorCount = 5 + GetRandom(5);
-			std::vector<std::string> schoolNames;
+			vector<string> schoolNames;
 			for (int i = 0; i < majorCount; i++) {
-				schoolNames.push_back("第" + std::to_string(i + 1) + "大学");
+				schoolNames.push_back("第" + to_string(i + 1) + "大学");
 			}
 
-			std::shuffle(levelPotentials[EDUCATION_COLLEGE].begin(), levelPotentials[EDUCATION_COLLEGE].end(), generator);
+			shuffle(levelPotentials[EDUCATION_COLLEGE].begin(), levelPotentials[EDUCATION_COLLEGE].end(), generator);
 			int studentsPerMajor = levelPotentials[EDUCATION_COLLEGE].size() / majorCount;
 
 			for (int i = 0; i < majorCount; i++) {
@@ -599,12 +599,12 @@ void Populace::GenerateEducations() {
 		// 研究生入学
 		if (!levelPotentials[EDUCATION_POST].empty()) {
 			int majorCount = 3 + GetRandom(3);
-			std::vector<std::string> schoolNames;
+			vector<string> schoolNames;
 			for (int i = 0; i < majorCount; i++) {
-				schoolNames.push_back("第" + std::to_string(i + 1) + "研究院");
+				schoolNames.push_back("第" + to_string(i + 1) + "研究院");
 			}
 
-			std::shuffle(levelPotentials[EDUCATION_POST].begin(), levelPotentials[EDUCATION_POST].end(), generator);
+			shuffle(levelPotentials[EDUCATION_POST].begin(), levelPotentials[EDUCATION_POST].end(), generator);
 			int studentsPerMajor = levelPotentials[EDUCATION_POST].size() / majorCount;
 
 			for (int i = 0; i < majorCount; i++) {
@@ -666,8 +666,8 @@ void Populace::GenerateEmotions() {
 		relationshipCount = max(relationshipCount - citizen->GetEmotionExperiences().size(), 0);
 
 		// 随机生成指定段数的经历
-		std::vector<EmotionExperience> newEmotions;
-		std::vector<std::pair<Time, Time>> allocatedPeriods;
+		vector<EmotionExperience> newEmotions;
+		vector<pair<Time, Time>> allocatedPeriods;
 		for (int i = 0; i < relationshipCount; i++) {
 			Time startTime, endTime;
 			bool validPeriod = false;
@@ -738,7 +738,7 @@ void Populace::GenerateEmotions() {
 
 				int candidateBirthYear = candidate->GetBirthday().GetYear();
 				int candidateAge = startTime.GetYear() - candidateBirthYear;
-				int ageDiff = std::abs(birthYear - candidateBirthYear);
+				int ageDiff = abs(birthYear - candidateBirthYear);
 				if (candidateAge < 16 || ageDiff > 10) continue;
 
 				bool timeAvailable = true;
@@ -821,7 +821,7 @@ void Populace::GenerateEmotions() {
 
 				int candidateBirthYear = candidate->GetBirthday().GetYear();
 				int candidateAge = time.GetYear() - candidateBirthYear;
-				int ageDiff = std::abs(currentAge - candidateAge);
+				int ageDiff = abs(currentAge - candidateAge);
 				if (ageDiff > 10) continue;
 
 				bool timeAvailable = true;

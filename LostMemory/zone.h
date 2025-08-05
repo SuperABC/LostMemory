@@ -69,6 +69,12 @@ public:
 	Zone(ZONE_TYPE type) : type(type) {
 		plotType = PLOT_ZONE;
 	}
+	~Zone() {
+		for(auto building : buildings){
+			delete building;
+		}
+		buildings.clear();
+	}
 
 	// 获取/设置园区类型
 	ZONE_TYPE GetType();

@@ -198,12 +198,85 @@ static std::string buildingText[BUILDING_END] = {
 	"焚烧厂"       // BUILDING_INCINERATION
 };
 
+enum FACE_DIRECTION {
+	FACE_WEST,
+	FACE_EAST,
+	FACE_NORTH,
+	FACE_SOUTH
+};
+
+class Facility : public Rect {
+public:
+	enum FACILITY_TYPE { FACILITY_CORRIDOR, FACILITY_STAIR, FACILITY_ELEVATOR };
+
+	Facility(FACILITY_TYPE type, float x, float y, float w, float h)
+		: Rect(x, y, w, h), type(type) {}
+
+	FACILITY_TYPE getType() const { return type; }
+	const std::string& getId() const { return id; }
+
+private:
+	FACILITY_TYPE type;
+	std::string id;
+};
+
+class Floor : public Rect {
+public:
+	Floor(int level, int width, int height)
+		: level(level), Rect(0, 0, width, height) {}
+	~Floor() {}
+
+	void AddFacility(Facility facility) {
+		facilities.push_back(facility);
+	}
+
+	void AddUsage(std::pair<Rect, int> usage) {
+		usages.push_back(usage);
+	}
+
+	void AddRoom(Room* room) {
+		rooms.push_back(room);
+	}
+
+	// 获取楼层
+	int GetLevel() const { return level; }
+
+	// 访问组件
+	const std::vector<Facility>& GetFacilities() const { return facilities; }
+	const std::vector<std::pair<Rect, int>>& GetUsages() const { return usages; }
+	const std::vector<Room *>& GetRooms() const { return rooms; }
+
+	// 自动布局
+	void AutoLayout();
+
+private:
+	int level;
+
+	std::vector<Facility> facilities;
+	std::vector<std::pair<Rect, int>> usages;
+	std::vector<Room *> rooms;
+};
+
+enum LAYOUT_TYPE {
+	FLAT_LINAR
+};
+
 enum AREA_TYPE;
 enum ZONE_TYPE;
 class Building : public Plot {
 public:
 	Building(BUILDING_TYPE type) : type(type) {
 		plotType = PLOT_BUILDING;
+	}
+	~Building() {
+		for (auto organization : organizations) {
+			delete organization;
+		}
+		organizations.clear();
+		for (auto room : rooms) {
+			delete room;
+		}
+		rooms.clear();
 	}
 
 	// 获取/设置类型
@@ -223,6 +296,8 @@ public:
 	// 获取/设置组织/房间
 	std::vector<Organization*>& GetOrganizations() { return organizations; }
 	std::vector<Room*>& GetRooms() { return rooms; }
+
+	void ClassicLayout(LAYOUT_TYPE layout, FACE_DIRECTION face, float underScalar, float aboveScalar);
 
 	// 指定建筑属性
 	virtual void InitBuilding() = 0;
@@ -265,6 +340,9 @@ protected:
 
 	int layers = 1;
 	int basement = 0;
+
+	Rect above, ground, under;
+	std::vector<Floor> floors;
 };
 
 class RoadfixBuilding : public Building {

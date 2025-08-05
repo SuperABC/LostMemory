@@ -1,9 +1,13 @@
 ﻿#pragma once
 #pragma warning(disable:4244)
 #pragma warning(disable:4267)
+#pragma warning(disable:4150)
+
+#include <string>
 
 #include <windows.h>
 #include <strsafe.h>
+
 
 // 获取[0, range - 1]的随机整数
 int GetRandom(int range, int (*cdf)(int) = nullptr);

@@ -1,7 +1,61 @@
 ﻿#include "plot.h"
 
+
+using namespace std;
+
+int Plot::GetAcreage() {
+	return acreage;
+}
+
+float Rect::GetSizeX() {
+	return sizeX;
+}
+
+float Rect::GetSizeY() {
+	return sizeY;
+}
+
+float Rect::GetOffsetX() {
+	return offsetX;
+}
+
+float Rect::GetOffsetY() {
+	return offsetY;
+}
+
+float Rect::GetLeft() {
+	return offsetX;
+}
+
+float Rect::GetRight() {
+	return offsetX + sizeX;
+}
+
+float Rect::GetTop() {
+	return offsetY;
+}
+
+float Rect::GetBottom() {
+	return offsetY + sizeY;
+}
+
+void Rect::SetPosition(float left, float right, float top, float bottom) {
+	this->offsetX = left;
+	this->offsetY = top;
+	this->sizeX = right - left;
+	this->sizeY = bottom - top;
+}
+
 int Plot::GetId() {
 	return id;
+}
+
+pair<int, int>& Plot::GetAcreageRange() {
+	return acreageRange;
+}
+
+pair<int, int>& Plot::GetDistanceRange() {
+	return distanceRange;
 }
 
 void Plot::SetId(int id) {
@@ -17,10 +71,7 @@ void Plot::SetDistance(int distance) {
 }
 
 void Plot::SetPosition(int left, int right, int top, int bottom) {
-	this->offsetX = left;
-	this->offsetY = top;
-	this->sizeX = right - left;
-	this->sizeY = bottom - top;
+	Rect::SetPosition(left, right, top, bottom);
 	this->acreage = this->sizeX * this->sizeY * 100;
 }
 
@@ -31,46 +82,3 @@ void Plot::SetPosition(Plot* plot) {
 	sizeY = plot->sizeY;
 }
 
-std::pair<int, int>& Plot::GetAcreageRange() {
-	return acreageRange;
-}
-
-std::pair<int, int>& Plot::GetDistanceRange() {
-	return distanceRange;
-}
-
-int Plot::GetAcreage() {
-	return acreage;
-}
-
-int Plot::GetSizeX() {
-	return sizeX;
-}
-
-int Plot::GetSizeY() {
-	return sizeY;
-}
-
-int Plot::GetOffsetX() {
-	return offsetX;
-}
-
-int Plot::GetOffsetY() {
-	return offsetY;
-}
-
-int Plot::GetLeft() {
-	return offsetX;
-}
-
-int Plot::GetRight() {
-	return offsetX + sizeX;
-}
-
-int Plot::GetTop() {
-	return offsetY;
-}
-
-int Plot::GetBottom() {
-	return offsetY + sizeY;
-}

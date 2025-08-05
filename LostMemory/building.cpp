@@ -7,6 +7,28 @@
 
 using namespace std;
 
+void Floor::AutoLayout() {
+    if (rooms.size() == 0)return;
+
+    int idx = 0;
+    for (auto usage : usages) {
+        if (usage.second == FACE_WEST || usage.second == FACE_EAST) {
+            for (int y = 0; y + rooms[idx]->GetAcreage() / usage.first.GetSizeX() < usage.first.GetSizeY(); idx++) {
+                if (idx >= rooms.size())break;
+                rooms[idx]->SetPosition(usage.first.GetLeft(), usage.first.GetRight(), y, y + rooms[idx]->GetAcreage() / usage.first.GetSizeX());
+                y += rooms[idx]->GetAcreage() / usage.first.GetSizeX();
+            }
+        }
+        if (usage.second == FACE_NORTH || usage.second == FACE_SOUTH) {
+            for (int x = 0; x + rooms[idx]->GetAcreage() / usage.first.GetSizeY() < usage.first.GetSizeX(); idx++) {
+                if (idx >= rooms.size())break;
+                rooms[idx]->SetPosition(x, x + rooms[idx]->GetAcreage() / usage.first.GetSizeY(), usage.first.GetTop(), usage.first.GetBottom());
+                x += rooms[idx]->GetAcreage() / usage.first.GetSizeY();
+            }
+        }
+    }
+}
+
 BUILDING_TYPE Building::GetType() {
     return type;
 }
@@ -33,6 +55,132 @@ ZONE_TYPE Building::GetZoneType() {
 
 void Building::SetZoneType(ZONE_TYPE type) {
     zone = type;
+}
+
+void Building::ClassicLayout(LAYOUT_TYPE layout, FACE_DIRECTION face, float underScalar, float aboveScalar) {
+    float aboveScalarX = aboveScalar;
+    float aboveScalarY = aboveScalar;
+    float underScalarX = underScalar;
+    float underScalarY = underScalar;
+
+    // 设定局部位置
+    float minLength = 1.6f;
+    float minGap = 0.4f;
+    if (sizeX * aboveScalarX < minLength) {
+        aboveScalarX = minLength / sizeX;
+    }
+    if (sizeY * aboveScalarY < minLength) {
+        aboveScalarY = minLength / sizeY;
+    }
+    if (sizeX - minGap < sizeX * aboveScalarX) {
+        aboveScalarX = 1.f - minGap / sizeX;
+    }
+    if (sizeY - minGap < sizeY * aboveScalarY) {
+        aboveScalarY = 1.f - minGap / sizeY;
+    }
+    under = Rect(sizeX * (1.0f - underScalarX) / 2, sizeY * (1.0f - underScalarY) / 2,
+        sizeX * underScalarX, sizeY * underScalarY);
+    switch (face) {
+    case FACE_WEST:
+        above = Rect(sizeX * (1.0f + underScalarX) / 2 - sizeX * aboveScalarX, sizeY * (1.0f - aboveScalarY) / 2,
+            sizeX * aboveScalarX, sizeY * aboveScalarY);
+        break;
+    case FACE_EAST:
+        above = Rect(sizeX * (1.0f - underScalarX) / 2, sizeY * (1.0f - aboveScalarY) / 2,
+            sizeX * aboveScalarX, sizeY * aboveScalarY);
+        break;
+    case FACE_NORTH:
+        above = Rect(sizeX * (1.0f - aboveScalarX) / 2, sizeY * (1.0f + underScalarY) / 2 - sizeY * aboveScalarY,
+            sizeX * aboveScalarX, sizeY * aboveScalarY);
+        break;
+    case FACE_SOUTH:
+        above = Rect(sizeX * (1.0f - aboveScalarX) / 2, sizeY * (1.0f - underScalarY) / 2,
+            sizeX * aboveScalarX, sizeY * aboveScalarY);
+        break;
+    default:
+        break;
+    }
+
+    // 添加楼层
+    float underX = sizeX * underScalar;
+    float underY = sizeY * underScalar;
+    for (int i = -basement; i < 0; i++) {
+        floors.emplace_back(i, underX, underY);
+    }
+    floors.emplace_back(0, sizeX, sizeY);
+    int aboveX = sizeX * aboveScalar;
+    int aboveY = sizeY * aboveScalar;
+    for (int i = 0; i < layers; i++) {
+        floors.emplace_back(i + 1, aboveX, aboveY);
+    }
+
+    // 把房间加入楼层
+    for (auto room : rooms) {
+        floors[basement + room->GetLayer()].AddRoom(room);
+    }
+
+    // 划分每层区域
+    switch (layout) {
+    case FLAT_LINAR: {
+        vector<Facility> corridors;
+        vector<Facility> stairs;
+        vector<Facility> elevators;
+        vector<pair<Rect, int>> usages;
+        switch (face) {
+        case FACE_WEST:
+            corridors.push_back(Facility(Facility::FACILITY_CORRIDOR,
+                0, above.GetSizeY() / 2 - 0.4f, above.GetSizeX() / 2 - 0.2f, 0.8f));
+            corridors.push_back(Facility(Facility::FACILITY_CORRIDOR,
+                above.GetSizeX() / 2 - 0.2f, 0, 0.4f, above.GetSizeY()));
+            corridors.push_back(Facility(Facility::FACILITY_CORRIDOR,
+                above.GetSizeX() / 2 + 0.2f, above.GetSizeY() / 2 - 0.2f, above.GetSizeX() / 2 - 0.2f, 0.4f));
+            stairs.push_back(Facility(Facility::FACILITY_STAIR, 0, 0, above.GetSizeX() / 2 - 0.2f, 0.4f));
+            stairs.push_back(Facility(Facility::FACILITY_STAIR, 0, above.GetSizeY() - 0.4f, above.GetSizeX() / 2 - 0.2f, 0.4f));
+            elevators.push_back(Facility(Facility::FACILITY_ELEVATOR,
+                above.GetSizeX() / 2 + 0.2f, above.GetSizeY() / 2 - 0.4f, above.GetSizeX() / 2 - 0.2f, 0.2f));
+            elevators.push_back(Facility(Facility::FACILITY_ELEVATOR,
+                above.GetSizeX() / 2 + 0.2f, above.GetSizeY() / 2 + 0.2f, above.GetSizeX() / 2 - 0.2f, 0.2f));
+            usages.emplace_back(Rect(0, 0.4f, above.GetSizeX() / 2 - 0.2f, above.GetSizeY() / 2 - 0.8f), face);
+            usages.emplace_back(Rect(0, above.GetSizeY() / 2 + 0.4f, above.GetSizeX() / 2 - 0.2f, above.GetSizeY() / 2 - 0.8f), face);
+            usages.emplace_back(Rect(above.GetSizeX() / 2 + 0.2f, 0, above.GetSizeX() / 2 - 0.2f, above.GetSizeY() / 2 - 0.4f), face);
+            usages.emplace_back(Rect(above.GetSizeX() / 2 + 0.2f, above.GetSizeY() / 2 + 0.4f, above.GetSizeX() / 2 - 0.2f, above.GetSizeY() / 2 - 0.4f), face);
+            break;
+        case FACE_EAST:
+            break;
+        case FACE_NORTH:
+            break;
+        case FACE_SOUTH:
+            break;
+        default:
+            break;
+        }
+        for (auto& floor : floors) {
+            for (auto stair : stairs) {
+                floor.AddFacility(stair);
+            }
+            for (auto elevator : elevators) {
+                floor.AddFacility(elevator);
+            }
+            if (floor.GetLevel() > 0) {
+                for (auto corridor : corridors) {
+                    floor.AddFacility(corridor);
+                }
+                for (auto usage : usages) {
+                    floor.AddUsage(usage);
+                }
+            }
+        }
+
+        break;
+    }
+    default:
+        break;
+    }
+
+    // 分配房间位置
+    for (auto floor : floors) {
+        floor.AutoLayout();
+    }
 }
 
 Building* CreateBuilding(BUILDING_TYPE type) {
@@ -1308,7 +1456,7 @@ void ResidentBuilding::InitBuilding() {
     else {
         layers = 3 + GetRandom(5);
     }
-    basement = 1 + GetRandom(2);
+    basement = GetRandom(2);
 }
 
 void ResidentBuilding::DistributeInside() {
@@ -1356,7 +1504,10 @@ void ResidentBuilding::DistributeInside() {
 }
 
 void ResidentBuilding::ArrangeLayout() {
+    //随机朝向
+    FACE_DIRECTION face = (FACE_DIRECTION)GetRandom(4);
 
+    ClassicLayout(FLAT_LINAR, face, 0.8f, 0.4f);
 }
 
 void VillaBuilding::InitBuilding() {
@@ -3017,4 +3168,3 @@ void IncinerationBuilding::DistributeInside() {
 void IncinerationBuilding::ArrangeLayout() {
 
 }
-

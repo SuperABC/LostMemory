@@ -30,6 +30,7 @@ enum RELATIVE_TYPE {
 class Person {
 public:
 	Person() = default;
+	~Person();
 
 	// 获取/设置基础信息
 	int GetId() const { return id; }

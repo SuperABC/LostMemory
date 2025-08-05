@@ -1,6 +1,9 @@
 ﻿#pragma once
 
+#include "plot.h"
+
 #include <string>
+
 
 enum ROOM_TYPE {
 	ROOM_NONE, //无
@@ -203,7 +206,7 @@ static std::string roomText[ROOM_END] = {
 	"金库"
 };
 
-class Room {
+class Room : public Rect {
 public:
 	Room(ROOM_TYPE type) : type(type) {}
 

@@ -327,6 +327,12 @@ static std::string organizationText[ORGANIZATION_END] = {
 class Organization {
 public:
 	Organization(ORGANIZATION_TYPE type) : type(type) {}
+	~Organization() {
+		for (auto room : rooms) {
+			delete room;
+		}
+		rooms.clear();
+	}
 
 	// 获取/设置类型
 	ORGANIZATION_TYPE GetType();
