@@ -1,31 +1,52 @@
-﻿#pragma warning(disable:4244)
-#pragma warning(disable:4267)
-
+﻿#include "util.h"
 #include "building.h"
-#include "util.h"
+
+#include <filesystem>
+#include <fstream>
+#include <string>
 
 
 using namespace std;
 
-void Floor::AutoLayout() {
+std::unordered_map<std::string, std::vector<std::pair<Facility::FACILITY_TYPE, std::vector<float>>>> Building::templateFacility = {};
+std::unordered_map<std::string, std::vector<std::pair<FACE_DIRECTION, std::vector<float>>>> Building::templateUsage = {};
+
+Room* Floor::SampleRoom(vector<Room> & complement, int idx) {
+    if (idx < rooms.size())return rooms[idx];
+
+    Room *room = new Room(complement[(idx - rooms.size()) % complement.size()]);
+    room->SetLayer(level);
+    rooms.push_back(room);
+    return room;
+}
+
+void Floor::UsageLayout(vector<Room> complement) {
     if (rooms.size() == 0)return;
 
     int idx = 0;
     for (auto usage : usages) {
+        if (idx >= rooms.size())break;
         if (usage.second == FACE_WEST || usage.second == FACE_EAST) {
-            for (int y = 0; y + rooms[idx]->GetAcreage() / usage.first.GetSizeX() < usage.first.GetSizeY(); idx++) {
-                if (idx >= rooms.size())break;
-                rooms[idx]->SetPosition(usage.first.GetLeft(), usage.first.GetRight(), y, y + rooms[idx]->GetAcreage() / usage.first.GetSizeX());
-                y += rooms[idx]->GetAcreage() / usage.first.GetSizeX();
+            for (float y = 0; y + (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeX() < usage.first.GetSizeY(); idx++) {
+                SampleRoom(complement, idx)->SetPosition(
+                    usage.first.GetLeft(), usage.first.GetRight(), y, y + (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeX());
+                y += (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeX();
             }
         }
         if (usage.second == FACE_NORTH || usage.second == FACE_SOUTH) {
-            for (int x = 0; x + rooms[idx]->GetAcreage() / usage.first.GetSizeY() < usage.first.GetSizeX(); idx++) {
-                if (idx >= rooms.size())break;
-                rooms[idx]->SetPosition(x, x + rooms[idx]->GetAcreage() / usage.first.GetSizeY(), usage.first.GetTop(), usage.first.GetBottom());
-                x += rooms[idx]->GetAcreage() / usage.first.GetSizeY();
+            for (float x = 0; x + (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeY() < usage.first.GetSizeX(); idx++) {
+                SampleRoom(complement, idx)->SetPosition(
+                    x, x + (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeY(), usage.first.GetTop(), usage.first.GetBottom());
+                x += (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeY();
             }
         }
+    }
+
+    if (idx < rooms.size()) {
+        for (int i = idx; i < rooms.size(); i++) {
+            delete rooms[i];
+        }
+        rooms.resize(idx);
     }
 }
 
@@ -57,7 +78,7 @@ void Building::SetZoneType(ZONE_TYPE type) {
     zone = type;
 }
 
-void Building::ClassicLayout(LAYOUT_TYPE layout, FACE_DIRECTION face, float underScalar, float aboveScalar) {
+void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScalar, float aboveScalar) {
     float aboveScalarX = aboveScalar;
     float aboveScalarY = aboveScalar;
     float underScalarX = underScalar;
@@ -119,67 +140,92 @@ void Building::ClassicLayout(LAYOUT_TYPE layout, FACE_DIRECTION face, float unde
         floors[basement + room->GetLayer()].AddRoom(room);
     }
 
-    // 划分每层区域
-    switch (layout) {
-    case FLAT_LINAR: {
-        vector<Facility> corridors;
-        vector<Facility> stairs;
-        vector<Facility> elevators;
-        vector<pair<Rect, int>> usages;
-        switch (face) {
-        case FACE_WEST:
-            corridors.push_back(Facility(Facility::FACILITY_CORRIDOR,
-                0, above.GetSizeY() / 2 - 0.4f, above.GetSizeX() / 2 - 0.2f, 0.8f));
-            corridors.push_back(Facility(Facility::FACILITY_CORRIDOR,
-                above.GetSizeX() / 2 - 0.2f, 0, 0.4f, above.GetSizeY()));
-            corridors.push_back(Facility(Facility::FACILITY_CORRIDOR,
-                above.GetSizeX() / 2 + 0.2f, above.GetSizeY() / 2 - 0.2f, above.GetSizeX() / 2 - 0.2f, 0.4f));
-            stairs.push_back(Facility(Facility::FACILITY_STAIR, 0, 0, above.GetSizeX() / 2 - 0.2f, 0.4f));
-            stairs.push_back(Facility(Facility::FACILITY_STAIR, 0, above.GetSizeY() - 0.4f, above.GetSizeX() / 2 - 0.2f, 0.4f));
-            elevators.push_back(Facility(Facility::FACILITY_ELEVATOR,
-                above.GetSizeX() / 2 + 0.2f, above.GetSizeY() / 2 - 0.4f, above.GetSizeX() / 2 - 0.2f, 0.2f));
-            elevators.push_back(Facility(Facility::FACILITY_ELEVATOR,
-                above.GetSizeX() / 2 + 0.2f, above.GetSizeY() / 2 + 0.2f, above.GetSizeX() / 2 - 0.2f, 0.2f));
-            usages.emplace_back(Rect(0, 0.4f, above.GetSizeX() / 2 - 0.2f, above.GetSizeY() / 2 - 0.8f), face);
-            usages.emplace_back(Rect(0, above.GetSizeY() / 2 + 0.4f, above.GetSizeX() / 2 - 0.2f, above.GetSizeY() / 2 - 0.8f), face);
-            usages.emplace_back(Rect(above.GetSizeX() / 2 + 0.2f, 0, above.GetSizeX() / 2 - 0.2f, above.GetSizeY() / 2 - 0.4f), face);
-            usages.emplace_back(Rect(above.GetSizeX() / 2 + 0.2f, above.GetSizeY() / 2 + 0.4f, above.GetSizeX() / 2 - 0.2f, above.GetSizeY() / 2 - 0.4f), face);
-            break;
-        case FACE_EAST:
-            break;
-        case FACE_NORTH:
-            break;
-        case FACE_SOUTH:
-            break;
-        default:
-            break;
+    //布局公共设施
+    for (auto &floor : floors) {
+        for (auto facility : templateFacility[temp + "_" + faceAbbr[face]]) {
+            if (floor.GetLevel() == 0)continue;
+            if (floor.GetLevel() < 0 && facility.first == Facility::FACILITY_CORRIDOR)continue;
+            float l = facility.second[0] * floor.GetSizeX() + facility.second[1] * 0.1f;
+            float t = facility.second[2] * floor.GetSizeY() + facility.second[3] * 0.1f;
+            float r = facility.second[4] * floor.GetSizeX() + facility.second[5] * 0.1f;
+            float b = facility.second[6] * floor.GetSizeY() + facility.second[7] * 0.1f;
+            floor.AddFacility(Facility(facility.first, l, t, r - l, b - t));
         }
-        for (auto& floor : floors) {
-            for (auto stair : stairs) {
-                floor.AddFacility(stair);
-            }
-            for (auto elevator : elevators) {
-                floor.AddFacility(elevator);
-            }
-            if (floor.GetLevel() > 0) {
-                for (auto corridor : corridors) {
-                    floor.AddFacility(corridor);
-                }
-                for (auto usage : usages) {
-                    floor.AddUsage(usage);
-                }
-            }
+        for (auto usage : templateUsage[temp + "_" + faceAbbr[face]]) {
+            if (floor.GetLevel() <= 0)continue;
+            float l = usage.second[0] * floor.GetSizeX() + usage.second[1] * 0.1f;
+            float t = usage.second[2] * floor.GetSizeY() + usage.second[3] * 0.1f;
+            float r = usage.second[4] * floor.GetSizeX() + usage.second[5] * 0.1f;
+            float b = usage.second[6] * floor.GetSizeY() + usage.second[7] * 0.1f;
+            floor.AddUsage(make_pair(Rect(l, t, r - l, b - t), usage.first));
         }
-
-        break;
-    }
-    default:
-        break;
     }
 
     // 分配房间位置
-    for (auto floor : floors) {
-        floor.AutoLayout();
+    for (auto &floor : floors) {
+        int num = floor.GetRooms().size();
+        floor.UsageLayout(complement);
+
+        for (int i = num; i < floor.GetRooms().size(); i++) {
+            rooms.push_back(floor.GetRooms()[num]);
+        }
+    }
+}
+
+void Building::ReadTemplates(std::string path) {
+    std::vector<std::pair<std::string, std::string>> templates;
+
+    if (!filesystem::exists(path)) {
+        throw std::runtime_error("Path does not exist: " + path);
+    }
+
+    for (const auto& entry : std::filesystem::directory_iterator(path)) {
+        if (entry.is_regular_file()) {
+            string filename = entry.path().filename().string();
+            filename = filename.substr(0, filename.length() - 4);
+
+            ifstream fin(entry.path());
+            string type;
+            float param;
+            if (fin.is_open()) {
+                templateFacility.emplace(filename, vector<pair<Facility::FACILITY_TYPE, std::vector<float>>>());
+                templateUsage.emplace(filename, vector<pair<FACE_DIRECTION, std::vector<float>>>());
+                while (!fin.eof()) {
+                    pair<Facility::FACILITY_TYPE, std::vector<float>> facilities;
+                    pair<FACE_DIRECTION, std::vector<float>> usages;
+
+                    fin >> type;
+
+                    if (type == "corridor")facilities.first = Facility::FACILITY_CORRIDOR;
+                    else if (type == "stair")facilities.first = Facility::FACILITY_STAIR;
+                    else if (type == "elevator")facilities.first = Facility::FACILITY_ELEVATOR;
+                    else if (type == "usage") {
+                        fin >> param;
+                        usages.first = (FACE_DIRECTION)param;
+                    }
+                    else break;
+
+                    if (type == "corridor" || type == "stair" || type == "elevator") {
+                        for (int i = 0; i < 8; i++) {
+                            fin >> param;
+                            facilities.second.push_back(param);
+                        }
+                        templateFacility[filename].push_back(facilities);
+                    }
+                    else if (type == "usage") {
+                        for (int i = 0; i < 8; i++) {
+                            fin >> param;
+                            usages.second.push_back(param);
+                        }
+                        templateUsage[filename].push_back(usages);
+                    }
+                    else break;
+                }
+            }
+            else {
+                throw std::runtime_error("Failed to open file: " + filename);
+            }
+        }
     }
 }
 
@@ -446,47 +492,11 @@ void RoadfixBuilding::InitBuilding() {
 }
 
 void RoadfixBuilding::DistributeInside() {
-    //Parking
-    //Guard
-    //Clean
-    //Toilet
-    //Warehouse
-    //Office
 
-    vector<int> acreages(layers, GetAcreage() * 0.16);
-
-    auto roadfix = CreateOrganization<RoadfixOrganization>();
-
-    roadfix->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.48));
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            roadfix->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    if (zone == ZONE_NONE) {
-        roadfix->AddRoom(CreateRoom<GuardRoom>(1, 40));
-        acreages[0] -= 40;
-    }
-    roadfix->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        roadfix->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 40));
-        acreages[layer] -= 40;
-    }
-    for (int i = 0; i < acreages[0] / 200; i++) {
-        roadfix->AddRoom(CreateRoom<OfficeRoom>(1, 40));
-        roadfix->AddRoom(CreateRoom<WarehouseRoom>(1, 160));
-    }
-    for (int layer = 1; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            roadfix->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void RoadfixBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> RoadfixBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ParkingBuilding::InitBuilding() {
@@ -496,34 +506,11 @@ void ParkingBuilding::InitBuilding() {
 }
 
 void ParkingBuilding::DistributeInside() {
-    //Parking
-    //Guard
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto parking = CreateOrganization<ParkingOrganization>();
-
-    if (layers == 1) {
-        parking->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.64));
-    }
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            parking->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    if (zone == ZONE_NONE) {
-        parking->AddRoom(CreateRoom<GuardRoom>(1, 40));
-    }
-    if (layers > 1) {
-        for (int layer = 0; layer < layers; layer++) {
-            parking->AddRoom(CreateRoom<ParkingRoom>(layer + 1, acreages[layer]));
-        }
-    }
 }
 
-void ParkingBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> ParkingBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void BankBuilding::InitBuilding() {
@@ -543,54 +530,11 @@ void BankBuilding::InitBuilding() {
 }
 
 void BankBuilding::DistributeInside() {
-    //Guard
-    //Clean
-    //Toilet
-    //Office
-    //Reception
-    //Gold
-    //Warehouse
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto bank = CreateOrganization<BankOrganization>();
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++) {
-            if (GetRandom(10) == 0) {
-                bank->AddRoom(CreateRoom<GoldRoom>(-i, GetAcreage() * 0.16));
-            }
-            else {
-                bank->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.16));
-            }
-        }
-    }
-
-    if (zone == ZONE_NONE) {
-        bank->AddRoom(CreateRoom<GuardRoom>(1, 40));
-        acreages[0] -= 40;
-    }
-    bank->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        bank->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    if (acreages[0] > 200) {
-        bank->AddRoom(CreateRoom<ReceptionRoom>(1, 200));
-    }
-    else {
-        bank->AddRoom(CreateRoom<ReceptionRoom>(1, acreages[0]));
-    }
-    for (int layer = 1; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            bank->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void BankBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> BankBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void LibraryBuilding::InitBuilding() {
@@ -610,58 +554,11 @@ void LibraryBuilding::InitBuilding() {
 }
 
 void LibraryBuilding::DistributeInside() {
-    //Parking
-    //Guard
-    //Clean
-    //Toilet
-    //Warehouse
-    //Office
-    //Reception
-    //Reading
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto library = CreateOrganization<LibraryOrganization>();
-
-    if (zone == ZONE_NONE) {
-        if (basement > 0) {
-            library->AddRoom(CreateRoom<WarehouseRoom>(-1, GetAcreage() * 0.16));
-            library->AddRoom(CreateRoom<ParkingRoom>(-1, GetAcreage() * 0.48));
-        }
-        if (basement > 1) {
-            for (int i = 1; i < basement; i++)
-                library->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-        }
-    }
-    else {
-        basement = 1;
-        library->AddRoom(CreateRoom<WarehouseRoom>(-1, GetAcreage() * 0.16));
-    }
-
-    if (zone == ZONE_NONE) {
-        library->AddRoom(CreateRoom<GuardRoom>(1, 40));
-        acreages[0] -= 40;
-    }
-    library->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        library->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    library->AddRoom(CreateRoom<ReceptionRoom>(1, 120));
-    acreages[0] -= 120;
-    library->AddRoom(CreateRoom<OfficeRoom>(1, 80));
-    acreages[0] -= 80;
-    for (int layer = 0; layer < layers; layer++) {
-        int n = 2 + GetRandom(3);
-        for (int i = 0; i < n; i++) {
-            library->AddRoom(CreateRoom<ReadingRoom>(layer + 1, acreages[layer] / n));
-        }
-    }
 }
 
-void LibraryBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> LibraryBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ClinicBuilding::InitBuilding() {
@@ -681,44 +578,11 @@ void ClinicBuilding::InitBuilding() {
 }
 
 void ClinicBuilding::DistributeInside() {
-    //Parking
-    //Toilet
-    //Office
-    //Doctor
-    //Reception
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto clinic = CreateOrganization<ClinicOrganization>();
-
-    if (zone == ZONE_NONE) {
-        if (basement > 0) {
-            for (int i = 0; i < basement; i++)
-                clinic->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-        }
-    }
-
-    for (int layer = 0; layer < layers; layer++) {
-        clinic->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 40));
-        acreages[layer] -= 40;
-    }
-    clinic->AddRoom(CreateRoom<ReceptionRoom>(1, 80));
-    acreages[0] -= 80;
-    for (int i = 0; i < acreages[0] / 200; i++) {
-        clinic->AddRoom(CreateRoom<OfficeRoom>(1, 40));
-        clinic->AddRoom(CreateRoom<DoctorRoom>(1, 80));
-        clinic->AddRoom(CreateRoom<DoctorRoom>(1, 80));
-    }
-    for (int layer = 1; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 120; i++) {
-            clinic->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 40));
-            clinic->AddRoom(CreateRoom<DoctorRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void ClinicBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> ClinicBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void HospitalBuilding::InitBuilding() {
@@ -741,68 +605,11 @@ void HospitalBuilding::InitBuilding() {
 }
 
 void HospitalBuilding::DistributeInside() {
-    //Parking
-    //Toilet
-    //Office
-    //Doctor
-    //Reception
-    //Warehouse
-    //Outpatient
-    //Emergency
-    //ICU
-    //Operation
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto hospital = CreateOrganization<HospitalOrganization>();
-
-    if (zone == ZONE_NONE) {
-        if (basement > 0) {
-            for (int i = 0; i < basement - 1; i++)
-                hospital->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-            hospital->AddRoom(CreateRoom<WarehouseRoom>(-basement, GetAcreage() * 0.16));
-        }
-    }
-    else {
-        basement = 1;
-        hospital->AddRoom(CreateRoom<WarehouseRoom>(-basement, GetAcreage() * 0.16));
-    }
-
-    if (zone == ZONE_NONE) {
-        hospital->AddRoom(CreateRoom<GuardRoom>(1, 40));
-        acreages[0] -= 40;
-    }
-    hospital->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        hospital->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 80));
-        acreages[0] -= 80;
-    }
-    hospital->AddRoom(CreateRoom<ReceptionRoom>(1, 120));
-    acreages[0] -= 120;
-    for (int layer = 0; layer < 1; layer++) {
-        for (int i = 0; i < acreages[layer] / 200; i++) {
-            hospital->AddRoom(CreateRoom<OutpatientRoom>(layer + 1, 40));
-            hospital->AddRoom(CreateRoom<OutpatientRoom>(layer + 1, 40));
-            hospital->AddRoom(CreateRoom<EmergencyRoom>(layer + 1, 120));
-        }
-    }
-    for (int layer = 2; layer < layers - 2; layer++) {
-        for (int i = 0; i < acreages[layer] / 240; i++) {
-            hospital->AddRoom(CreateRoom<ICURoom>(layer + 1, 120));
-            hospital->AddRoom(CreateRoom<OperationRoom>(layer + 1, 120));
-        }
-    }
-    for (int layer = max(2, layers - 2); layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 120; i++) {
-            hospital->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-            hospital->AddRoom(CreateRoom<DoctorRoom>(layer + 1, 40));
-        }
-    }
 }
 
-void HospitalBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> HospitalBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void InpatientBuilding::InitBuilding() {
@@ -822,55 +629,11 @@ void InpatientBuilding::InitBuilding() {
 }
 
 void InpatientBuilding::DistributeInside() {
-    //Parking
-    //Warehouse
-    //Toilet
-    //Office
-    //Doctor
-    //Reception
-    //Bunk
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto inpatient = CreateOrganization<InpatientOrganization>();
-
-    if (zone == ZONE_NONE) {
-        if (basement > 0) {
-            inpatient->AddRoom(CreateRoom<WarehouseRoom>(-1, GetAcreage() * 0.64));
-            for (int i = 1; i < basement; i++)
-                inpatient->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-        }
-    }
-    else {
-        basement = 1;
-        inpatient->AddRoom(CreateRoom<WarehouseRoom>(-basement, GetAcreage() * 0.64));
-    }
-
-    if (zone == ZONE_NONE) {
-        inpatient->AddRoom(CreateRoom<GuardRoom>(1, 40));
-        acreages[0] -= 40;
-    }
-    inpatient->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        inpatient->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 80));
-        acreages[layer] -= 80;
-        inpatient->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 40));
-        acreages[layer] -= 40;
-        inpatient->AddRoom(CreateRoom<DoctorRoom>(layer + 1, 40));
-        acreages[layer] -= 40;
-    }
-    inpatient->AddRoom(CreateRoom<ReceptionRoom>(1, 80));
-    acreages[0] -= 80;
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            inpatient->AddRoom(CreateRoom<BunkRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void InpatientBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> InpatientBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void SanatoriumBuilding::InitBuilding() {
@@ -890,51 +653,11 @@ void SanatoriumBuilding::InitBuilding() {
 }
 
 void SanatoriumBuilding::DistributeInside() {
-    //Parking
-    //Warehouse
-    //Toilet
-    //Office
-    //Doctor
-    //Reception
-    //Bunk
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto sanatorium = CreateOrganization<SanatoriumOrganization>();
-
-    if (zone == ZONE_NONE) {
-        if (basement > 0) {
-            sanatorium->AddRoom(CreateRoom<WarehouseRoom>(-1, GetAcreage() * 0.64));
-            for (int i = 1; i < basement; i++)
-                sanatorium->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-        }
-    }
-    else {
-        basement = 1;
-        sanatorium->AddRoom(CreateRoom<WarehouseRoom>(-basement, GetAcreage() * 0.64));
-    }
-
-    for (int layer = 0; layer < layers; layer++) {
-        sanatorium->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 80));
-        acreages[layer] -= 80;
-        sanatorium->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 40));
-        acreages[layer] -= 40;
-        sanatorium->AddRoom(CreateRoom<DoctorRoom>(layer + 1, 40));
-        acreages[layer] -= 40;
-        sanatorium->AddRoom(CreateRoom<DoctorRoom>(layer + 1, 40));
-        acreages[layer] -= 40;
-    }
-    sanatorium->AddRoom(CreateRoom<ReceptionRoom>(1, 80));
-    acreages[0] -= 80;
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            sanatorium->AddRoom(CreateRoom<BunkRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void SanatoriumBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> SanatoriumBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PoliceBuilding::InitBuilding() {
@@ -954,44 +677,11 @@ void PoliceBuilding::InitBuilding() {
 }
 
 void PoliceBuilding::DistributeInside() {
-    //Parking
-    //Guard
-    //Clean
-    //Toilet
-    //Warehouse
-    //Office
-    //Reception
 
-    vector<int> acreages(layers, GetAcreage() * 0.16);
-
-    auto police = CreateOrganization<PoliceOrganization>();
-
-    police->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.48));
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            police->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    police->AddRoom(CreateRoom<GuardRoom>(1, 40));
-    acreages[0] -= 40;
-    police->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        police->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    police->AddRoom(CreateRoom<ReceptionRoom>(1, 60));
-    acreages[0] -= 60;
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            police->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void PoliceBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PoliceBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void FireBuilding::InitBuilding() {
@@ -1006,44 +696,11 @@ void FireBuilding::InitBuilding() {
 }
 
 void FireBuilding::DistributeInside() {
-    //Parking
-    //Guard
-    //Clean
-    //Toilet
-    //Warehouse
-    //Office
-    //Reception
 
-    vector<int> acreages(layers, GetAcreage() * 0.16);
-
-    auto fire = CreateOrganization<FireOrganization>();
-
-    fire->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.48));
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            fire->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    fire->AddRoom(CreateRoom<GuardRoom>(1, 40));
-    acreages[0] -= 40;
-    fire->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        fire->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    fire->AddRoom(CreateRoom<ReceptionRoom>(1, 60));
-    acreages[0] -= 60;
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            fire->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void FireBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> FireBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void SchoolBuilding::InitBuilding() {
@@ -1066,64 +723,11 @@ void SchoolBuilding::InitBuilding() {
 }
 
 void SchoolBuilding::DistributeInside() {
-    //Guard
-    //Clean
-    //Toilet
-    //Class
-    //Office
-    //Meeting
-    //Grocery
-    //Computer
-    //Review
-    //Playground
 
-    vector<int> acreages;
-    if (zone == ZONE_NONE) {
-        acreages = vector<int>(layers, GetAcreage() * 0.16);
-    }
-    else {
-        acreages = vector<int>(layers, GetAcreage() * 0.64);
-    }
-
-    Organization* school;
-    if (zone == ZONE_NONE) {
-        if (GetRandom(2) == 0)
-            school = CreateOrganization<PrimaryOrganization>();
-        else if (GetRandom(2) == 0)
-            school = CreateOrganization<MiddleOrganization>();
-        else
-            school = CreateOrganization<VocationalOrganization>();
-    }
-    else {
-        school = CreateOrganization<UniversityOrganization>();
-    }
-
-    if (zone == ZONE_NONE) {
-        school->AddRoom(CreateRoom<PlaygroundRoom>(0, GetAcreage() * 0.48));
-        school->AddRoom(CreateRoom<GuardRoom>(1, 40));
-        acreages[0] -= 40;
-    }
-    school->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        school->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-        school->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        acreages[layer] -= 80;
-        school->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        acreages[layer] -= 80;
-    }
-    school->AddRoom(CreateRoom<ComputerRoom>(layers - 1, 120));
-    acreages[0] -= 120;
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 120; i++) {
-            school->AddRoom(CreateRoom<ClassRoom>(layer + 1, 120));
-        }
-    }
 }
 
-void SchoolBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> SchoolBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void CrematoriumBuilding::InitBuilding() {
@@ -1138,44 +742,11 @@ void CrematoriumBuilding::InitBuilding() {
 }
 
 void CrematoriumBuilding::DistributeInside() {
-    //Reception
-    //Clean
-    //Parking
-    //Office
-    //Condolence
-    //Funeral
-    //Boiler
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto crematorium = CreateOrganization<CrematoriumOrganization>();
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            crematorium->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    crematorium->AddRoom(CreateRoom<ReceptionRoom>(1, 80));
-    acreages[0] -= 80;
-    crematorium->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    crematorium->AddRoom(CreateRoom<CondolenceRoom>(1, 240));
-    acreages[0] -= 240;
-    crematorium->AddRoom(CreateRoom<FuneralRoom>(1, 160));
-    acreages[0] -= 160;
-    crematorium->AddRoom(CreateRoom<FuneralRoom>(1, 160));
-    acreages[0] -= 160;
-    crematorium->AddRoom(CreateRoom<BoilerRoom>(1, 240));
-    acreages[0] -= 240;
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 120; i++) {
-            crematorium->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 120));
-        }
-    }
 }
 
-void CrematoriumBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> CrematoriumBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void CemetryBuilding::InitBuilding() {
@@ -1185,17 +756,11 @@ void CemetryBuilding::InitBuilding() {
 }
 
 void CemetryBuilding::DistributeInside() {
-    //Funeral
-    //Parking
 
-    auto cemetry = CreateOrganization<CemetryOrganization>();
-
-    cemetry->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.16));
-    cemetry->AddRoom(CreateRoom<FuneralRoom>(0, GetAcreage() * 0.48));
 }
 
-void CemetryBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> CemetryBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void TVStationBuilding::InitBuilding() {
@@ -1218,49 +783,11 @@ void TVStationBuilding::InitBuilding() {
 }
 
 void TVStationBuilding::DistributeInside() {
-    //Parking
-    //Guard
-    //Clean
-    //Toilet
-    //Warehouse
-    //Office
-    //Studio
-    //Stage
 
-    vector<int> acreages(layers, GetAcreage() * 0.36);
-
-    auto tv = CreateOrganization<TVStationOrganization>();
-
-    tv->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.28));
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            tv->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    tv->AddRoom(CreateRoom<GuardRoom>(1, 40));
-    acreages[0] -= 40;
-    tv->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        tv->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-        tv->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        acreages[layer] -= 80;
-        tv->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        acreages[layer] -= 80;
-        tv->AddRoom(CreateRoom<StageRoom>(layer + 1, 400));
-        acreages[layer] -= 400;
-    }
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 200; i++) {
-            tv->AddRoom(CreateRoom<StudioRoom>(layer + 1, 200));
-        }
-    }
 }
 
-void TVStationBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> TVStationBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void GasolineBuilding::InitBuilding() {
@@ -1275,17 +802,11 @@ void GasolineBuilding::InitBuilding() {
 }
 
 void GasolineBuilding::DistributeInside() {
-    //Gasoline
-    //Market
 
-    auto gasoline = CreateOrganization<GasolineOrganization>();
-
-    gasoline->AddRoom(CreateRoom<GasolineRoom>(0, GetAcreage() * 0.36));
-    gasoline->AddRoom(CreateRoom<MarketRoom>(0, GetAcreage() * 0.28));
 }
 
-void GasolineBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> GasolineBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ToiletBuilding::InitBuilding() {
@@ -1300,15 +821,11 @@ void ToiletBuilding::InitBuilding() {
 }
 
 void ToiletBuilding::DistributeInside() {
-    //Toilet
 
-    auto toilet = CreateOrganization<ToiletOrganization>();
-
-    toilet->AddRoom(CreateRoom<ToiletRoom>(0, GetAcreage() * 0.64));
 }
 
-void ToiletBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> ToiletBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void SubstationBuilding::InitBuilding() {
@@ -1318,15 +835,11 @@ void SubstationBuilding::InitBuilding() {
 }
 
 void SubstationBuilding::DistributeInside() {
-    //Device
 
-    auto substation = CreateOrganization<DeviceOrganization>();
-
-    substation->AddRoom(CreateRoom<DeviceRoom>(0, GetAcreage() * 0.64));
 }
 
-void SubstationBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> SubstationBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PostBuilding::InitBuilding() {
@@ -1346,44 +859,11 @@ void PostBuilding::InitBuilding() {
 }
 
 void PostBuilding::DistributeInside() {
-    //Parking
-    //Reception
-    //Guard
-    //Clean
-    //Warehouse
-    //Toilet
-    //Office
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto post = CreateOrganization<PostOrganization>();
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            post->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    post->AddRoom(CreateRoom<ReceptionRoom>(1, 200));
-    acreages[0] -= 200;
-    post->AddRoom(CreateRoom<GuardRoom>(1, 40));
-    acreages[0] -= 40;
-    post->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    post->AddRoom(CreateRoom<WarehouseRoom>(1, 200));
-    acreages[0] -= 200;
-    for (int layer = 0; layer < layers; layer++) {
-        post->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            post->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void PostBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PostBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void MetroBuilding::InitBuilding() {
@@ -1394,8 +874,8 @@ void MetroBuilding::DistributeInside() {
 
 }
 
-void MetroBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> MetroBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void TrainBuilding::InitBuilding() {
@@ -1406,8 +886,8 @@ void TrainBuilding::DistributeInside() {
 
 }
 
-void TrainBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> TrainBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PlaneBuilding::InitBuilding() {
@@ -1418,8 +898,8 @@ void PlaneBuilding::DistributeInside() {
 
 }
 
-void PlaneBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PlaneBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ShipBuilding::InitBuilding() {
@@ -1430,8 +910,8 @@ void ShipBuilding::DistributeInside() {
 
 }
 
-void ShipBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> ShipBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ResidentBuilding::InitBuilding() {
@@ -1465,27 +945,26 @@ void ResidentBuilding::DistributeInside() {
 
     vector<int> acreages(layers, GetAcreage() * 0.64);
 
-    auto property = CreateOrganization<CommunityOrganization>();
+    auto resident = CreateOrganization<CommunityOrganization>();
 
     if (basement > 0) {
         for (int i = 0; i < basement; i++)
-            property->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
+            resident->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
     }
 
     int standard;
-    switch (GetRandom(10))
-    {
+    switch (GetRandom(10)) {
     case 0:
-        standard = 400;
+        standard = 120;
         break;
     case 1:
     case 2:
-        standard = 320;
+        standard = 120;
         break;
     case 3:
     case 4:
     case 5:
-        standard = 200;
+        standard = 120;
         break;
     case 6:
     case 7:
@@ -1498,16 +977,17 @@ void ResidentBuilding::DistributeInside() {
 
     for (int layer = 0; layer < layers; layer++) {
         for (int i = 0; i < acreages[layer] / standard; i++) {
-            property->AddRoom(CreateRoom<HomeRoom>(layer + 1, standard));
+            resident->AddRoom(CreateRoom<HomeRoom>(layer + 1, standard));
         }
     }
+
+    complement = { HomeRoom(120) };
+
+    TemplateLayout("straight_linear", FACE_NORTH, 0.8f, 0.8f);
 }
 
-void ResidentBuilding::ArrangeLayout() {
-    //随机朝向
-    FACE_DIRECTION face = (FACE_DIRECTION)GetRandom(4);
-
-    ClassicLayout(FLAT_LINAR, face, 0.8f, 0.4f);
+vector<pair<Job*, int>> ResidentBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void VillaBuilding::InitBuilding() {
@@ -1530,49 +1010,11 @@ void VillaBuilding::InitBuilding() {
 }
 
 void VillaBuilding::DistributeInside() {
-    //Parking
-    //Home
 
-    vector<int> acreages(layers, GetAcreage() * 0.36);
-
-    auto property = CreateOrganization<CommunityOrganization>();
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++) {
-            property->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.16));
-            property->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.20));
-        }
-    }
-
-    property->AddRoom(CreateRoom<ParkingRoom>(0, 80));
-
-    int standard;
-    switch (GetRandom(6))
-    {
-    case 0:
-        standard = 640;
-        break;
-    case 1:
-    case 2:
-        standard = 400;
-        break;
-    case 3:
-    case 4:
-    case 5:
-    default:
-        standard = 240;
-        break;
-    }
-
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / standard; i++) {
-            property->AddRoom(CreateRoom<VillaRoom>(layer + 1, standard));
-        }
-    }
 }
 
-void VillaBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> VillaBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void EstateBuilding::InitBuilding() {
@@ -1587,38 +1029,11 @@ void EstateBuilding::InitBuilding() {
 }
 
 void EstateBuilding::DistributeInside() {
-    //Parking
-    //Reception
-    //Clean
-    //Home
-    //Office
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto estate = CreateOrganization<EstateOrganization>();
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            estate->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    estate->AddRoom(CreateRoom<ReceptionRoom>(1, 200));
-    acreages[0] -= 200;
-    estate->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    estate->AddRoom(CreateRoom<HomeRoom>(1, 200));
-    acreages[0] -= 200;
-    estate->AddRoom(CreateRoom<HomeRoom>(1, 320));
-    acreages[0] -= 320;
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            estate->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void EstateBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> EstateBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PropertyBuilding::InitBuilding() {
@@ -1633,40 +1048,11 @@ void PropertyBuilding::InitBuilding() {
 }
 
 void PropertyBuilding::DistributeInside() {
-    //Parking
-    //Reception
-    //Clean
-    //Toilet
-    //Office
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
-    auto property = CreateOrganization<PropertyOrganization>();
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            property->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    property->AddRoom(CreateRoom<ReceptionRoom>(1, 200));
-    acreages[0] -= 200;
-    property->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    property->AddRoom(CreateRoom<CleanRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        property->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            property->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void PropertyBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PropertyBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PackageBuilding::InitBuilding() {
@@ -1681,33 +1067,11 @@ void PackageBuilding::InitBuilding() {
 }
 
 void PackageBuilding::DistributeInside() {
-    //Parking
-    //Reception
-    //Office
 
-    vector<int> acreages(layers, GetAcreage() * 0.36);
-
-    auto package = CreateOrganization<PackageOrganization>();
-
-    package->AddRoom(CreateRoom<ParkingRoom>(1, GetAcreage() * 0.28));
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            package->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    package->AddRoom(CreateRoom<ReceptionRoom>(1, 40));
-    acreages[0] -= 40;
-    package->AddRoom(CreateRoom<WarehouseRoom>(1, acreages[0]));
-    for (int layer = 1; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            package->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void PackageBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PackageBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void HotelBuilding::InitBuilding() {
@@ -1736,67 +1100,11 @@ void HotelBuilding::InitBuilding() {
 }
 
 void HotelBuilding::DistributeInside() {
-    //Parking
-    //Guard
-    //Reception
-    //Toilet
-    //Kitchen
-    //Canteen
-    //Warehouse
-    //Clean
-    //Bunk
-    //Office
-    //Meeting
 
-    vector<int> acreages;
-    if (zone == ZONE_NONE) {
-        acreages = vector<int>(layers, GetAcreage() * 0.36);
-    }
-    else {
-        acreages = vector<int>(layers, GetAcreage() * 0.64);
-    }
-
-    auto hotel = CreateOrganization<HotelOrganization>();
-
-    if (zone == ZONE_NONE) {
-        hotel->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.28));
-    }
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            hotel->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    hotel->AddRoom(CreateRoom<GuardRoom>(1, 40));
-    acreages[0] -= 40;
-    hotel->AddRoom(CreateRoom<ReceptionRoom>(1, 200));
-    acreages[0] -= 200;
-    hotel->AddRoom(CreateRoom<ToiletRoom>(1, 60));
-    acreages[0] -= 60;
-    hotel->AddRoom(CreateRoom<KitchenRoom>(1, 120));
-    acreages[0] -= 120;
-    hotel->AddRoom(CreateRoom<CanteenRoom>(1, 200));
-    acreages[0] -= 200;
-    hotel->AddRoom(CreateRoom<OfficeRoom>(1, 120));
-    acreages[0] -= 120;
-    if (GetAcreage() > 4000) {
-        hotel->AddRoom(CreateRoom<MeetingRoom>(1, 400));
-        acreages[0] -= 400;
-    }
-    hotel->AddRoom(CreateRoom<WarehouseRoom>(1, acreages[0]));
-    for (int layer = 1; layer < layers; layer++) {
-        hotel->AddRoom(CreateRoom<CleanRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    for (int layer = 1; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 80; i++) {
-            hotel->AddRoom(CreateRoom<BunkRoom>(layer + 1, 80));
-        }
-    }
 }
 
-void HotelBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> HotelBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void RestaurantBuilding::InitBuilding() {
@@ -1819,56 +1127,11 @@ void RestaurantBuilding::InitBuilding() {
 }
 
 void RestaurantBuilding::DistributeInside() {
-    //Parking
-    //Toilet
-    //Kitchen
-    //PublicEat
-    //PrivateEat
 
-    vector<int> acreages;
-    if (zone == ZONE_NONE) {
-        acreages = vector<int>(layers, GetAcreage() * 0.36);
-    }
-    else {
-        acreages = vector<int>(layers, GetAcreage() * 0.64);
-    }
-
-    auto restaurant = CreateOrganization<RestaurantOrganization>();
-
-    if (zone == ZONE_NONE) {
-        restaurant->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.28));
-    }
-
-    if (basement > 0) {
-        for (int i = 0; i < basement; i++)
-            restaurant->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
-    }
-
-    for (int layer = 0; layer < layers; layer++) {
-        restaurant->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    restaurant->AddRoom(CreateRoom<KitchenRoom>(1, acreages[0] / 2));
-    if (GetAcreage() > 4000 && layers > 1) {
-        restaurant->AddRoom(CreateRoom<PublicEatRoom>(1, acreages[0] / 2));
-        restaurant->AddRoom(CreateRoom<MeetingRoom>(2, 400));
-        acreages[1] -= 400;
-    }
-    else {
-        restaurant->AddRoom(CreateRoom<PublicEatRoom>(1, acreages[0] / 3));
-        for (int i = 0; i < acreages[0] / 6 / 40; i++) {
-            restaurant->AddRoom(CreateRoom<PrivateEatRoom>(1, 40));
-        }
-    }
-    for (int layer = 1; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / 40; i++) {
-            restaurant->AddRoom(CreateRoom<PrivateEatRoom>(layer + 1, 40));
-        }
-    }
 }
 
-void RestaurantBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> RestaurantBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void MallBuilding::InitBuilding() {
@@ -1891,71 +1154,11 @@ void MallBuilding::InitBuilding() {
 }
 
 void MallBuilding::DistributeInside() {
-    vector<Organization*> organizations;
 
-    static vector<pair<ORGANIZATION_TYPE, float>> probs = {
-        {ORGANIZATION_BRAND, 0.0},
-        {ORGANIZATION_CLOTHES, 0.2},
-        {ORGANIZATION_RESTAURANT, 0.4},
-        {ORGANIZATION_FASTFOOD, 0.55},
-        {ORGANIZATION_BUFFET, 0.63},
-        {ORGANIZATION_COFFEE, 0.68},
-        {ORGANIZATION_DRINK, 0.70},
-        {ORGANIZATION_CINEMA, 0.76},
-        {ORGANIZATION_MARKET, 0.77},
-        {ORGANIZATION_CARRENT, 0.78},
-        {ORGANIZATION_MUSIC, 0.79},
-        {ORGANIZATION_COSMETIC, 0.81},
-        {ORGANIZATION_HAIRCUT, 0.83},
-        {ORGANIZATION_SMOKEWINETEA, 0.85},
-        {ORGANIZATION_CHESSCARD, 0.86},
-        {ORGANIZATION_PET, 0.87},
-        {ORGANIZATION_ELECTRONIC, 0.89},
-        {ORGANIZATION_STUDIO, 0.94},
-        {ORGANIZATION_BOOK, 0.95},
-        {ORGANIZATION_BILLIARD, 0.97},
-        {ORGANIZATION_NET, 0.98},
-        {ORGANIZATION_KTV, 0.99},
-    };
-
-    vector<int> acreages;
-    if (zone == ZONE_NONE) {
-        acreages = vector<int>(layers, GetAcreage() * 0.36);
-    }
-    else {
-        acreages = vector<int>(layers, GetAcreage() * 0.64);
-    }
-
-    auto mall = CreateOrganization<MallOrganization>();
-
-    for (int layer = 0; layer < layers; layer++) {
-        mall->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-
-    int layer = 0;
-    while (acreages[layer] > 0) {
-        float p = GetRandom(1000) / 1000.0f;
-        ORGANIZATION_TYPE organizationType = ORGANIZATION_NONE;
-        for (int i = 0; i < probs.size(); i++) {
-            if (p >= probs[i].second) {
-                organizationType = probs[i].first;
-                break;
-            }
-        }
-        auto organization = ::CreateOrganization(organizationType);
-        if (organization) {
-            acreages[layer] -= organization->AutoRoom(acreages[layer]);
-        }
-        if (acreages[layer] <= 0) {
-            layer++;
-        }
-        if (layer >= layers)break;
-    }
 }
 
-void MallBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> MallBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void MarketBuilding::InitBuilding() {
@@ -1975,57 +1178,11 @@ void MarketBuilding::InitBuilding() {
 }
 
 void MarketBuilding::DistributeInside() {
-    //Parking
-    //Warehouse
-    //Reception
-    //Toilet
-    //Office
-    //Market
-    
-    vector<int> acreages;
-    if (zone == ZONE_NONE) {
-        acreages = vector<int>(layers, GetAcreage() * 0.36);
-    }
-    else {
-        acreages = vector<int>(layers, GetAcreage() * 0.64);
-    }
 
-    auto market = CreateOrganization<MarketOrganization>();
-
-    if (zone == ZONE_NONE) {
-        market->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.28));
-        if (basement > 0) {
-            for (int i = 0; i < basement; i++) {
-                market->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.64));
-            }
-        }
-    }
-    else {
-        if (basement > 0) {
-            market->AddRoom(CreateRoom<ParkingRoom>(-1, GetAcreage() * 0.32));
-            market->AddRoom(CreateRoom<WarehouseRoom>(-1, GetAcreage() * 0.32));
-            for (int i = 1; i < basement; i++) {
-                market->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.64));
-            }
-        }
-    }
-
-    market->AddRoom(CreateRoom<ReceptionRoom>(1, 120));
-    acreages[0] -= 120;
-    for (int layer = 0; layer < layers; layer++) {
-        market->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-        market->AddRoom(CreateRoom<OfficeRoom>(1, 80));
-        acreages[layer] -= 80;
-    }
-
-    for (int layer = 0; layer < layers; layer++) {
-        market->AddRoom(CreateRoom<MarketRoom>(1, acreages[0]));
-    }
 }
 
-void MarketBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> MarketBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void MusicBuilding::InitBuilding() {
@@ -2040,39 +1197,11 @@ void MusicBuilding::InitBuilding() {
 }
 
 void MusicBuilding::DistributeInside() {
-    //Warehouse
-    //Reception
-    //Toilet
-    //Music
-    //Class
 
-    vector<int> acreages = vector<int>(layers, GetAcreage() * 0.64);
-
-    auto music = CreateOrganization<MusicOrganization>();
-
-    music->AddRoom(CreateRoom<ReceptionRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        music->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-    }
-    music->AddRoom(CreateRoom<WarehouseRoom>(1, acreages[0] / 2));
-    music->AddRoom(CreateRoom<MusicRoom>(1, acreages[0] / 2));
-
-    for (int layer = 1; layer < layers; layer++) {
-        if (layer == layers - 1) {
-            for (int i = 0; i < acreages[layer] / 40; i++) {
-                music->AddRoom(CreateRoom<ClassRoom>(layer + 1, 40));
-            }
-        }
-        else {
-            music->AddRoom(CreateRoom<MusicRoom>(1, acreages[0]));
-        }
-    }
 }
 
-void MusicBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> MusicBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void IngredientBuilding::InitBuilding() {
@@ -2092,18 +1221,11 @@ void IngredientBuilding::InitBuilding() {
 }
 
 void IngredientBuilding::DistributeInside() {
-    // Market
 
-    vector<int> acreages = vector<int>(layers, GetAcreage() * 64);
-    auto ingredient = CreateOrganization<IngredientOrganization>();
-
-    for (int layer = 0; layer < layers; layer++) {
-        ingredient->AddRoom(CreateRoom<MarketRoom>(1, acreages[0]));
-    }
 }
 
-void IngredientBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> IngredientBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void BrandBuilding::InitBuilding() {
@@ -2123,51 +1245,11 @@ void BrandBuilding::InitBuilding() {
 }
 
 void BrandBuilding::DistributeInside() {
-    //Parking
-    //Warehouse
-    //Reception
-    //Toilet
-    //Sale
 
-    vector<int> acreages;
-    if (zone == ZONE_NONE) {
-        acreages = vector<int>(layers, GetAcreage() * 0.36);
-    }
-    else {
-        acreages = vector<int>(layers, GetAcreage() * 0.64);
-    }
-
-    auto brand = CreateOrganization<BrandOrganization>();
-
-    if (zone == ZONE_NONE) {
-        brand->AddRoom(CreateRoom<ParkingRoom>(0, GetAcreage() * 0.28));
-        if (basement > 0) {
-            for (int i = 0; i < basement; i++) {
-                brand->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.64));
-            }
-        }
-    }
-    else {
-        if (basement > 0) {
-            brand->AddRoom(CreateRoom<ParkingRoom>(-1, GetAcreage() * 0.32));
-            brand->AddRoom(CreateRoom<WarehouseRoom>(-1, GetAcreage() * 0.32));
-            for (int i = 1; i < basement; i++) {
-                brand->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * 0.64));
-            }
-        }
-    }
-
-    brand->AddRoom(CreateRoom<ReceptionRoom>(1, 40));
-    acreages[0] -= 40;
-    for (int layer = 0; layer < layers; layer++) {
-        brand->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        acreages[layer] -= 60;
-        brand->AddRoom(CreateRoom<SaleRoom>(layer + 1, acreages[layer]));
-    }
 }
 
-void BrandBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> BrandBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void CarRentBuilding::InitBuilding() {
@@ -2190,8 +1272,8 @@ void CarRentBuilding::DistributeInside() {
 
 }
 
-void CarRentBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> CarRentBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void TheaterBuilding::InitBuilding() {
@@ -2209,8 +1291,8 @@ void TheaterBuilding::DistributeInside() {
 
 }
 
-void TheaterBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> TheaterBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void MuseumBuilding::InitBuilding() {
@@ -2233,8 +1315,8 @@ void MuseumBuilding::DistributeInside() {
 
 }
 
-void MuseumBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> MuseumBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ZooBuilding::InitBuilding() {
@@ -2252,8 +1334,8 @@ void ZooBuilding::DistributeInside() {
 
 }
 
-void ZooBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> ZooBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void BotanicBuilding::InitBuilding() {
@@ -2271,8 +1353,8 @@ void BotanicBuilding::DistributeInside() {
 
 }
 
-void BotanicBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> BotanicBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void AquariumBuilding::InitBuilding() {
@@ -2290,8 +1372,8 @@ void AquariumBuilding::DistributeInside() {
 
 }
 
-void AquariumBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> AquariumBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void CinemaBuilding::InitBuilding() {
@@ -2314,8 +1396,8 @@ void CinemaBuilding::DistributeInside() {
 
 }
 
-void CinemaBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> CinemaBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PubBuilding::InitBuilding() {
@@ -2333,8 +1415,8 @@ void PubBuilding::DistributeInside() {
 
 }
 
-void PubBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PubBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void MasageBuilding::InitBuilding() {
@@ -2357,8 +1439,8 @@ void MasageBuilding::DistributeInside() {
 
 }
 
-void MasageBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> MasageBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void AmusementBuilding::InitBuilding() {
@@ -2376,8 +1458,8 @@ void AmusementBuilding::DistributeInside() {
 
 }
 
-void AmusementBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> AmusementBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void OfficeBuilding::InitBuilding() {
@@ -2403,8 +1485,8 @@ void OfficeBuilding::DistributeInside() {
 
 }
 
-void OfficeBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> OfficeBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void StockBuilding::InitBuilding() {
@@ -2427,8 +1509,8 @@ void StockBuilding::DistributeInside() {
 
 }
 
-void StockBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> StockBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void CourtBuilding::InitBuilding() {
@@ -2451,8 +1533,8 @@ void CourtBuilding::DistributeInside() {
 
 }
 
-void CourtBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> CourtBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void GovernmentBuilding::InitBuilding() {
@@ -2475,8 +1557,8 @@ void GovernmentBuilding::DistributeInside() {
 
 }
 
-void GovernmentBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> GovernmentBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void LabBuilding::InitBuilding() {
@@ -2502,8 +1584,8 @@ void LabBuilding::DistributeInside() {
 
 }
 
-void LabBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> LabBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void FactoryBuilding::InitBuilding() {
@@ -2521,8 +1603,8 @@ void FactoryBuilding::DistributeInside() {
 
 }
 
-void FactoryBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> FactoryBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void WarehouseBuilding::InitBuilding() {
@@ -2540,8 +1622,8 @@ void WarehouseBuilding::DistributeInside() {
 
 }
 
-void WarehouseBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> WarehouseBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void RepairBuilding::InitBuilding() {
@@ -2559,8 +1641,8 @@ void RepairBuilding::DistributeInside() {
 
 }
 
-void RepairBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> RepairBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void MiningBuilding::InitBuilding() {
@@ -2578,8 +1660,8 @@ void MiningBuilding::DistributeInside() {
 
 }
 
-void MiningBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> MiningBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void OilingBuilding::InitBuilding() {
@@ -2597,8 +1679,8 @@ void OilingBuilding::DistributeInside() {
 
 }
 
-void OilingBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> OilingBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void QuarryBuilding::InitBuilding() {
@@ -2616,8 +1698,8 @@ void QuarryBuilding::DistributeInside() {
 
 }
 
-void QuarryBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> QuarryBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void FarmBuilding::InitBuilding() {
@@ -2635,8 +1717,8 @@ void FarmBuilding::DistributeInside() {
 
 }
 
-void FarmBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> FarmBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PastureBuilding::InitBuilding() {
@@ -2654,8 +1736,8 @@ void PastureBuilding::DistributeInside() {
 
 }
 
-void PastureBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PastureBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void BreedingBuilding::InitBuilding() {
@@ -2673,8 +1755,8 @@ void BreedingBuilding::DistributeInside() {
 
 }
 
-void BreedingBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> BreedingBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void FishingBuilding::InitBuilding() {
@@ -2692,8 +1774,8 @@ void FishingBuilding::DistributeInside() {
 
 }
 
-void FishingBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> FishingBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void OrchardBuilding::InitBuilding() {
@@ -2711,8 +1793,8 @@ void OrchardBuilding::DistributeInside() {
 
 }
 
-void OrchardBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> OrchardBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ForestBuilding::InitBuilding() {
@@ -2730,8 +1812,8 @@ void ForestBuilding::DistributeInside() {
 
 }
 
-void ForestBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> ForestBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ParkBuilding::InitBuilding() {
@@ -2744,8 +1826,8 @@ void ParkBuilding::DistributeInside() {
 
 }
 
-void ParkBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> ParkBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PlazaBuilding::InitBuilding() {
@@ -2758,8 +1840,8 @@ void PlazaBuilding::DistributeInside() {
 
 }
 
-void PlazaBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PlazaBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void StatueBuilding::InitBuilding() {
@@ -2772,8 +1854,8 @@ void StatueBuilding::DistributeInside() {
 
 }
 
-void StatueBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> StatueBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void GymBuilding::InitBuilding() {
@@ -2791,8 +1873,8 @@ void GymBuilding::DistributeInside() {
 
 }
 
-void GymBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> GymBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void StadiumBuilding::InitBuilding() {
@@ -2810,8 +1892,8 @@ void StadiumBuilding::DistributeInside() {
 
 }
 
-void StadiumBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> StadiumBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void ResortBuilding::InitBuilding() {
@@ -2829,8 +1911,8 @@ void ResortBuilding::DistributeInside() {
 
 }
 
-void ResortBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> ResortBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void RemainsBuilding::InitBuilding() {
@@ -2843,8 +1925,8 @@ void RemainsBuilding::DistributeInside() {
 
 }
 
-void RemainsBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> RemainsBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void RocketBuilding::InitBuilding() {
@@ -2862,8 +1944,8 @@ void RocketBuilding::DistributeInside() {
 
 }
 
-void RocketBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> RocketBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PlaygroundBuilding::InitBuilding() {
@@ -2881,8 +1963,8 @@ void PlaygroundBuilding::DistributeInside() {
 
 }
 
-void PlaygroundBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PlaygroundBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PrisonBuilding::InitBuilding() {
@@ -2905,8 +1987,8 @@ void PrisonBuilding::DistributeInside() {
 
 }
 
-void PrisonBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PrisonBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void GuardBuilding::InitBuilding() {
@@ -2924,8 +2006,8 @@ void GuardBuilding::DistributeInside() {
 
 }
 
-void GuardBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> GuardBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void CanteenBuilding::InitBuilding() {
@@ -2948,8 +2030,8 @@ void CanteenBuilding::DistributeInside() {
 
 }
 
-void CanteenBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> CanteenBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void DormitryBuilding::InitBuilding() {
@@ -2975,8 +2057,8 @@ void DormitryBuilding::DistributeInside() {
 
 }
 
-void DormitryBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> DormitryBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void DataBuilding::InitBuilding() {
@@ -2994,8 +2076,8 @@ void DataBuilding::DistributeInside() {
 
 }
 
-void DataBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> DataBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void WaterBuilding::InitBuilding() {
@@ -3013,8 +2095,8 @@ void WaterBuilding::DistributeInside() {
 
 }
 
-void WaterBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> WaterBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void SewageBuilding::InitBuilding() {
@@ -3032,8 +2114,8 @@ void SewageBuilding::DistributeInside() {
 
 }
 
-void SewageBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> SewageBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void PowerBuilding::InitBuilding() {
@@ -3051,8 +2133,8 @@ void PowerBuilding::DistributeInside() {
 
 }
 
-void PowerBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> PowerBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void WindmillBuilding::InitBuilding() {
@@ -3070,8 +2152,8 @@ void WindmillBuilding::DistributeInside() {
 
 }
 
-void WindmillBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> WindmillBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void NuclearBuilding::InitBuilding() {
@@ -3089,8 +2171,8 @@ void NuclearBuilding::DistributeInside() {
 
 }
 
-void NuclearBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> NuclearBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void BatteryBuilding::InitBuilding() {
@@ -3108,8 +2190,8 @@ void BatteryBuilding::DistributeInside() {
 
 }
 
-void BatteryBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> BatteryBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void RecycleBuilding::InitBuilding() {
@@ -3127,8 +2209,8 @@ void RecycleBuilding::DistributeInside() {
 
 }
 
-void RecycleBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> RecycleBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void TrashBuilding::InitBuilding() {
@@ -3146,8 +2228,8 @@ void TrashBuilding::DistributeInside() {
 
 }
 
-void TrashBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> TrashBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }
 
 void IncinerationBuilding::InitBuilding() {
@@ -3165,6 +2247,6 @@ void IncinerationBuilding::DistributeInside() {
 
 }
 
-void IncinerationBuilding::ArrangeLayout() {
-
+vector<pair<Job*, int>> IncinerationBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
 }

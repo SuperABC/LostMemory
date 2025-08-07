@@ -284,6 +284,9 @@ private:
 class HomeRoom : public Room {
 public:
 	HomeRoom() : Room(ROOM_HOME) {}
+	HomeRoom(int acreage) : Room(ROOM_HOME) {
+		SetAcreage(acreage);
+	}
 
 private:
 

@@ -5,8 +5,10 @@
 #include "zone.h"
 #include "organization.h"
 #include "room.h"
+#include "job.h"
 
 #include <vector>
+#include <unordered_map>
 
 class Organization;
 
@@ -204,6 +206,7 @@ enum FACE_DIRECTION {
 	FACE_NORTH,
 	FACE_SOUTH
 };
+static char faceAbbr[4] = { 'w', 'e', 'n', 's' };
 
 class Facility : public Rect {
 public:
@@ -213,11 +216,9 @@ public:
 		: Rect(x, y, w, h), type(type) {}
 
 	FACILITY_TYPE getType() const { return type; }
-	const std::string& getId() const { return id; }
 
 private:
 	FACILITY_TYPE type;
-	std::string id;
 };
 
 class Floor : public Rect {
@@ -247,7 +248,8 @@ public:
 	const std::vector<Room *>& GetRooms() const { return rooms; }
 
 	// 自动布局
-	void AutoLayout();
+	Room* SampleRoom(std::vector<Room>& complement, int idx);
+	void UsageLayout(std::vector<Room> complement);
 
 private:
 	int level;
@@ -255,10 +257,6 @@ private:
 	std::vector<Facility> facilities;
 	std::vector<std::pair<Rect, int>> usages;
 	std::vector<Room *> rooms;
-};
-
-enum LAYOUT_TYPE {
-	FLAT_LINAR
 };
 
 enum AREA_TYPE;
@@ -293,11 +291,17 @@ public:
 	int GetLayers() { return layers; }
 	int GetBasements() { return basement; }
 
-	// 获取/设置组织/房间
+	// 获取/设置组织/房间/楼层
 	std::vector<Organization*>& GetOrganizations() { return organizations; }
 	std::vector<Room*>& GetRooms() { return rooms; }
+	Floor* GetFloor(int floor) {
+		if (basement + floor < floors.size())
+			return &floors[basement + floor];
+		else return nullptr;
+	}
 
-	void ClassicLayout(LAYOUT_TYPE layout, FACE_DIRECTION face, float underScalar, float aboveScalar);
+	// 内部布局
+	void TemplateLayout(std::string temp, FACE_DIRECTION face, float underScalar, float aboveScalar);
 
 	// 指定建筑属性
 	virtual void InitBuilding() = 0;
@@ -306,7 +310,10 @@ public:
 	virtual void DistributeInside() = 0;
 	
 	// 布局房间位置
-	virtual void ArrangeLayout() = 0;
+	virtual std::vector<std::pair<Job *, int>> GetJobs() = 0;
+
+	// 读入布局模板
+	static void ReadTemplates(std::string path);
 
 protected:
 	// 在建筑中添加组织
@@ -341,8 +348,13 @@ protected:
 	int layers = 1;
 	int basement = 0;
 
-	Rect above, ground, under;
+	Rect above, under;
 	std::vector<Floor> floors;
+	std::vector<Room> complement;
+
+private:
+	static std::unordered_map<std::string, std::vector<std::pair<Facility::FACILITY_TYPE, std::vector<float>>>> templateFacility;
+	static std::unordered_map<std::string, std::vector<std::pair<FACE_DIRECTION, std::vector<float>>>> templateUsage;
 };
 
 class RoadfixBuilding : public Building {
@@ -354,7 +366,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -368,7 +380,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -381,7 +393,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -395,7 +407,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -408,7 +420,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -421,7 +433,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -434,7 +446,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -448,7 +460,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -461,7 +473,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -475,7 +487,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -488,7 +500,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -502,7 +514,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -516,7 +528,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -530,7 +542,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -544,7 +556,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -558,7 +570,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -572,7 +584,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -586,7 +598,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -597,7 +609,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -608,7 +620,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -619,7 +631,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -630,7 +642,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -643,7 +655,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -657,7 +669,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -671,7 +683,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -685,7 +697,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -699,7 +711,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -712,7 +724,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -725,7 +737,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -738,7 +750,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -752,7 +764,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -765,7 +777,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -779,7 +791,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -792,7 +804,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -805,7 +817,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -819,7 +831,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -833,7 +845,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -847,7 +859,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -861,7 +873,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -875,7 +887,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -889,7 +901,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -902,7 +914,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -915,7 +927,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -929,7 +941,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -942,7 +954,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -955,7 +967,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -969,7 +981,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -983,7 +995,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -996,7 +1008,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1010,7 +1022,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1023,7 +1035,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1036,7 +1048,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1050,7 +1062,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1064,7 +1076,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1078,7 +1090,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1092,7 +1104,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1106,7 +1118,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1120,7 +1132,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1131,7 +1143,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1145,7 +1157,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1159,7 +1171,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1172,7 +1184,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1185,7 +1197,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1199,7 +1211,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1213,7 +1225,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1227,7 +1239,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1241,7 +1253,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1255,7 +1267,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1268,7 +1280,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1281,7 +1293,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1294,7 +1306,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1307,7 +1319,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1320,7 +1332,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1333,7 +1345,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1346,7 +1358,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1359,7 +1371,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1372,7 +1384,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1385,7 +1397,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1398,7 +1410,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1411,7 +1423,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1424,7 +1436,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1437,7 +1449,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1450,7 +1462,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };
@@ -1463,7 +1475,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual void ArrangeLayout();
+	virtual std::vector<std::pair<Job *, int>> GetJobs();
 private:
 
 };

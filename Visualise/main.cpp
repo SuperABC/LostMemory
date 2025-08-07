@@ -41,8 +41,32 @@ bool populaceInfo = false;
 void updateBuilding(int floor, int scroll) {
 	setColor(255, 255, 255);
 	clearScreen();
-	setColor(0, 0, 0);
 
+	Floor* currentFloor = currentBuilding->GetFloor(floor);
+	if (currentFloor) {
+		for (auto facility : currentFloor->GetFacilities()) {
+			switch (facility.getType()) {
+			case Facility::FACILITY_CORRIDOR:
+				setColor(127, 127, 127);
+				break;
+			case Facility::FACILITY_STAIR:
+				setColor(0, 255, 0);
+				break;
+			case Facility::FACILITY_ELEVATOR:
+				setColor(0, 255, 255);
+				break;
+			default:
+				break;
+			}
+			putQuad(facility.GetLeft() * 16, facility.GetTop() * 16, facility.GetRight() * 16, facility.GetBottom() * 16, SOLID_FILL);
+		}
+		setColor(0, 0, 0);
+		for (auto room : currentFloor->GetRooms()) {
+			putQuad(room->GetLeft() * 16, room->GetTop() * 16, room->GetRight() * 16, room->GetBottom() * 16, EMPTY_FILL);
+		}
+	}
+
+	setColor(0, 0, 0);
 	string text = buildingText[currentBuilding->GetType()] + "\n" +
 		"宽" + to_string(currentBuilding->GetSizeX() * 10) + "m" + "\n" +
 		"高" + to_string(currentBuilding->GetSizeY() * 10) + "m" + "\n" +

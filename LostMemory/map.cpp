@@ -128,10 +128,12 @@ int Map::Init(int blockX, int blockY) {
 	DrawRoad();
 
 	// 随机生成园区与建筑
+	Building::ReadTemplates("../LostMemory/lyt/");
 	DistributeZone();
 	DistributeBuilding();
 	ArrangeArea();
 	ArrangeZone();
+	ClearEmpty();
 	RoomLayout();
 
 	// 计算城市人口容纳量
@@ -1824,11 +1826,28 @@ void Map::ArrangeZone() {
 	}
 }
 
+void Map::ClearEmpty() {
+	for (int i = 0; i < buildings.size(); i++) {
+		if (buildings[i]->GetSizeX() <= 0 || buildings[i]->GetSizeY() <= 0)continue;
+		buildings[i] = buildings.back();
+		buildings.pop_back();
+		i--;
+	}
+
+	for (auto zone : zones) {
+		for (int i = 0; i < zone->GetBuildings().size(); i++) {
+			if (zone->GetBuildings()[i]->GetSizeX() <= 0 || zone->GetBuildings()[i]->GetSizeY() <= 0)continue;
+			zone->GetBuildings()[i] = zone->GetBuildings().back();
+			zone->GetBuildings().pop_back();
+			i--;
+		}
+	}
+}
+
 void Map::RoomLayout() {
 	// 布局室内
 	for (auto building : buildings) {
 		building->DistributeInside();
-		building->ArrangeLayout();
 	}
 }
 

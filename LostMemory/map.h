@@ -219,6 +219,7 @@ private:
 	void DistributeBuilding();
 	void ArrangeArea();
 	void ArrangeZone();
+	void ClearEmpty();
 	void RoomLayout();
 };
 
