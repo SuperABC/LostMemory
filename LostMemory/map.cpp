@@ -1828,7 +1828,7 @@ void Map::ArrangeZone() {
 
 void Map::ClearEmpty() {
 	for (int i = 0; i < buildings.size(); i++) {
-		if (buildings[i]->GetSizeX() <= 0 || buildings[i]->GetSizeY() <= 0)continue;
+		if (buildings[i]->GetSizeX() > 0 && buildings[i]->GetSizeY() > 0)continue;
 		buildings[i] = buildings.back();
 		buildings.pop_back();
 		i--;
@@ -1836,7 +1836,7 @@ void Map::ClearEmpty() {
 
 	for (auto zone : zones) {
 		for (int i = 0; i < zone->GetBuildings().size(); i++) {
-			if (zone->GetBuildings()[i]->GetSizeX() <= 0 || zone->GetBuildings()[i]->GetSizeY() <= 0)continue;
+			if (zone->GetBuildings()[i]->GetSizeX() > 0 || zone->GetBuildings()[i]->GetSizeY() > 0)continue;
 			zone->GetBuildings()[i] = zone->GetBuildings().back();
 			zone->GetBuildings().pop_back();
 			i--;

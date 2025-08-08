@@ -13,40 +13,74 @@ std::unordered_map<std::string, std::vector<std::pair<FACE_DIRECTION, std::vecto
 
 Room* Floor::SampleRoom(vector<Room> & complement, int idx) {
     if (idx < rooms.size())return rooms[idx];
+    else return &complement[(idx - rooms.size()) % complement.size()];
+}
 
-    Room *room = new Room(complement[(idx - rooms.size()) % complement.size()]);
+Room* Floor::ApplyRoom(vector<Room>& complement, int idx) {
+    if (idx < rooms.size())return rooms[idx];
+
+    Room* room = new Room(complement[(idx - rooms.size()) % complement.size()]);
     room->SetLayer(level);
     rooms.push_back(room);
     return room;
 }
 
 void Floor::UsageLayout(vector<Room> complement) {
-    if (rooms.size() == 0)return;
-
     int idx = 0;
     for (auto usage : usages) {
-        if (idx >= rooms.size())break;
+        vector<float> samples;
         if (usage.second == FACE_WEST || usage.second == FACE_EAST) {
-            for (float y = 0; y + (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeX() < usage.first.GetSizeY(); idx++) {
-                SampleRoom(complement, idx)->SetPosition(
-                    usage.first.GetLeft(), usage.first.GetRight(), y, y + (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeX());
-                y += (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeX();
+            float y = 0;
+            int idxBegin = idx;
+            while(true) {
+                Room* sample = SampleRoom(complement, idx);
+                float step = (sample->GetAcreage() / 100.f) / usage.first.GetSizeX();
+                if (y + step > usage.first.GetSizeY() + GLOBAL_EPS)break;
+                Room *room = ApplyRoom(complement, idx++);
+                room->SetPosition(
+                    usage.first.GetLeft(), usage.first.GetRight(),
+                    usage.first.GetTop() + y, usage.first.GetTop() + y + step);
+                samples.push_back(y);
+                y += step;
+            }
+            int idxEnd = idx;
+            samples.push_back(y);
+            float inflate = usage.first.GetSizeY() / y;
+            for (auto &sample : samples) {
+                sample *= inflate;
+            }
+            for (int i = 0; i < idxEnd - idxBegin; i++) {
+                Room* room = SampleRoom(complement, idxBegin + i);
+                room->SetPosition(room->GetLeft(), room->GetRight(),
+                    usage.first.GetTop() + samples[i], usage.first.GetTop() + samples[i + 1]);
             }
         }
         if (usage.second == FACE_NORTH || usage.second == FACE_SOUTH) {
-            for (float x = 0; x + (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeY() < usage.first.GetSizeX(); idx++) {
-                SampleRoom(complement, idx)->SetPosition(
-                    x, x + (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeY(), usage.first.GetTop(), usage.first.GetBottom());
-                x += (SampleRoom(complement, idx)->GetAcreage() / 100.f) / usage.first.GetSizeY();
+            float x = 0;
+            int idxBegin = idx;
+            while (true) {
+                Room* sample = SampleRoom(complement, idx);
+                float step = (sample->GetAcreage() / 100.f) / usage.first.GetSizeY();
+                if (x + step > usage.first.GetSizeX() + GLOBAL_EPS)break;
+                Room* room = ApplyRoom(complement, idx++);
+                room->SetPosition(
+                    usage.first.GetLeft() + x, usage.first.GetLeft() + x + step,
+                    usage.first.GetTop(), usage.first.GetBottom());
+                samples.push_back(x);
+                x += step;
+            }
+            int idxEnd = idx;
+            samples.push_back(x);
+            float inflate = usage.first.GetSizeX() / x;
+            for (auto& sample : samples) {
+                sample *= inflate;
+            }
+            for (int i = 0; i < idxEnd - idxBegin; i++) {
+                Room* room = SampleRoom(complement, idxBegin + i);
+                room->SetPosition(usage.first.GetLeft() + samples[i], usage.first.GetLeft() + samples[i + 1],
+                    room->GetTop(), room->GetBottom());
             }
         }
-    }
-
-    if (idx < rooms.size()) {
-        for (int i = idx; i < rooms.size(); i++) {
-            delete rooms[i];
-        }
-        rooms.resize(idx);
     }
 }
 
@@ -129,8 +163,8 @@ void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScala
         floors.emplace_back(i, underX, underY);
     }
     floors.emplace_back(0, sizeX, sizeY);
-    int aboveX = sizeX * aboveScalar;
-    int aboveY = sizeY * aboveScalar;
+    float aboveX = sizeX * aboveScalar;
+    float aboveY = sizeY * aboveScalar;
     for (int i = 0; i < layers; i++) {
         floors.emplace_back(i + 1, aboveX, aboveY);
     }
@@ -162,12 +196,14 @@ void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScala
     }
 
     // 分配房间位置
-    for (auto &floor : floors) {
-        int num = floor.GetRooms().size();
-        floor.UsageLayout(complement);
+    for (int i = 0; i < floors.size(); i++) {
+        int num = floors[i].GetRooms().size();
+        floors[i].UsageLayout(complements[i]);
 
-        for (int i = num; i < floor.GetRooms().size(); i++) {
-            rooms.push_back(floor.GetRooms()[num]);
+        if (num < floors[i].GetRooms().size()) {
+            for (int i = num; i < floors[i].GetRooms().size(); i++) {
+                rooms.push_back(floors[i].GetRooms()[num]);
+            }
         }
     }
 }
@@ -943,47 +979,85 @@ void ResidentBuilding::DistributeInside() {
     //Parking
     //Home
 
-    vector<int> acreages(layers, GetAcreage() * 0.64);
-
     auto resident = CreateOrganization<CommunityOrganization>();
+
+    float aboveScalar = 0.8f;
+    float underScalar = 0.8f;
 
     if (basement > 0) {
         for (int i = 0; i < basement; i++)
-            resident->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * 0.64));
+            resident->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
     }
 
-    int standard;
-    switch (GetRandom(10)) {
-    case 0:
-        standard = 120;
-        break;
-    case 1:
-    case 2:
-        standard = 120;
-        break;
-    case 3:
-    case 4:
-    case 5:
-        standard = 120;
-        break;
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-    default:
-        standard = 120;
-        break;
+    int standard = 100;
+    string temp = "";
+    int face = 0;
+    int narrow = min(GetSizeX(), GetSizeY());
+    if (GetAcreage() < 800) {
+        standard = 80;
+        temp = "straight_linear";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
     }
-
-    for (int layer = 0; layer < layers; layer++) {
-        for (int i = 0; i < acreages[layer] / standard; i++) {
-            resident->AddRoom(CreateRoom<HomeRoom>(layer + 1, standard));
+    else if (GetAcreage() < 2000) {
+        if (narrow <= 2) {
+            standard = 60;
+        }
+        else {
+            standard = 100;
+        }
+        temp = "straight_linear";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_WEST : FACE_EAST) :
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH);
+    }
+    else {
+        if (narrow <= 4) {
+            if (narrow <= 2) {
+                standard = 60;
+            }
+            else {
+                standard = 100;
+            }
+            temp = "straight_linear";
+            face = (GetSizeX() > GetSizeY()) ?
+                (GetRandom(2) ? FACE_WEST : FACE_EAST) :
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH);
+        }
+        else {
+            standard = 160;
+            switch (GetRandom(2)) {
+            case 0:
+                temp = "comb_double";
+                face = (GetSizeX() > GetSizeY()) ?
+                    (GetRandom(2) ? FACE_WEST : FACE_EAST) :
+                    (GetRandom(2) ? FACE_NORTH : FACE_SOUTH);
+                break;
+            case 1:
+                temp = "fence_double";
+                face = (GetSizeX() > GetSizeY()) ?
+                    (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                    (GetRandom(2) ? FACE_WEST : FACE_EAST);
+                break;
+            default:
+                break;
+            }
         }
     }
 
-    complement = { HomeRoom(120) };
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto &complement : complements) {
+        complement.push_back(HomeRoom());
+        complement.back().SetAcreage(standard);
+    }
 
-    TemplateLayout("straight_linear", FACE_NORTH, 0.8f, 0.8f);
+    TemplateLayout(temp, (FACE_DIRECTION)face, 0.8f, 0.8f);
+    if (rooms.size() > resident->GetRooms().size()) {
+        for (int i = resident->GetRooms().size(); i < rooms.size(); i++) {
+            resident->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> ResidentBuilding::GetJobs() {

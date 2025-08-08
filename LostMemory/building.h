@@ -223,7 +223,7 @@ private:
 
 class Floor : public Rect {
 public:
-	Floor(int level, int width, int height)
+	Floor(int level, float width, float height)
 		: level(level), Rect(0, 0, width, height) {}
 	~Floor() {}
 
@@ -249,6 +249,7 @@ public:
 
 	// 自动布局
 	Room* SampleRoom(std::vector<Room>& complement, int idx);
+	Room* ApplyRoom(std::vector<Room>& complement, int idx);
 	void UsageLayout(std::vector<Room> complement);
 
 private:
@@ -350,7 +351,7 @@ protected:
 
 	Rect above, under;
 	std::vector<Floor> floors;
-	std::vector<Room> complement;
+	std::vector<std::vector<Room>> complements;
 
 private:
 	static std::unordered_map<std::string, std::vector<std::pair<Facility::FACILITY_TYPE, std::vector<float>>>> templateFacility;

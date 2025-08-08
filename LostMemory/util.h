@@ -8,6 +8,8 @@
 #include <windows.h>
 #include <strsafe.h>
 
+#define GLOBAL_EPS 1e-4
+
 
 // 获取[0, range - 1]的随机整数
 int GetRandom(int range, int (*cdf)(int) = nullptr);
