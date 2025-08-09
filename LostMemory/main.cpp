@@ -26,12 +26,14 @@ int main() {
 
 		try {
 			switch (type) {
-			case CMD_INIT:
+			case CMD_INIT: {
 				parser.AddOption("--block", 'b', "Block num both horizontally and vertically.", true, "4");
 				parser.ParseCmd(cmd);
-				populace->Init(map->Init(4, 4));
+				int size = atoi(parser.GetOption("--block").data());
+				populace->Init(map->Init(size, size));
 				map->Checkin(populace->GetCitizens(), populace->GetTime().GetYear());
 				break;
+			}
 			case CMD_PASS:
 				parser.AddOption("--tick", 't', "Tick num to pass.", true, "1");
 				parser.ParseCmd(cmd);
