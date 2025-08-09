@@ -43,16 +43,24 @@ void Floor::UsageLayout(vector<Room> complement) {
                 samples.push_back(y);
                 y += step;
             }
-            int idxEnd = idx;
-            samples.push_back(y);
-            float inflate = usage.first.GetSizeY() / y;
-            for (auto &sample : samples) {
-                sample *= inflate;
+            if (samples.size() == 0) {
+                Room* room = ApplyRoom(complement, idx++);
+                room->SetPosition(
+                    usage.first.GetLeft(), usage.first.GetRight(),
+                    usage.first.GetTop(), usage.first.GetBottom());
             }
-            for (int i = 0; i < idxEnd - idxBegin; i++) {
-                Room* room = SampleRoom(complement, idxBegin + i);
-                room->SetPosition(room->GetLeft(), room->GetRight(),
-                    usage.first.GetTop() + samples[i], usage.first.GetTop() + samples[i + 1]);
+            else {
+                int idxEnd = idx;
+                samples.push_back(y);
+                float inflate = usage.first.GetSizeY() / y;
+                for (auto& sample : samples) {
+                    sample *= inflate;
+                }
+                for (int i = 0; i < idxEnd - idxBegin; i++) {
+                    Room* room = SampleRoom(complement, idxBegin + i);
+                    room->SetPosition(room->GetLeft(), room->GetRight(),
+                        usage.first.GetTop() + samples[i], usage.first.GetTop() + samples[i + 1]);
+                }
             }
         }
         if (usage.second == FACE_NORTH || usage.second == FACE_SOUTH) {
@@ -69,16 +77,24 @@ void Floor::UsageLayout(vector<Room> complement) {
                 samples.push_back(x);
                 x += step;
             }
-            int idxEnd = idx;
-            samples.push_back(x);
-            float inflate = usage.first.GetSizeX() / x;
-            for (auto& sample : samples) {
-                sample *= inflate;
+            if (samples.size() == 0) {
+                Room* room = ApplyRoom(complement, idx++);
+                room->SetPosition(
+                    usage.first.GetLeft(), usage.first.GetRight(),
+                    usage.first.GetTop(), usage.first.GetBottom());
             }
-            for (int i = 0; i < idxEnd - idxBegin; i++) {
-                Room* room = SampleRoom(complement, idxBegin + i);
-                room->SetPosition(usage.first.GetLeft() + samples[i], usage.first.GetLeft() + samples[i + 1],
-                    room->GetTop(), room->GetBottom());
+            else {
+                int idxEnd = idx;
+                samples.push_back(x);
+                float inflate = usage.first.GetSizeX() / x;
+                for (auto& sample : samples) {
+                    sample *= inflate;
+                }
+                for (int i = 0; i < idxEnd - idxBegin; i++) {
+                    Room* room = SampleRoom(complement, idxBegin + i);
+                    room->SetPosition(usage.first.GetLeft() + samples[i], usage.first.GetLeft() + samples[i + 1],
+                        room->GetTop(), room->GetBottom());
+                }
             }
         }
     }
@@ -201,8 +217,8 @@ void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScala
         floors[i].UsageLayout(complements[i]);
 
         if (num < floors[i].GetRooms().size()) {
-            for (int i = num; i < floors[i].GetRooms().size(); i++) {
-                rooms.push_back(floors[i].GetRooms()[num]);
+            for (int j = num; j < floors[i].GetRooms().size(); j++) {
+                rooms.push_back(floors[i].GetRooms()[j]);
             }
         }
     }
