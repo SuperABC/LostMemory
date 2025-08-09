@@ -1068,7 +1068,7 @@ void ResidentBuilding::DistributeInside() {
         complement.back().SetAcreage(standard);
     }
 
-    TemplateLayout(temp, (FACE_DIRECTION)face, 0.8f, 0.8f);
+    TemplateLayout(temp, (FACE_DIRECTION)face, aboveScalar, underScalar);
     if (rooms.size() > resident->GetRooms().size()) {
         for (int i = resident->GetRooms().size(); i < rooms.size(); i++) {
             resident->AddRoom(rooms[i]);
@@ -1100,7 +1100,43 @@ void VillaBuilding::InitBuilding() {
 }
 
 void VillaBuilding::DistributeInside() {
+    //Warehouse
+    //Home
 
+    auto villa = CreateOrganization<CommunityOrganization>();
+
+    float aboveScalar, underScalar;
+    if (GetAcreage() < 1000) {
+        aboveScalar = underScalar = 0.5f;
+    }
+    else if (GetAcreage() < 2000) {
+        aboveScalar = underScalar = 0.4f;
+    }
+    else {
+        aboveScalar = underScalar = 0.3f;
+    }
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            villa->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    int standard = 1e4;
+    string temp = "single_room";
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(HomeRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temp, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > villa->GetRooms().size()) {
+        for (int i = villa->GetRooms().size(); i < rooms.size(); i++) {
+            villa->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> VillaBuilding::GetJobs() {
