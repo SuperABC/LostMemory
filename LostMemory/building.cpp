@@ -128,6 +128,14 @@ void Building::SetZoneType(ZONE_TYPE type) {
     zone = type;
 }
 
+Rect Building::GetAbove() {
+    return above;
+}
+
+Rect Building::GetUnder() {
+    return under;
+}
+
 void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScalar, float aboveScalar) {
     float aboveScalarX = aboveScalar;
     float aboveScalarY = aboveScalar;
@@ -173,16 +181,12 @@ void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScala
     }
 
     // 添加楼层
-    float underX = sizeX * underScalar;
-    float underY = sizeY * underScalar;
     for (int i = -basement; i < 0; i++) {
-        floors.emplace_back(i, underX, underY);
+        floors.emplace_back(i, under.GetSizeX(), under.GetSizeY());
     }
     floors.emplace_back(0, sizeX, sizeY);
-    float aboveX = sizeX * aboveScalar;
-    float aboveY = sizeY * aboveScalar;
     for (int i = 0; i < layers; i++) {
-        floors.emplace_back(i + 1, aboveX, aboveY);
+        floors.emplace_back(i + 1, above.GetSizeX(), above.GetSizeY());
     }
 
     // 把房间加入楼层
@@ -213,12 +217,18 @@ void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScala
 
     // 分配房间位置
     for (int i = 0; i < floors.size(); i++) {
-        int num = floors[i].GetRooms().size();
-        floors[i].UsageLayout(complements[i]);
+        if (floors[i].GetLevel() == 0)continue;
+        else if (floors[i].GetLevel() < 0) {
+            floors[i].GetRooms()[0]->SetPosition(under.GetLeft(), under.GetRight(), under.GetTop(), under.GetBottom());
+        }
+        else {
+            int num = floors[i].GetRooms().size();
+            floors[i].UsageLayout(complements[i]);
 
-        if (num < floors[i].GetRooms().size()) {
-            for (int j = num; j < floors[i].GetRooms().size(); j++) {
-                rooms.push_back(floors[i].GetRooms()[j]);
+            if (num < floors[i].GetRooms().size()) {
+                for (int j = num; j < floors[i].GetRooms().size(); j++) {
+                    rooms.push_back(floors[i].GetRooms()[j]);
+                }
             }
         }
     }
@@ -228,7 +238,7 @@ void Building::ReadTemplates(std::string path) {
     std::vector<std::pair<std::string, std::string>> templates;
 
     if (!filesystem::exists(path)) {
-        throw std::runtime_error("Path does not exist: " + path);
+        throw std::runtime_error("Path does not exist: " + path + "\n");
     }
 
     for (const auto& entry : std::filesystem::directory_iterator(path)) {
@@ -275,7 +285,7 @@ void Building::ReadTemplates(std::string path) {
                 }
             }
             else {
-                throw std::runtime_error("Failed to open file: " + filename);
+                throw std::runtime_error("Failed to open file: " + filename + "\n");
             }
         }
     }

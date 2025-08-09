@@ -94,7 +94,7 @@ int Map::Init(int blockX, int blockY) {
 
 	// 地图尺寸需要为正
 	if (blockX < 1 || blockY < 1) {
-		throw invalid_argument("Invalid map size.");
+		throw invalid_argument("Invalid map size.\n");
 		return 0;
 	}
 
@@ -369,7 +369,7 @@ bool Map::CheckXY(int x, int y) {
 
 Block* Map::GetBlock(int x, int y) {
 	if (!CheckXY(x, y)) {
-		throw invalid_argument("invalid block query position");
+		throw invalid_argument("invalid block query position.\n");
 		return nullptr;
 	}
 
@@ -381,7 +381,7 @@ Block* Map::GetBlock(int x, int y) {
 
 Element* Map::GetElement(int x, int y) {
 	if (!CheckXY(x, y)) {
-		throw invalid_argument("invalid block query position");
+		throw invalid_argument("invalid block query position.\n");
 		return nullptr;
 	}
 

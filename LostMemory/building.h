@@ -301,6 +301,10 @@ public:
 		else return nullptr;
 	}
 
+	// 获取实际建筑区域
+	Rect GetAbove();
+	Rect GetUnder();
+
 	// 内部布局
 	void TemplateLayout(std::string temp, FACE_DIRECTION face, float underScalar, float aboveScalar);
 

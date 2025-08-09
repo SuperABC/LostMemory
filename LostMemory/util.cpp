@@ -356,17 +356,17 @@ string Time::DayOfWeekName() const {
 
 void Time::Validate() const {
     if (month < 1 || month > 12)
-        throw out_of_range("Month must be between 1-12");
+        throw out_of_range("Month must be between 1-12.\n");
     if (day < 1 || day > DaysInMonth(year, month))
-        throw out_of_range("Invalid day for given month and year");
+        throw out_of_range("Invalid day for given month and year.\n");
     if (hour < 0 || hour > 23)
-        throw out_of_range("Hour must be between 0-23");
+        throw out_of_range("Hour must be between 0-23.\n");
     if (minute < 0 || minute > 59)
-        throw out_of_range("Minute must be between 0-59");
+        throw out_of_range("Minute must be between 0-59.\n");
     if (second < 0 || second > 59)
-        throw out_of_range("Second must be between 0-59");
+        throw out_of_range("Second must be between 0-59.\n");
     if (millisecond < 0 || millisecond > 999)
-        throw out_of_range("Millisecond must be between 0-999");
+        throw out_of_range("Millisecond must be between 0-999.\n");
 }
 
 int Time::DaysInMonth(int year, int month) {

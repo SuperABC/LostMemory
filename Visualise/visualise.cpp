@@ -44,25 +44,45 @@ void updateBuilding(int floor, int scroll) {
 
 	Floor* currentFloor = currentBuilding->GetFloor(floor);
 	if (currentFloor) {
-		for (auto facility : currentFloor->GetFacilities()) {
-			switch (facility.getType()) {
-			case Facility::FACILITY_CORRIDOR:
-				setColor(127, 127, 127);
-				break;
-			case Facility::FACILITY_STAIR:
-				setColor(0, 255, 0);
-				break;
-			case Facility::FACILITY_ELEVATOR:
-				setColor(0, 255, 255);
-				break;
-			default:
-				break;
-			}
-			putQuad(facility.GetLeft() * 20, facility.GetTop() * 20, facility.GetRight() * 20, facility.GetBottom() * 20, SOLID_FILL);
+		Rect above = currentBuilding->GetAbove();
+		Rect under = currentBuilding->GetUnder();
+		if (currentFloor->GetLevel() == 0) {
+			setColor(0, 0, 255);
+			putQuad(above.GetLeft() * 20, above.GetTop() * 20, above.GetRight() * 20, above.GetBottom() * 20, SOLID_FILL);
 		}
-		setColor(0, 0, 0);
-		for (auto room : currentFloor->GetRooms()) {
-			putQuad(room->GetLeft() * 20, room->GetTop() * 20, room->GetRight() * 20, room->GetBottom() * 20, EMPTY_FILL);
+		else {
+			if (currentFloor->GetLevel() < 0) {
+				setColor(127, 127, 127);
+				putQuad(under.GetLeft() * 20, under.GetTop() * 20, under.GetRight() * 20, under.GetBottom() * 20, SOLID_FILL);
+			}
+			for (auto facility : currentFloor->GetFacilities()) {
+				switch (facility.getType()) {
+				case Facility::FACILITY_CORRIDOR:
+					setColor(127, 127, 127);
+					break;
+				case Facility::FACILITY_STAIR:
+					setColor(0, 255, 0);
+					break;
+				case Facility::FACILITY_ELEVATOR:
+					setColor(0, 255, 255);
+					break;
+				default:
+					break;
+				}
+				putQuad((above.GetLeft() + facility.GetLeft()) * 20,
+					(above.GetTop() + facility.GetTop()) * 20,
+					(above.GetLeft() + facility.GetRight()) * 20,
+					(above.GetTop() + facility.GetBottom()) * 20, SOLID_FILL);
+			}
+			if (currentFloor->GetLevel() > 0) {
+				setColor(0, 0, 0);
+				for (auto room : currentFloor->GetRooms()) {
+					putQuad((above.GetLeft() + room->GetLeft()) * 20,
+						(above.GetTop() + room->GetTop()) * 20,
+						(above.GetLeft() + room->GetRight()) * 20,
+						(above.GetTop() + room->GetBottom()) * 20, EMPTY_FILL);
+				}
+			}
 		}
 	}
 
