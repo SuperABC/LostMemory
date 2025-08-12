@@ -341,10 +341,7 @@ public:
 	// 获取/添加房间
 	std::vector<Room*>& GetRooms() { return rooms; }
 	void AddRoom(Room* room) { rooms.push_back(room); }
-
-	// 根据组织类型自动分配房间
-	// TODO: 为每个组织实现自动分配房间功能
-	int AutoRoom(int space) { return 100; }
+	void UpdateRoom(std::vector<Room *> rooms) { this->rooms = rooms; }
 
 	// 获取组织名称
 	std::string GetName() { return name; }

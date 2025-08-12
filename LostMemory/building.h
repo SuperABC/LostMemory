@@ -243,14 +243,14 @@ public:
 	int GetLevel() const { return level; }
 
 	// 访问组件
-	const std::vector<Facility>& GetFacilities() const { return facilities; }
-	const std::vector<std::pair<Rect, int>>& GetUsages() const { return usages; }
-	const std::vector<Room *>& GetRooms() const { return rooms; }
+	std::vector<Facility>& GetFacilities() { return facilities; }
+	std::vector<std::pair<Rect, int>>& GetUsages() { return usages; }
+	std::vector<Room *>& GetRooms() { return rooms; }
 
 	// 自动布局
-	Room* SampleRoom(std::vector<Room>& complement, int idx);
-	Room* ApplyRoom(std::vector<Room>& complement, int idx);
-	void UsageLayout(std::vector<Room> complement);
+	Room* SampleRoom(std::vector<Room>& complement, int idx, int start);
+	Room* ApplyRoom(std::vector<Room>& complement, int idx, int start);
+	int UsageLayout(std::vector<Room> complement);
 
 private:
 	int level;
@@ -306,7 +306,7 @@ public:
 	Rect GetUnder();
 
 	// 内部布局
-	void TemplateLayout(std::string temp, FACE_DIRECTION face, float underScalar, float aboveScalar);
+	void TemplateLayout(std::vector<std::string> temps, FACE_DIRECTION face, float aboveScalar, float underScalar);
 
 	// 指定建筑属性
 	virtual void InitBuilding() = 0;
@@ -750,7 +750,7 @@ private:
 class MallBuilding : public Building {
 public:
 	MallBuilding() : Building(BUILDING_MALL) {
-		acreageRange = std::make_pair(10000, 100000);
+		acreageRange = std::make_pair(5000, 100000);
 	}
 
 	virtual void InitBuilding();

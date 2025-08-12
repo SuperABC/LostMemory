@@ -30,6 +30,19 @@ enum ROOM_TYPE {
 	ROOM_RECEPTION, //服务大堂
 	ROOM_INGREDIENT, //菜市场
 	ROOM_SALE, //商店
+	ROOM_BRAND, //品牌店
+	ROOM_CLOTHES, //服装店
+	ROOM_RESTAURANT, //饭店
+	ROOM_FASTFOOD, //快餐店
+	ROOM_BUFFET, //自助餐店
+	ROOM_COFFEE, //咖啡厅
+	ROOM_DRINK, //饮品店
+	ROOM_CINEMA, //电影院
+	ROOM_CARRENT, //租车店
+	ROOM_HAIRCUT, //理发店
+	ROOM_SMOKEWINETEA, //烟酒茶专卖店
+	ROOM_ELECTRONIC, //电子产品店
+	ROOM_BOOK, //书店
 	ROOM_MOVIE, //电影放映厅
 	ROOM_PUB, //酒吧
 	ROOM_MASAGE, //按摩室
@@ -131,6 +144,19 @@ static std::string roomText[ROOM_END] = {
 	"服务大堂",
 	"菜市场",
 	"商店",
+	"品牌店",
+	"服装店",
+	"饭店",
+	"快餐店",
+	"自助餐店",
+	"咖啡厅",
+	"饮品店",
+	"电影院",
+	"租车店",
+	"理发店",
+	"烟酒茶专卖店",
+	"电子产品店",
+	"书店",
 	"电影放映厅",
 	"酒吧",
 	"按摩室",
@@ -412,6 +438,110 @@ private:
 class SaleRoom : public Room {
 public:
 	SaleRoom() : Room(ROOM_SALE) {}
+
+private:
+
+};
+
+class BrandRoom : public Room {
+public:
+	BrandRoom() : Room(ROOM_BRAND) {}
+
+private:
+
+};
+
+class ClothesRoom : public Room {
+public:
+	ClothesRoom() : Room(ROOM_CLOTHES) {}
+
+private:
+
+};
+
+class RestaurantRoom : public Room {
+public:
+	RestaurantRoom() : Room(ROOM_RESTAURANT) {}
+
+private:
+
+};
+
+class FastfoodRoom : public Room {
+public:
+	FastfoodRoom() : Room(ROOM_FASTFOOD) {}
+
+private:
+
+};
+
+class BuffetRoom : public Room {
+public:
+	BuffetRoom() : Room(ROOM_BUFFET) {}
+
+private:
+
+};
+
+class CoffeeRoom : public Room {
+public:
+	CoffeeRoom() : Room(ROOM_COFFEE) {}
+
+private:
+
+};
+
+class DrinkRoom : public Room {
+public:
+	DrinkRoom() : Room(ROOM_DRINK) {}
+
+private:
+
+};
+
+class CinemaRoom : public Room {
+public:
+	CinemaRoom() : Room(ROOM_CINEMA) {}
+
+private:
+
+};
+
+class CarrentRoom : public Room {
+public:
+	CarrentRoom() : Room(ROOM_CARRENT) {}
+
+private:
+
+};
+
+class HaircutRoom : public Room {
+public:
+	HaircutRoom() : Room(ROOM_HAIRCUT) {}
+
+private:
+
+};
+
+class SmokewineteaRoom : public Room {
+public:
+	SmokewineteaRoom() : Room(ROOM_SMOKEWINETEA) {}
+
+private:
+
+};
+
+class ElectronicRoom : public Room {
+public:
+	ElectronicRoom() : Room(ROOM_ELECTRONIC) {}
+
+private:
+
+};
+
+class BookRoom : public Room {
+public:
+	BookRoom() : Room(ROOM_BOOK) {}
 
 private:
 
@@ -1000,3 +1130,5 @@ public:
 private:
 
 };
+
+Room* CreateRoom(ROOM_TYPE type);

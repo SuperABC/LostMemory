@@ -11,32 +11,33 @@ using namespace std;
 std::unordered_map<std::string, std::vector<std::pair<Facility::FACILITY_TYPE, std::vector<float>>>> Building::templateFacility = {};
 std::unordered_map<std::string, std::vector<std::pair<FACE_DIRECTION, std::vector<float>>>> Building::templateUsage = {};
 
-Room* Floor::SampleRoom(vector<Room> & complement, int idx) {
+Room* Floor::SampleRoom(vector<Room> & complement, int idx, int start) {
     if (idx < rooms.size())return rooms[idx];
-    else return &complement[(idx - rooms.size()) % complement.size()];
+    else return &complement[(idx - start) % complement.size()];
 }
 
-Room* Floor::ApplyRoom(vector<Room>& complement, int idx) {
+Room* Floor::ApplyRoom(vector<Room>& complement, int idx, int start) {
     if (idx < rooms.size())return rooms[idx];
 
-    Room* room = new Room(complement[(idx - rooms.size()) % complement.size()]);
+    Room* room = new Room(complement[(idx - start) % complement.size()]);
     room->SetLayer(level);
     rooms.push_back(room);
     return room;
 }
 
-void Floor::UsageLayout(vector<Room> complement) {
+int Floor::UsageLayout(vector<Room> complement) {
     int idx = 0;
+    int start = rooms.size();
     for (auto usage : usages) {
         vector<float> samples;
         if (usage.second == FACE_WEST || usage.second == FACE_EAST) {
             float y = 0;
             int idxBegin = idx;
             while(true) {
-                Room* sample = SampleRoom(complement, idx);
+                Room* sample = SampleRoom(complement, idx, start);
                 float step = (sample->GetAcreage() / 100.f) / usage.first.GetSizeX();
                 if (y + step > usage.first.GetSizeY() + GLOBAL_EPS)break;
-                Room *room = ApplyRoom(complement, idx++);
+                Room *room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft(), usage.first.GetRight(),
                     usage.first.GetTop() + y, usage.first.GetTop() + y + step);
@@ -44,7 +45,7 @@ void Floor::UsageLayout(vector<Room> complement) {
                 y += step;
             }
             if (samples.size() == 0) {
-                Room* room = ApplyRoom(complement, idx++);
+                Room* room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft(), usage.first.GetRight(),
                     usage.first.GetTop(), usage.first.GetBottom());
@@ -57,7 +58,7 @@ void Floor::UsageLayout(vector<Room> complement) {
                     sample *= inflate;
                 }
                 for (int i = 0; i < idxEnd - idxBegin; i++) {
-                    Room* room = SampleRoom(complement, idxBegin + i);
+                    Room* room = SampleRoom(complement, idxBegin + i, start);
                     room->SetPosition(room->GetLeft(), room->GetRight(),
                         usage.first.GetTop() + samples[i], usage.first.GetTop() + samples[i + 1]);
                 }
@@ -67,10 +68,10 @@ void Floor::UsageLayout(vector<Room> complement) {
             float x = 0;
             int idxBegin = idx;
             while (true) {
-                Room* sample = SampleRoom(complement, idx);
+                Room* sample = SampleRoom(complement, idx, start);
                 float step = (sample->GetAcreage() / 100.f) / usage.first.GetSizeY();
                 if (x + step > usage.first.GetSizeX() + GLOBAL_EPS)break;
-                Room* room = ApplyRoom(complement, idx++);
+                Room* room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft() + x, usage.first.GetLeft() + x + step,
                     usage.first.GetTop(), usage.first.GetBottom());
@@ -78,7 +79,7 @@ void Floor::UsageLayout(vector<Room> complement) {
                 x += step;
             }
             if (samples.size() == 0) {
-                Room* room = ApplyRoom(complement, idx++);
+                Room* room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft(), usage.first.GetRight(),
                     usage.first.GetTop(), usage.first.GetBottom());
@@ -91,13 +92,14 @@ void Floor::UsageLayout(vector<Room> complement) {
                     sample *= inflate;
                 }
                 for (int i = 0; i < idxEnd - idxBegin; i++) {
-                    Room* room = SampleRoom(complement, idxBegin + i);
+                    Room* room = SampleRoom(complement, idxBegin + i, start);
                     room->SetPosition(usage.first.GetLeft() + samples[i], usage.first.GetLeft() + samples[i + 1],
                         room->GetTop(), room->GetBottom());
                 }
             }
         }
     }
+    return idx;
 }
 
 BUILDING_TYPE Building::GetType() {
@@ -136,7 +138,7 @@ Rect Building::GetUnder() {
     return under;
 }
 
-void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScalar, float aboveScalar) {
+void Building::TemplateLayout(vector<string> temps, FACE_DIRECTION face, float aboveScalar, float underScalar) {
     float aboveScalarX = aboveScalar;
     float aboveScalarY = aboveScalar;
     float underScalarX = underScalar;
@@ -195,27 +197,32 @@ void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScala
     }
 
     //布局公共设施
+    string temp;
     for (auto &floor : floors) {
+        if (floor.GetLevel() == 0)continue;
+        if (floor.GetLevel() < 0)temp = temps[0];
+        else if (floor.GetLevel() >= temps.size())temp = temps.back();
+        else temp = temps[floor.GetLevel()];
         for (auto facility : templateFacility[temp + "_" + faceAbbr[face]]) {
-            if (floor.GetLevel() == 0)continue;
             if (floor.GetLevel() < 0 && facility.first == Facility::FACILITY_CORRIDOR)continue;
-            float l = facility.second[0] * floor.GetSizeX() + facility.second[1] * 0.1f;
-            float t = facility.second[2] * floor.GetSizeY() + facility.second[3] * 0.1f;
-            float r = facility.second[4] * floor.GetSizeX() + facility.second[5] * 0.1f;
-            float b = facility.second[6] * floor.GetSizeY() + facility.second[7] * 0.1f;
+            float l = facility.second[0] * above.GetSizeX() + facility.second[1] * 0.1f;
+            float t = facility.second[2] * above.GetSizeY() + facility.second[3] * 0.1f;
+            float r = facility.second[4] * above.GetSizeX() + facility.second[5] * 0.1f;
+            float b = facility.second[6] * above.GetSizeY() + facility.second[7] * 0.1f;
             floor.AddFacility(Facility(facility.first, l, t, r - l, b - t));
         }
+        if (floor.GetLevel() <= 0)continue;
         for (auto usage : templateUsage[temp + "_" + faceAbbr[face]]) {
-            if (floor.GetLevel() <= 0)continue;
-            float l = usage.second[0] * floor.GetSizeX() + usage.second[1] * 0.1f;
-            float t = usage.second[2] * floor.GetSizeY() + usage.second[3] * 0.1f;
-            float r = usage.second[4] * floor.GetSizeX() + usage.second[5] * 0.1f;
-            float b = usage.second[6] * floor.GetSizeY() + usage.second[7] * 0.1f;
+            float l = usage.second[0] * above.GetSizeX() + usage.second[1] * 0.1f;
+            float t = usage.second[2] * above.GetSizeY() + usage.second[3] * 0.1f;
+            float r = usage.second[4] * above.GetSizeX() + usage.second[5] * 0.1f;
+            float b = usage.second[6] * above.GetSizeY() + usage.second[7] * 0.1f;
             floor.AddUsage(make_pair(Rect(l, t, r - l, b - t), usage.first));
         }
     }
 
     // 分配房间位置
+    int idx = 0;
     for (int i = 0; i < floors.size(); i++) {
         if (floors[i].GetLevel() == 0)continue;
         else if (floors[i].GetLevel() < 0) {
@@ -223,7 +230,7 @@ void Building::TemplateLayout(string temp, FACE_DIRECTION face, float underScala
         }
         else {
             int num = floors[i].GetRooms().size();
-            floors[i].UsageLayout(complements[i]);
+            idx += floors[i].UsageLayout(complements[i]);
 
             if (num < floors[i].GetRooms().size()) {
                 for (int j = num; j < floors[i].GetRooms().size(); j++) {
@@ -1078,7 +1085,7 @@ void ResidentBuilding::DistributeInside() {
         complement.back().SetAcreage(standard);
     }
 
-    TemplateLayout(temp, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
     if (rooms.size() > resident->GetRooms().size()) {
         for (int i = resident->GetRooms().size(); i < rooms.size(); i++) {
             resident->AddRoom(rooms[i]);
@@ -1141,7 +1148,7 @@ void VillaBuilding::DistributeInside() {
         complement.back().SetAcreage(standard);
     }
 
-    TemplateLayout(temp, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
     if (rooms.size() > villa->GetRooms().size()) {
         for (int i = villa->GetRooms().size(); i < rooms.size(); i++) {
             villa->AddRoom(rooms[i]);
@@ -1290,7 +1297,132 @@ void MallBuilding::InitBuilding() {
 }
 
 void MallBuilding::DistributeInside() {
+    static vector<pair<ROOM_TYPE, float>> probs = {
+        {ROOM_BRAND, 0.2f},
+        {ROOM_CLOTHES, 0.4f},
+        {ROOM_RESTAURANT, 0.55f},
+        {ROOM_FASTFOOD, 0.63f},
+        {ROOM_BUFFET, 0.68f},
+        {ROOM_COFFEE, 0.70f},
+        {ROOM_DRINK, 0.76f},
+        {ROOM_CINEMA, 0.77f},
+        {ROOM_MARKET, 0.78f},
+        {ROOM_CARRENT, 0.79f},
+        {ROOM_MUSIC, 0.81f},
+        {ROOM_COSMETIC, 0.83f},
+        {ROOM_HAIRCUT, 0.85f},
+        {ROOM_SMOKEWINETEA, 0.86f},
+        {ROOM_CHESSCARD, 0.87f},
+        {ROOM_PET, 0.89f},
+        {ROOM_ELECTRONIC, 0.94f},
+        {ROOM_STUDIO, 0.95f},
+        {ROOM_BOOK, 0.97f},
+        {ROOM_BILLIARD, 0.98f},
+        {ROOM_NET, 0.99f},
+        {ROOM_KTV, 1.0f},
+    };
+    static unordered_map<ROOM_TYPE, ORGANIZATION_TYPE> mapping = {
+        {ROOM_BRAND, ORGANIZATION_BRAND},
+        {ROOM_CLOTHES, ORGANIZATION_CLOTHES},
+        {ROOM_RESTAURANT, ORGANIZATION_RESTAURANT},
+        {ROOM_FASTFOOD, ORGANIZATION_FASTFOOD},
+        {ROOM_BUFFET, ORGANIZATION_BUFFET},
+        {ROOM_COFFEE, ORGANIZATION_COFFEE},
+        {ROOM_DRINK, ORGANIZATION_DRINK},
+        {ROOM_CINEMA, ORGANIZATION_CINEMA},
+        {ROOM_MARKET, ORGANIZATION_MARKET},
+        {ROOM_CARRENT, ORGANIZATION_CARRENT},
+        {ROOM_MUSIC, ORGANIZATION_MUSIC},
+        {ROOM_COSMETIC, ORGANIZATION_COSMETIC},
+        {ROOM_HAIRCUT, ORGANIZATION_HAIRCUT},
+        {ROOM_SMOKEWINETEA, ORGANIZATION_SMOKEWINETEA},
+        {ROOM_CHESSCARD, ORGANIZATION_CHESSCARD},
+        {ROOM_PET, ORGANIZATION_PET},
+        {ROOM_ELECTRONIC, ORGANIZATION_ELECTRONIC},
+        {ROOM_STUDIO, ORGANIZATION_STUDIO},
+        {ROOM_BOOK, ORGANIZATION_BOOK},
+        {ROOM_BILLIARD, ORGANIZATION_BILLIARD},
+        {ROOM_NET, ORGANIZATION_NET},
+        {ROOM_KTV, ORGANIZATION_KTV},
+    };
 
+    auto mall = CreateOrganization<MallOrganization>();
+
+    float aboveScalar, underScalar;
+    underScalar = 0.8f;
+    if (GetAcreage() < 20000) {
+        aboveScalar = 0.8f;
+    }
+    else if (GetAcreage() < 50000) {
+        aboveScalar = 0.7f;
+    }
+    else {
+        aboveScalar = 0.6f;
+    }
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            mall->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        mall->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+    }
+
+    int standard = 100;
+    string temp = "";
+    int face = GetRandom(4);
+
+    if (GetAcreage() < 10000) {
+        standard = 120;
+        temp = "circle_single";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+    }
+    else if (GetAcreage() < 20000) {
+        standard = 160;
+        temp = "circle_single";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+    }
+    else {
+        standard = 200;
+        temp = "circle_single";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        for (int i = 0; i < GetAcreage() / standard; i++) {
+            float p = GetRandom(1000) / 1000.0f;
+            ROOM_TYPE roomType = ROOM_NONE;
+            for (int i = 0; i < probs.size(); i++) {
+                if (p < probs[i].second) {
+                    roomType = probs[i].first;
+                    break;
+                }
+            }
+            Room* room = ::CreateRoom(roomType);
+            complement.push_back(Room(*room));
+            delete room;
+            complement.back().SetAcreage(standard * exp(GetRandom(1000) / 1000.0f - 0.5f));
+        }
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > mall->GetRooms().size()) {
+        for (int i = mall->GetRooms().size(); i < rooms.size(); i++) {
+            auto organization = ::CreateOrganization(mapping[rooms[i]->GetType()]);
+            if (organization) {
+                organization->AddRoom(rooms[i]);
+                organizations.push_back(organization);
+            }
+        }
+    }
 }
 
 vector<pair<Job*, int>> MallBuilding::GetJobs() {

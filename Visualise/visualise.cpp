@@ -103,7 +103,7 @@ void updateBuilding(int floor, int scroll) {
 			roomMap[room->GetType()]++;
 		}
 		for (auto room : roomMap) {
-			text += roomText[room.first] + " " + to_string(room.second) + "个.\n";
+			text += "    " + roomText[room.first] + " " + to_string(room.second) + "个.\n";
 		}
 	}
 

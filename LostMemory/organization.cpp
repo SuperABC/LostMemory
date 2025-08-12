@@ -15,8 +15,7 @@ void Organization::SetType(ORGANIZATION_TYPE type) {
 }
 
 Organization* CreateOrganization(ORGANIZATION_TYPE type) {
-    switch (type)
-    {
+    switch (type) {
     case ORGANIZATION_NONE:
         return new Organization(type);
     case ORGANIZATION_ROADFIX:
