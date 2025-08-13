@@ -179,8 +179,8 @@ private:
 	std::vector<std::vector<std::shared_ptr<Block>>> blocks;
 
 	std::vector<std::shared_ptr<Area>> areas;
-	std::vector< std::shared_ptr<Zone>> zones;
-	std::vector< std::shared_ptr<Building>> buildings;
+	std::vector<std::shared_ptr<Zone>> zones;
+	std::vector<std::shared_ptr<Building>> buildings;
 
 	Roadnet roadnet;
 
@@ -232,6 +232,7 @@ bool Map::AddPlot(int avg) {
 	if (avg == 1) {
 		std::shared_ptr<T> plot = LM_NEW(T);
 
+		// 按区域面积从大到小选一个进行添加
 		for (auto area : areas) {
 			if (plot->plotType == PLOT_ZONE && !area->Empty())continue;
 			if (area->GetDistance() < plot->GetDistanceRange().first)continue;
@@ -254,12 +255,13 @@ bool Map::AddPlot(int avg) {
 				else continue;
 			}
 		}
-		LM_DELETE(plot);
 	}
 	// 若均值大于1，则添加的数量在(avg/2+1)到(avg*2)之间
 	else if (avg > 1) {
 		int count = 0;
 		int fail = 0;
+
+		// 按每次全区域随机选一个进行添加
 		while (true) {
 			if (fail > areas.size() / 2)break;
 
@@ -282,7 +284,6 @@ bool Map::AddPlot(int avg) {
 			}
 			else {
 				fail++;
-				LM_DELETE(plot);
 				continue;
 			}
 

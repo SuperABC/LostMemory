@@ -4,9 +4,7 @@
 using namespace std;
 
 Person::~Person() {
-	for (auto asset : assets) {
-		LM_DELETE(asset);
-	}
+	assets.clear();
 }
 
 void Person::AddRelative(RELATIVE_TYPE type, shared_ptr<Person> person) {
@@ -63,15 +61,15 @@ vector<shared_ptr<Asset>>& Person::GetAssets() {
 	return assets;
 }
 
-void Person::AddEducationExperience(const EducationExperience& exp) {
+void Person::AddEducationExperience(EducationExperience exp) {
 	educationExperiences.push_back(exp);
 }
 
-void Person::AddJobExperience(const JobExperience& exp) {
+void Person::AddJobExperience(JobExperience exp) {
 	jobExperiences.push_back(exp);
 }
 
-void Person::AddEmotionExperience(const EmotionExperience& exp) {
+void Person::AddEmotionExperience(EmotionExperience exp) {
 	emotionExperiences.push_back(exp);
 }
 

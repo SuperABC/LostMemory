@@ -6,7 +6,7 @@
 
 using namespace std;
 
-ROOM_TYPE Room::GetType() {
+ROOM_TYPE Room::GetType() const {
 	return type;
 }
 

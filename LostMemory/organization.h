@@ -328,14 +328,11 @@ class Organization {
 public:
 	Organization(ORGANIZATION_TYPE type) : type(type) {}
 	~Organization() {
-		for (auto room : rooms) {
-			LM_DELETE(room);
-		}
 		rooms.clear();
 	}
 
 	// 获取/设置类型
-	ORGANIZATION_TYPE GetType();
+	ORGANIZATION_TYPE GetType() const;
 	void SetType(ORGANIZATION_TYPE type);
 
 	// 获取/添加房间
@@ -344,7 +341,7 @@ public:
 	void UpdateRoom(std::vector<std::shared_ptr<Room>> rooms) { this->rooms = rooms; }
 
 	// 获取组织名称
-	std::string GetName() { return name; }
+	std::string GetName() const { return name; }
 
 private:
 	ORGANIZATION_TYPE type;

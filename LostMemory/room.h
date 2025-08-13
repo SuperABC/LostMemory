@@ -237,15 +237,15 @@ public:
 	Room(ROOM_TYPE type) : type(type) {}
 
 	// 获取/设置类型
-	ROOM_TYPE GetType();
+	ROOM_TYPE GetType() const;
 	void SetType(ROOM_TYPE type);
 
 	// 获取/设置属性
-	int GetOwner() { return owner; }
+	int GetOwner() const { return owner; }
 	void SetOwner(int owner) { this->owner = owner; }
-	int GetLayer() { return layer; }
+	int GetLayer() const { return layer; }
 	void SetLayer(int layer) { this->layer = layer; }
-	int GetAcreage() { return acreage; }
+	int GetAcreage() const { return acreage; }
 	void SetAcreage(int acreage) { this->acreage = acreage; }
 
 private:

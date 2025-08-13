@@ -70,11 +70,7 @@ bool Block::CheckXY(int x, int y) {
 }
 
 Block::~Block() {
-	for (int i = 0; i < BLOCK_SIZE; i++) {
-		for (int j = 0; j < BLOCK_SIZE; j++) {
-			LM_DELETE(elements[j][i]);
-		}
-	}
+	elements.clear();
 }
 
 shared_ptr<Element> Block::GetElement(int x, int y) {
@@ -206,29 +202,12 @@ void Map::Checkin(vector<shared_ptr<Person>> citizens, int year) {
 }
 
 void Map::Destroy() {
-	if (width != 0 && height != 0) {
-		for (int i = 0; i < width / BLOCK_SIZE; i++) {
-			for (int j = 0; j < height / BLOCK_SIZE; j++) {
-				if (blocks[j][i])LM_DELETE(blocks[j][i]);
-			}
-		}
-	}
 	blocks.clear();
+
 	roadnet.Reset();
 
-	for (auto area : areas) {
-		if (area)LM_DELETE(area);
-	}
 	areas.clear();
-
-	for (auto zone : zones) {
-		if (zone)LM_DELETE(zone);
-	}
 	zones.clear();
-
-	for (auto building : buildings) {
-		if (building)LM_DELETE(building);
-	}
 	buildings.clear();
 }
 
@@ -1489,8 +1468,7 @@ void Map::DistributeZone() {
 		float prob = GetRandom(1000) / 1000.0f;
 		shared_ptr<Zone> tmp = CreateZone(RandomZone(area->GetType(), prob));
 		if (tmp) {
-			if (!area->AddPlot(tmp))LM_DELETE(tmp);
-			else {
+			if (area->AddPlot(tmp)) {
 				tmp->SetId(zones.size());
 				zones.push_back(tmp);
 			}
@@ -1524,7 +1502,6 @@ void Map::DistributeBuilding() {
 			shared_ptr<Building> tmp = CreateBuilding(RandomBuilding(area->GetType(), prob));
 			if (tmp) {
 				if (!area->AddPlot(tmp)) {
-					LM_DELETE(tmp);
 					break;
 				}
 				else {
@@ -1674,7 +1651,6 @@ void Map::ArrangeArea() {
 						if (plot1->plotType == PLOT_OTHER)plots.push_back(plot1);
 						if (plot2->plotType == PLOT_OTHER)plots.push_back(plot2);
 					}
-					LM_DELETE(tmp);
 				}
 			}
 		}
@@ -1816,7 +1792,6 @@ void Map::ArrangeZone() {
 						if (plot1->plotType == PLOT_OTHER)plots.push_back(plot1);
 						if (plot2->plotType == PLOT_OTHER)plots.push_back(plot2);
 					}
-					LM_DELETE(tmp);
 				}
 			}
 		}

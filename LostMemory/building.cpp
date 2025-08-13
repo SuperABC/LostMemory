@@ -11,7 +11,8 @@ using namespace std;
 std::unordered_map<std::string, std::vector<std::pair<Facility::FACILITY_TYPE, std::vector<float>>>> Building::templateFacility = {};
 std::unordered_map<std::string, std::vector<std::pair<FACE_DIRECTION, std::vector<float>>>> Building::templateUsage = {};
 
-Room *Floor::SampleRoom(vector<Room> &complement, int idx, int start) {
+const Room *Floor::SampleRoom(vector<Room> &complement, int idx, int start) {
+    //只返回房间数据
     if (idx < rooms.size())return rooms[idx].get();
     else return &complement[(idx - start) % complement.size()];
 }
@@ -19,6 +20,7 @@ Room *Floor::SampleRoom(vector<Room> &complement, int idx, int start) {
 shared_ptr<Room> Floor::ApplyRoom(vector<Room>& complement, int idx, int start) {
     if (idx < rooms.size())return rooms[idx];
 
+    //把要循环的房间加入楼层
     shared_ptr<Room> room = LM_NEW(Room, complement[(idx - start) % complement.size()]);
     room->SetLayer(level);
     rooms.push_back(room);
@@ -26,15 +28,21 @@ shared_ptr<Room> Floor::ApplyRoom(vector<Room>& complement, int idx, int start) 
 }
 
 int Floor::UsageLayout(vector<Room> complement) {
+    // 当前楼层已经布局完成的房间数量
     int idx = 0;
+
+    // 初始添加的房间总数
     int start = rooms.size();
+
+    // 每个功能区循环
     for (auto usage : usages) {
+        //房间宽度记录
         vector<float> samples;
         if (usage.second == FACE_WEST || usage.second == FACE_EAST) {
             float y = 0;
             int idxBegin = idx;
             while(true) {
-                Room* sample = SampleRoom(complement, idx, start);
+                const Room* sample = SampleRoom(complement, idx, start);
                 float step = (sample->GetAcreage() / 100.f) / usage.first.GetSizeX();
                 if (y + step > usage.first.GetSizeY() + GLOBAL_EPS)break;
                 shared_ptr<Room> room = ApplyRoom(complement, idx++, start);
@@ -44,12 +52,14 @@ int Floor::UsageLayout(vector<Room> complement) {
                 samples.push_back(y);
                 y += step;
             }
+            // 如果没有房间被添加，则强制添加一个房间
             if (samples.size() == 0) {
                 shared_ptr<Room> room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft(), usage.first.GetRight(),
                     usage.first.GetTop(), usage.first.GetBottom());
             }
+            // 否则所有房间按比例填满功能区
             else {
                 int idxEnd = idx;
                 samples.push_back(y);
@@ -58,7 +68,7 @@ int Floor::UsageLayout(vector<Room> complement) {
                     sample *= inflate;
                 }
                 for (int i = 0; i < idxEnd - idxBegin; i++) {
-                    Room* room = SampleRoom(complement, idxBegin + i, start);
+                    shared_ptr<Room> room = ApplyRoom(complement, idxBegin + i, start);
                     room->SetPosition(room->GetLeft(), room->GetRight(),
                         usage.first.GetTop() + samples[i], usage.first.GetTop() + samples[i + 1]);
                 }
@@ -68,7 +78,7 @@ int Floor::UsageLayout(vector<Room> complement) {
             float x = 0;
             int idxBegin = idx;
             while (true) {
-                Room* sample = SampleRoom(complement, idx, start);
+                const Room* sample = SampleRoom(complement, idx, start);
                 float step = (sample->GetAcreage() / 100.f) / usage.first.GetSizeY();
                 if (x + step > usage.first.GetSizeX() + GLOBAL_EPS)break;
                 shared_ptr<Room> room = ApplyRoom(complement, idx++, start);
@@ -78,12 +88,14 @@ int Floor::UsageLayout(vector<Room> complement) {
                 samples.push_back(x);
                 x += step;
             }
+            // 如果没有房间被添加，则强制添加一个房间
             if (samples.size() == 0) {
                 shared_ptr<Room> room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft(), usage.first.GetRight(),
                     usage.first.GetTop(), usage.first.GetBottom());
             }
+            // 否则所有房间按比例填满功能区
             else {
                 int idxEnd = idx;
                 samples.push_back(x);
@@ -92,7 +104,7 @@ int Floor::UsageLayout(vector<Room> complement) {
                     sample *= inflate;
                 }
                 for (int i = 0; i < idxEnd - idxBegin; i++) {
-                    Room* room = SampleRoom(complement, idxBegin + i, start);
+                    shared_ptr<Room> room = ApplyRoom(complement, idxBegin + i, start);
                     room->SetPosition(usage.first.GetLeft() + samples[i], usage.first.GetLeft() + samples[i + 1],
                         room->GetTop(), room->GetBottom());
                 }
@@ -102,7 +114,7 @@ int Floor::UsageLayout(vector<Room> complement) {
     return idx;
 }
 
-BUILDING_TYPE Building::GetType() {
+BUILDING_TYPE Building::GetType() const {
     return type;
 }
 
@@ -110,11 +122,11 @@ void Building::SetType(BUILDING_TYPE type) {
     this->type = type;
 }
 
-CONSTRUCTION_TYPE Building::GetStatus() {
+CONSTRUCTION_TYPE Building::GetStatus() const {
     return status;
 }
 
-AREA_TYPE Building::GetAreaType() {
+AREA_TYPE Building::GetAreaType() const {
     return area;
 }
 
@@ -122,7 +134,7 @@ void Building::SetAreaType(AREA_TYPE type) {
     area = type;
 }
 
-ZONE_TYPE Building::GetZoneType() {
+ZONE_TYPE Building::GetZoneType() const {
     return zone;
 }
 
@@ -242,57 +254,95 @@ void Building::TemplateLayout(vector<string> temps, FACE_DIRECTION face, float a
 }
 
 void Building::ReadTemplates(std::string path) {
-    std::vector<std::pair<std::string, std::string>> templates;
-
     if (!filesystem::exists(path)) {
         throw std::runtime_error("Path does not exist: " + path + "\n");
     }
 
-    for (const auto& entry : std::filesystem::directory_iterator(path)) {
+    for (const auto& entry : filesystem::directory_iterator(path)) {
         if (entry.is_regular_file()) {
             string filename = entry.path().filename().string();
-            filename = filename.substr(0, filename.length() - 4);
+            string basename = filename.substr(0, filename.length() - 4);
 
             ifstream fin(entry.path());
-            string type;
-            float param;
-            if (fin.is_open()) {
-                templateFacility.emplace(filename, vector<pair<Facility::FACILITY_TYPE, std::vector<float>>>());
-                templateUsage.emplace(filename, vector<pair<FACE_DIRECTION, std::vector<float>>>());
-                while (!fin.eof()) {
-                    pair<Facility::FACILITY_TYPE, std::vector<float>> facilities;
-                    pair<FACE_DIRECTION, std::vector<float>> usages;
-
-                    fin >> type;
-
-                    if (type == "corridor")facilities.first = Facility::FACILITY_CORRIDOR;
-                    else if (type == "stair")facilities.first = Facility::FACILITY_STAIR;
-                    else if (type == "elevator")facilities.first = Facility::FACILITY_ELEVATOR;
-                    else if (type == "usage") {
-                        fin >> param;
-                        usages.first = (FACE_DIRECTION)param;
-                    }
-                    else break;
-
-                    if (type == "corridor" || type == "stair" || type == "elevator") {
-                        for (int i = 0; i < 8; i++) {
-                            fin >> param;
-                            facilities.second.push_back(param);
-                        }
-                        templateFacility[filename].push_back(facilities);
-                    }
-                    else if (type == "usage") {
-                        for (int i = 0; i < 8; i++) {
-                            fin >> param;
-                            usages.second.push_back(param);
-                        }
-                        templateUsage[filename].push_back(usages);
-                    }
-                    else break;
-                }
-            }
-            else {
+            if (!fin.is_open()) {
                 throw std::runtime_error("Failed to open file: " + filename + "\n");
+            }
+
+            // 初始化当前文件的模板存储
+            templateFacility[basename] = vector<pair<Facility::FACILITY_TYPE, vector<float>>>();
+            templateUsage[basename] = vector<pair<FACE_DIRECTION, vector<float>>>();
+
+            string type;
+            while (fin >> type) {
+                // 处理注释行
+                if (type == "#") {
+                    fin.ignore((numeric_limits<streamsize>::max)(), '\n');
+                    continue;
+                }
+
+                // 处理设施
+                if (type == "corridor" || type == "stair" || type == "elevator") {
+                    vector<float> params(8);
+                    bool readError = false;
+
+                    for (int i = 0; i < 8; i++) {
+                        if (!(fin >> params[i])) {
+                            readError = true;
+                            break;
+                        }
+                    }
+
+                    if (readError) {
+                        throw std::runtime_error("Incomplete parameters for " + type +
+                            " in file: " + filename + "\n");
+                    }
+
+                    // 转换为枚举类型
+                    Facility::FACILITY_TYPE facType;
+                    if (type == "corridor")facType = Facility::FACILITY_CORRIDOR;
+                    else if (type == "stair")facType = Facility::FACILITY_STAIR;
+                    else facType = Facility::FACILITY_ELEVATOR;
+
+                    templateFacility[basename].push_back({ facType, params });
+                }
+                // 处理功能区
+                else if (type == "usage") {
+                    int directionInt;
+                    if (!(fin >> directionInt)) {
+                        throw std::runtime_error("Failed to read direction for usage in file: " + filename + "\n");
+                    }
+
+                    // 验证方向值有效性
+                    if (directionInt < 0 || directionInt > 3) {
+                        throw std::runtime_error("Invalid direction value " + to_string(directionInt) +
+                            " in file: " + filename + "\n");
+                    }
+                    FACE_DIRECTION direction = static_cast<FACE_DIRECTION>(directionInt);
+
+                    vector<float> params(8);
+                    bool readError = false;
+                    for (int i = 0; i < 8; i++) {
+                        if (!(fin >> params[i])) {
+                            readError = true;
+                            break;
+                        }
+                    }
+
+                    if (readError) {
+                        throw std::runtime_error("Incomplete parameters for usage in file: " + filename + "\n");
+                    }
+
+                    templateUsage[basename].push_back({ direction, params });
+                }
+                // 处理未知类型
+                else {
+                    string errorMsg = "Unknown type identifier '" + type +
+                        "' in file: " + filename + "\n";
+
+                    // 跳过错误行的剩余内容
+                    fin.ignore((numeric_limits<streamsize>::max)(), '\n');
+                    throw std::runtime_error(errorMsg);
+                }
             }
         }
     }
@@ -1408,7 +1458,6 @@ void MallBuilding::DistributeInside() {
             }
             shared_ptr<Room> room = ::CreateRoom(roomType);
             complement.push_back(Room(*room));
-            LM_DELETE(room);
             complement.back().SetAcreage(standard * exp(GetRandom(1000) / 1000.0f - 0.5f));
         }
     }

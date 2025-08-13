@@ -11,9 +11,7 @@ using namespace std;
 // TODO: 当前仍在持续的经历截止时间设为-1
 
 Populace::~Populace() {
-	for (auto citizen : citizens) {
-		if (citizen)LM_DELETE(citizen);
-	}
+	citizens.clear();
 }
 
 void Populace::Init(int accomodation) {
@@ -33,9 +31,6 @@ void Populace::Init(int accomodation) {
 }
 
 void Populace::Destroy() {
-	for (auto citizen : citizens) {
-		if (citizen)LM_DELETE(citizen);
-	}
 	citizens.clear();
 }
 
@@ -317,14 +312,14 @@ void Populace::GenerateEducations() {
 		EducationLevel level;
 		int startYear;
 		int grade;
-		vector<shared_ptr<Person>> students;
-		shared_ptr<Person> teacher = nullptr;
+		vector<int> students;
+		int teacher = -1;
 	};
 	vector<SchoolClass> levelClasses[EDUCATION_END];
 
 	// 从120年前开始模拟
 	mt19937 generator(random_device{}());
-	vector<shared_ptr<Person>> levelPotentials[EDUCATION_END];
+	vector<int> levelPotentials[EDUCATION_END];
 	for (int year = time.GetYear() - 120; year <= time.GetYear(); year++) {
 		// 班级变动
 		for (int level = EDUCATION_PRIMARY; level <= EDUCATION_POST; level++) {
@@ -336,7 +331,7 @@ void Populace::GenerateEducations() {
 					EducationExperience eduExp;
 					eduExp.SetSchool(cls.schoolName);
 					eduExp.SetTime(begin, end);
-					student->AddEducationExperience(eduExp);
+					citizens[student]->AddEducationExperience(eduExp);
 				}
 			}
 
@@ -441,7 +436,8 @@ void Populace::GenerateEducations() {
 					else {
 						float ratio = (100 - GetRandom((1.0f - stayRatio) * 100)) / 100.0f;
 						for (int j = cls.students.size() * ratio; j < cls.students.size(); j++) {
-							cls.students[j]->GetEducationExperiences().back().SetGraduate(false);
+							if(citizens[cls.students[j]]->GetEducationExperiences().size() > 0)
+								citizens[cls.students[j]]->GetEducationExperiences().back().SetGraduate(false);
 						}
 						cls.students.resize(cls.students.size() * ratio);
 					}
@@ -464,11 +460,11 @@ void Populace::GenerateEducations() {
 		}
 
 		// 适龄小学生
-		for (auto citizen : citizens) {
-			int birthYear = citizen->GetBirthday().GetYear();
+		for (int i = 0; i < citizens.size(); i++) {
+			int birthYear = citizens[i]->GetBirthday().GetYear();
 			if (birthYear < year - 5) {
-				if (GetRandom(9 + birthYear - year) == 0 && citizen->GetEducationExperiences().size() == 0)
-					levelPotentials[EDUCATION_PRIMARY].push_back(citizen);
+				if (GetRandom(9 + birthYear - year) == 0 && citizens[i]->GetEducationExperiences().size() == 0)
+					levelPotentials[EDUCATION_PRIMARY].push_back(i);
 			}
 		}
 

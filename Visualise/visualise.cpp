@@ -239,7 +239,10 @@ void updatePopulace(int scroll) {
 		if (citizen->GetGender() == GENDER_FEMALE)female++;
 		else male++;
 
-		ageList[(populace->GetTime() + Time(2001, 1, 1) - citizen->GetBirthday()).GetYear()]++;
+		if ((populace->GetTime() - citizen->GetBirthday()).GetYear() < 0) {
+			debugf("%d", (populace->GetTime() - citizen->GetBirthday()).GetYear());
+		}
+		ageList[(populace->GetTime() - citizen->GetBirthday()).GetYear()]++;
 	}
 	for (int age = 0; age < ageList.size(); age++) {
 		text += to_string(age) + "岁人数 " + to_string(ageList[age]) + "\n";

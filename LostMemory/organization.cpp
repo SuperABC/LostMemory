@@ -6,7 +6,7 @@
 
 using namespace std;
 
-ORGANIZATION_TYPE Organization::GetType() {
+ORGANIZATION_TYPE Organization::GetType() const {
     return type;
 }
 

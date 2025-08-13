@@ -34,12 +34,14 @@ vector<shared_ptr<Plot>> Zone::GetPlots() {
 }
 
 bool Zone::CalcAcreage(shared_ptr<Building> building, float scalar) {
+	// 计算区域内剩余面积
 	int content = 0;
 	for (auto b : buildings) {
 		content += b->GetAcreage();
 	}
 	int rest = GetAcreage() - content;
 
+	// 根据缩放调整新增建筑面积上下限
 	int minAcreage = building->GetAcreageRange().first;
 	int maxAcreage = building->GetAcreageRange().second;
 	if (scalar < 1.0f) {
@@ -49,10 +51,10 @@ bool Zone::CalcAcreage(shared_ptr<Building> building, float scalar) {
 		minAcreage = min(minAcreage * scalar, maxAcreage);
 	}
 
+	// 计算新增建筑随机面积并写入建筑
 	if (rest < minAcreage) {
 		return false;
 	}
-
 	if (rest > maxAcreage) {
 		float range = log(maxAcreage) - log(minAcreage);
 		range *= (GetRandom(1000) / 1000.0f);

@@ -100,7 +100,7 @@ bool Area::AddPlot(shared_ptr<Plot> plot) {
 		return false;
 	}
 
-	// 则根据剩余面积随机分配面积
+	// 否则根据剩余面积随机分配面积
 	// TODO: 重写随机分配逻辑
 	if (plot->GetAcreageRange().second < 0) {
 		if (rest > plot->GetAcreageRange().first * 2) {

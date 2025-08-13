@@ -248,7 +248,7 @@ public:
 	std::vector<std::shared_ptr<Room>>& GetRooms() { return rooms; }
 
 	// 自动布局
-	Room* SampleRoom(std::vector<Room>& complement, int idx, int start);
+	const Room* SampleRoom(std::vector<Room>& complement, int idx, int start);
 	std::shared_ptr<Room> ApplyRoom(std::vector<Room>& complement, int idx, int start);
 	int UsageLayout(std::vector<Room> complement);
 
@@ -268,23 +268,17 @@ public:
 		plotType = PLOT_BUILDING;
 	}
 	~Building() {
-		for (auto organization : organizations) {
-			LM_DELETE(organization);
-		}
 		organizations.clear();
-		for (auto room : rooms) {
-			LM_DELETE(room);
-		}
 		rooms.clear();
 	}
 
 	// 获取/设置类型
-	BUILDING_TYPE GetType();
+	BUILDING_TYPE GetType() const;
 	void SetType(BUILDING_TYPE type);
-	CONSTRUCTION_TYPE GetStatus();
-	AREA_TYPE GetAreaType();
+	CONSTRUCTION_TYPE GetStatus() const;
+	AREA_TYPE GetAreaType() const;
 	void SetAreaType(AREA_TYPE type);
-	ZONE_TYPE GetZoneType();
+	ZONE_TYPE GetZoneType() const;
 	void SetZoneType(ZONE_TYPE type);
 
 	// 获取/设置属性

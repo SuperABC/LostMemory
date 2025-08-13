@@ -69,9 +69,9 @@ public:
 	std::vector<std::shared_ptr<Room>>& GetAddresses();
 
 	// 管理经验信息
-	void AddEducationExperience(const EducationExperience& exp);
-	void AddEmotionExperience(const EmotionExperience& exp);
-	void AddJobExperience(const JobExperience& exp);
+	void AddEducationExperience(EducationExperience exp);
+	void AddEmotionExperience(EmotionExperience exp);
+	void AddJobExperience(JobExperience exp);
 	std::vector<EducationExperience>& GetEducationExperiences();
 	std::vector<EmotionExperience>& GetEmotionExperiences();
 	std::vector<JobExperience>& GetJobExperiences();

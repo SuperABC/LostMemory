@@ -70,9 +70,6 @@ public:
 		plotType = PLOT_ZONE;
 	}
 	~Zone() {
-		for(auto building : buildings){
-			LM_DELETE(building);
-		}
 		buildings.clear();
 	}
 
@@ -395,7 +392,6 @@ bool Zone::AddBuilding(int avg, float scalar = 1.0f) {
 			count++;
 		}
 		else {
-			LM_DELETE(building);
 			return false;
 		}
 
