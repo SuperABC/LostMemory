@@ -31,13 +31,13 @@ public:
 	Time GetTime();
 
 	// 获取全部市民
-	std::vector<Person*>& GetCitizens();
+	std::vector<std::shared_ptr<Person>>& GetCitizens();
 
 private:
 	Time time;
 
-	std::vector<Person*> citizens;
-	std::unordered_map<int, Person*> phoneRoll;
+	std::vector<std::shared_ptr<Person>> citizens;
+	std::unordered_map<int, std::shared_ptr<Person>> phoneRoll;
 
 	// 生成市民和经历
 	void GenerateCitizens(int num);

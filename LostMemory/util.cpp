@@ -506,3 +506,7 @@ Time GetRandom(Time begin, Time end, int (*cdf)(int)) {
 
     return result;
 }
+
+// 静态成员初始化
+std::set<std::weak_ptr<void>, MemoryManager::WeakPtrCompare> MemoryManager::objects_;
+std::mutex MemoryManager::mutex_;

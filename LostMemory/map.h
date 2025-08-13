@@ -63,11 +63,11 @@ public:
 	~Block();
 
 	//获取地块内某全局坐标的信息
-	Element* GetElement(int x, int y);
+	std::shared_ptr<Element> GetElement(int x, int y);
 
 private:
 	int offsetX, offsetY;
-	std::vector<std::vector<Element*>> elements;
+	std::vector<std::vector<std::shared_ptr<Element>>> elements;
 
 	//为成员初始化空间
 	void Init();
@@ -108,19 +108,19 @@ public:
 
 class Chunk : public Plot {
 public:
-	Chunk(Plot* a, Plot* b) {
+	Chunk(std::shared_ptr<Plot> a, std::shared_ptr<Plot> b) {
 		plotType = PLOT_OTHER;
-
-		if (a->plotType == PLOT_OTHER)blocks.push_back(static_cast<Chunk*>(a));
-		else plots.push_back(static_cast<Chunk*>(a));
-		if (b->plotType == PLOT_OTHER)blocks.push_back(static_cast<Chunk*>(b));
-		else plots.push_back(static_cast<Chunk*>(b));
+		
+		if (a->plotType == PLOT_OTHER)blocks.push_back(std::static_pointer_cast<Chunk>(a));
+		else plots.push_back(a);
+		if (b->plotType == PLOT_OTHER)blocks.push_back(std::static_pointer_cast<Chunk>(b));
+		else plots.push_back(b);
 
 		SetAcreage(a->GetAcreage() + b->GetAcreage());
 	}
 
-	std::vector<Chunk*> blocks;
-	std::vector<Plot*> plots;
+	std::vector<std::shared_ptr<Chunk>> blocks;
+	std::vector<std::shared_ptr<Plot>> plots;
 };
 
 class Map {
@@ -132,7 +132,7 @@ public:
 	int Init(int blockX, int blockY);
 
 	// 市民入驻
-	void Checkin(std::vector<Person*> citizens, int year);
+	void Checkin(std::vector<std::shared_ptr<Person>> citizens, int year);
 
 	// 释放空间
 	void Destroy();
@@ -154,33 +154,33 @@ public:
 	bool CheckXY(int x, int y);
 
 	// 获取地块
-	Block* GetBlock(int x, int y);
+	std::shared_ptr<Block> GetBlock(int x, int y);
 
 	// 获取元素
-	Element* GetElement(int x, int y);
+	std::shared_ptr<Element> GetElement(int x, int y);
 
 	// 获取所有区域
-	std::vector<Area*>& GetAreas();
+	std::vector<std::shared_ptr<Area>>& GetAreas();
 
 	// 获取所有园区
-	std::vector<Zone*>& GetZones();
+	std::vector<std::shared_ptr<Zone>>& GetZones();
 
 	// 获取所有建筑
-	std::vector<Building*>& GetBuildings();
+	std::vector<std::shared_ptr<Building>>& GetBuildings();
 
 	// 为园区范围内元素标记区域
-	void SetPlot(Zone* zone, int area);
+	void SetPlot(std::shared_ptr<Zone> zone, int area);
 
 	// 为建筑范围内元素标记区域
-	void SetPlot(Building* building, int area);
+	void SetPlot(std::shared_ptr<Building> building, int area);
 
 private:
 	int width = 0, height = 0;
-	std::vector<std::vector<Block*>> blocks;
+	std::vector<std::vector<std::shared_ptr<Block>>> blocks;
 
-	std::vector<Area*> areas;
-	std::vector<Zone*> zones;
-	std::vector<Building*> buildings;
+	std::vector<std::shared_ptr<Area>> areas;
+	std::vector< std::shared_ptr<Zone>> zones;
+	std::vector< std::shared_ptr<Building>> buildings;
 
 	Roadnet roadnet;
 
@@ -230,7 +230,7 @@ bool Map::AddPlot(int avg) {
 
 	// 若均值为1，则只尝试添加一次
 	if (avg == 1) {
-		T* plot = new T();
+		std::shared_ptr<T> plot = LM_NEW(T);
 
 		for (auto area : areas) {
 			if (plot->plotType == PLOT_ZONE && !area->Empty())continue;
@@ -241,12 +241,12 @@ bool Map::AddPlot(int avg) {
 				if (area->AddPlot(plot)) {
 					if (plot->plotType == PLOT_ZONE) {
 						plot->SetId(zones.size());
-						zones.push_back(reinterpret_cast<Zone*>(plot));
+						zones.push_back(std::reinterpret_pointer_cast<Zone>(plot));
 						zones.back()->SetAreaType(area->GetType());
 					}
 					else if (plot->plotType == PLOT_BUILDING) {
 						plot->SetId(buildings.size());
-						buildings.push_back(reinterpret_cast<Building*>(plot));
+						buildings.push_back(std::reinterpret_pointer_cast<Building>(plot));
 						buildings.back()->SetAreaType(area->GetType());
 					}
 					return true;
@@ -254,7 +254,7 @@ bool Map::AddPlot(int avg) {
 				else continue;
 			}
 		}
-		delete plot;
+		LM_DELETE(plot);
 	}
 	// 若均值大于1，则添加的数量在(avg/2+1)到(avg*2)之间
 	else if (avg > 1) {
@@ -263,7 +263,7 @@ bool Map::AddPlot(int avg) {
 		while (true) {
 			if (fail > areas.size() / 2)break;
 
-			T* plot = new T();
+			std::shared_ptr<T> plot = LM_NEW(T);
 			auto area = areas[GetRandom(areas.size())];
 			if (plot->plotType == PLOT_ZONE && !area->Empty())continue;
 			if (area->GetDistance() < plot->GetDistanceRange().first)continue;
@@ -272,17 +272,17 @@ bool Map::AddPlot(int avg) {
 			if (area->AddPlot(plot)) {
 				if (plot->plotType == PLOT_ZONE) {
 					plot->SetId(zones.size());
-					zones.push_back(reinterpret_cast<Zone*>(plot));
+					zones.push_back(std::reinterpret_pointer_cast<Zone>(plot));
 				}
 				else if (plot->plotType == PLOT_BUILDING) {
 					plot->SetId(buildings.size());
-					buildings.push_back(reinterpret_cast<Building*>(plot));
+					buildings.push_back(std::reinterpret_pointer_cast<Building>(plot));
 				}
 				count++;
 			}
 			else {
 				fail++;
-				delete plot;
+				LM_DELETE(plot);
 				continue;
 			}
 

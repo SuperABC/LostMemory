@@ -235,7 +235,7 @@ public:
 		usages.push_back(usage);
 	}
 
-	void AddRoom(Room* room) {
+	void AddRoom(std::shared_ptr<Room> room) {
 		rooms.push_back(room);
 	}
 
@@ -245,11 +245,11 @@ public:
 	// 访问组件
 	std::vector<Facility>& GetFacilities() { return facilities; }
 	std::vector<std::pair<Rect, int>>& GetUsages() { return usages; }
-	std::vector<Room *>& GetRooms() { return rooms; }
+	std::vector<std::shared_ptr<Room>>& GetRooms() { return rooms; }
 
 	// 自动布局
 	Room* SampleRoom(std::vector<Room>& complement, int idx, int start);
-	Room* ApplyRoom(std::vector<Room>& complement, int idx, int start);
+	std::shared_ptr<Room> ApplyRoom(std::vector<Room>& complement, int idx, int start);
 	int UsageLayout(std::vector<Room> complement);
 
 private:
@@ -257,7 +257,7 @@ private:
 
 	std::vector<Facility> facilities;
 	std::vector<std::pair<Rect, int>> usages;
-	std::vector<Room *> rooms;
+	std::vector<std::shared_ptr<Room>> rooms;
 };
 
 enum AREA_TYPE;
@@ -269,11 +269,11 @@ public:
 	}
 	~Building() {
 		for (auto organization : organizations) {
-			delete organization;
+			LM_DELETE(organization);
 		}
 		organizations.clear();
 		for (auto room : rooms) {
-			delete room;
+			LM_DELETE(room);
 		}
 		rooms.clear();
 	}
@@ -293,8 +293,8 @@ public:
 	int GetBasements() { return basement; }
 
 	// 获取/设置组织/房间/楼层
-	std::vector<Organization*>& GetOrganizations() { return organizations; }
-	std::vector<Room*>& GetRooms() { return rooms; }
+	std::vector<std::shared_ptr<Organization>>& GetOrganizations() { return organizations; }
+	std::vector<std::shared_ptr<Room>>& GetRooms() { return rooms; }
 	Floor* GetFloor(int floor) {
 		if (basement + floor < floors.size())
 			return &floors[basement + floor];
@@ -323,16 +323,16 @@ public:
 protected:
 	// 在建筑中添加组织
 	template<class T>
-	T* CreateOrganization() {
-		T* organization = new T();
+	std::shared_ptr<T> CreateOrganization() {
+		std::shared_ptr<T> organization = LM_NEW(T);
 		organizations.push_back(organization);
 		return organization;
 	}
 
 	// 在建筑中添加房间
 	template<class T>
-	T* CreateRoom(int layer, int acreage) {
-		T* room = new T();
+	std::shared_ptr<T> CreateRoom(int layer, int acreage) {
+		std::shared_ptr<T> room = LM_NEW(T);
 		room->SetLayer(layer);
 		room->SetAcreage(acreage);
 		rooms.push_back(room);
@@ -347,8 +347,8 @@ protected:
 	ZONE_TYPE zone;
 	std::pair<int, int> dist = std::make_pair(0, -1);
 
-	std::vector<Organization*> organizations;
-	std::vector<Room*> rooms;
+	std::vector<std::shared_ptr<Organization>> organizations;
+	std::vector<std::shared_ptr<Room>> rooms;
 
 	int layers = 1;
 	int basement = 0;
@@ -1485,5 +1485,5 @@ private:
 
 };
 
-Building* CreateBuilding(BUILDING_TYPE type);
+std::shared_ptr<Building> CreateBuilding(BUILDING_TYPE type);
 BUILDING_TYPE RandomBuilding(AREA_TYPE area, float prob);

@@ -46,7 +46,7 @@ int Area::GetAcreage() {
 	return acreage;
 }
 
-vector<Plot*>& Area::GetPlots() {
+vector<shared_ptr<Plot>>& Area::GetPlots() {
 	return plots;
 }
 
@@ -70,7 +70,7 @@ bool Area::Empty() {
 	return plots.empty();
 }
 
-bool Area::AddPlot(Plot* plot) {
+bool Area::AddPlot(shared_ptr<Plot> plot) {
 	// 不存在的地块无法添加到区域
 	if (!plot)return false;
 	// 市中心区域不可添加区块

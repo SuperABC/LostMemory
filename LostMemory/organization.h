@@ -329,7 +329,7 @@ public:
 	Organization(ORGANIZATION_TYPE type) : type(type) {}
 	~Organization() {
 		for (auto room : rooms) {
-			delete room;
+			LM_DELETE(room);
 		}
 		rooms.clear();
 	}
@@ -339,9 +339,9 @@ public:
 	void SetType(ORGANIZATION_TYPE type);
 
 	// 获取/添加房间
-	std::vector<Room*>& GetRooms() { return rooms; }
-	void AddRoom(Room* room) { rooms.push_back(room); }
-	void UpdateRoom(std::vector<Room *> rooms) { this->rooms = rooms; }
+	std::vector<std::shared_ptr<Room>>& GetRooms() { return rooms; }
+	void AddRoom(std::shared_ptr<Room> room) { rooms.push_back(room); }
+	void UpdateRoom(std::vector<std::shared_ptr<Room>> rooms) { this->rooms = rooms; }
 
 	// 获取组织名称
 	std::string GetName() { return name; }
@@ -351,7 +351,7 @@ private:
 	int id;
 	std::string name;
 
-	std::vector<Room*> rooms;
+	std::vector<std::shared_ptr<Room>> rooms;
 };
 
 class RoadfixOrganization : public Organization {
@@ -1578,4 +1578,4 @@ private:
 
 };
 
-Organization* CreateOrganization(ORGANIZATION_TYPE type);
+std::shared_ptr<Organization> CreateOrganization(ORGANIZATION_TYPE type);

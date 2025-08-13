@@ -55,18 +55,18 @@ public:
 	void SetDeposit(int newDeposit) { deposit = newDeposit; }
 
 	// 管理亲属
-	void AddRelative(RELATIVE_TYPE type, Person* person);
-	Person* GetFather();
-	Person* GetMother();
-	Person* GetSpouse();
-	std::vector<Person*> GetChilds();
+	void AddRelative(RELATIVE_TYPE type, std::shared_ptr<Person> person);
+	std::shared_ptr<Person> GetFather();
+	std::shared_ptr<Person> GetMother();
+	std::shared_ptr<Person> GetSpouse();
+	std::vector<std::shared_ptr<Person>> GetChilds();
 
 	// 管理属性信息
 	void AddPhone(std::string phone);
-	void AddAsset(Asset* asset);
-	std::vector<Asset*>& GetAssets();
-	void AddAddress(Room* room);
-	std::vector<Room*>& GetAddresses();
+	void AddAsset(std::shared_ptr<Asset> asset);
+	std::vector<std::shared_ptr<Asset>>& GetAssets();
+	void AddAddress(std::shared_ptr<Room> room);
+	std::vector<std::shared_ptr<Room>>& GetAddresses();
 
 	// 管理经验信息
 	void AddEducationExperience(const EducationExperience& exp);
@@ -75,8 +75,8 @@ public:
 	std::vector<EducationExperience>& GetEducationExperiences();
 	std::vector<EmotionExperience>& GetEmotionExperiences();
 	std::vector<JobExperience>& GetJobExperiences();
-	void AddAcquaintance(Person* person, Relation relation);
-	std::vector<std::pair<Person*, Relation>>& GetAcquaintances();
+	void AddAcquaintance(std::shared_ptr<Person> person, Relation relation);
+	std::vector<std::pair<std::shared_ptr<Person>, Relation>>& GetAcquaintances();
 
 	// 组合相同经历
 	void ExpComposition();
@@ -92,12 +92,12 @@ private:
 	std::string nick;
 	int deposit;
 
-	std::vector<std::pair<RELATIVE_TYPE, Person*>> relatives;
+	std::vector<std::pair<RELATIVE_TYPE, std::shared_ptr<Person>>> relatives;
 	std::vector<std::string> phones;
-	std::vector<Asset*> assets;
-	std::vector<Room*> addresses;
+	std::vector<std::shared_ptr<Asset>> assets;
+	std::vector<std::shared_ptr<Room>> addresses;
 	std::vector<EducationExperience> educationExperiences;
 	std::vector<EmotionExperience> emotionExperiences;
 	std::vector<JobExperience> jobExperiences;
-	std::vector<std::pair<Person*, Relation>> acquaintances;
+	std::vector<std::pair<std::shared_ptr<Person>, Relation>> acquaintances;
 };

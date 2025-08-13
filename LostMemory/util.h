@@ -4,6 +4,9 @@
 #pragma warning(disable:4150)
 
 #include <string>
+#include <memory>
+#include <set>
+#include <mutex>
 
 #include <windows.h>
 #include <strsafe.h>
@@ -116,3 +119,63 @@ private:
 
 // 时间范围内随机采样
 Time GetRandom(Time begin, Time end, int (*cdf)(int) = nullptr);
+
+class MemoryManager {
+private:
+    struct WeakPtrCompare {
+        bool operator()(const std::weak_ptr<void>& lhs,
+            const std::weak_ptr<void>& rhs) const {
+            return lhs.owner_before(rhs);
+        }
+    };
+
+    static std::set<std::weak_ptr<void>, WeakPtrCompare> objects_;
+    static std::mutex mutex_;
+
+    // 数组删除器
+    template <typename T>
+    struct ArrayDeleter {
+        void operator()(T* ptr) {
+            delete[] ptr;
+        }
+    };
+
+public:
+    // 创建对象
+    template <typename T, typename... Args>
+    static std::shared_ptr<T> create(Args&&... args) {
+        std::shared_ptr<T> ptr = std::make_shared<T>(std::forward<Args>(args)...);
+        track(ptr);
+        return ptr;
+    }
+
+    // 创建数组
+    template <typename T>
+    static std::shared_ptr<T> create_array(size_t size) {
+        std::shared_ptr<T> ptr(new T[size], ArrayDeleter<T>());
+        track(ptr);
+        return ptr;
+    }
+
+    // 清理失效引用
+    static void cleanup() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        for (auto it = objects_.begin(); it != objects_.end(); ) {
+            it->expired() ? it = objects_.erase(it) : ++it;
+        }
+    }
+
+private:
+    // 追踪对象
+    template <typename T>
+    static void track(const std::shared_ptr<T>& ptr) {
+        std::lock_guard<std::mutex> lock(mutex_);
+        objects_.emplace(ptr);
+    }
+};
+
+// 宏定义封装
+#define LM_NEW(T, ...) MemoryManager::create<T>(__VA_ARGS__)
+#define LM_NEW_ARRAY(T, size) MemoryManager::create_array<T>(size)
+#define LM_DELETE(ptr) (ptr).reset()
+

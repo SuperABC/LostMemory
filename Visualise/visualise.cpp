@@ -218,7 +218,7 @@ void zoneLoop() {
 				if (currentBuilding) {
 					closeWindow(buildingWindow);
 				}
-				buildingWindow = createParamWindow(building->GetSizeX() * 20 + 200, building->GetSizeY() * 20, buildingText[building->GetType()].data(), BIT_MAP, buildingSetup, buildingLoop, building);
+				buildingWindow = createParamWindow(building->GetSizeX() * 20 + 200, building->GetSizeY() * 20, buildingText[building->GetType()].data(), BIT_MAP, buildingSetup, buildingLoop, building.get());
 			}
 		}
 	}
@@ -563,14 +563,14 @@ void sgLoop() {
 					if (currentZone) {
 						closeWindow(zoneWindow);
 					}
-					zoneWindow = createParamWindow(zone->GetSizeX() * 20 + 200, zone->GetSizeY() * 20, zoneText[zone->GetType()].data(), BIT_MAP, zoneSetup, zoneLoop, zone);
+					zoneWindow = createParamWindow(zone->GetSizeX() * 20 + 200, zone->GetSizeY() * 20, zoneText[zone->GetType()].data(), BIT_MAP, zoneSetup, zoneLoop, zone.get());
 				}
 				else if (element && element->GetBuildingId() >= 0) {
 					auto building = map->GetBuildings()[element->GetBuildingId()];
 					if (currentBuilding) {
 						closeWindow(buildingWindow);
 					}
-					buildingWindow = createParamWindow(building->GetSizeX() * 20 + 200, building->GetSizeY() * 20, buildingText[building->GetType()].data(), BIT_MAP, buildingSetup, buildingLoop, building);
+					buildingWindow = createParamWindow(building->GetSizeX() * 20 + 200, building->GetSizeY() * 20, buildingText[building->GetType()].data(), BIT_MAP, buildingSetup, buildingLoop, building.get());
 				}
 			}
 			else {

@@ -5,29 +5,29 @@ using namespace std;
 
 Person::~Person() {
 	for (auto asset : assets) {
-		delete asset;
+		LM_DELETE(asset);
 	}
 }
 
-void Person::AddRelative(RELATIVE_TYPE type, Person* person) {
+void Person::AddRelative(RELATIVE_TYPE type, shared_ptr<Person> person) {
 	relatives.push_back(make_pair(type, person));
 }
 
-Person* Person::GetFather() {
+shared_ptr<Person> Person::GetFather() {
 	for (auto relative : relatives) {
 		if (relative.first == RELATIVE_FATHER)return relative.second;
 	}
 	return nullptr;
 }
 
-Person* Person::GetMother() {
+shared_ptr<Person> Person::GetMother() {
 	for (auto relative : relatives) {
 		if (relative.first == RELATIVE_MOTHER)return relative.second;
 	}
 	return nullptr;
 }
 
-Person* Person::GetSpouse() {
+shared_ptr<Person> Person::GetSpouse() {
 	for (auto relative : relatives) {
 		if (relative.first == RELATIVE_WIFE || relative.first == RELATIVE_HUSBAND)return relative.second;
 	}
@@ -35,8 +35,8 @@ Person* Person::GetSpouse() {
 	return nullptr;
 }
 
-vector<Person*> Person::GetChilds() {
-	vector<Person*>childs;
+vector<shared_ptr<Person>> Person::GetChilds() {
+	vector<shared_ptr<Person>>childs;
 	for (auto relative : relatives) {
 		if (relative.first == RELATIVE_SON || relative.first == RELATIVE_DAUGHTER)childs.push_back(relative.second);
 	}
@@ -47,19 +47,19 @@ void Person::AddPhone(string phone) {
 	phones.push_back(phone);
 }
 
-void Person::AddAddress(Room* room) {
+void Person::AddAddress(shared_ptr<Room> room) {
 	addresses.push_back(room);
 }
 
-vector<Room*>& Person::GetAddresses() {
+vector<shared_ptr<Room>>& Person::GetAddresses() {
 	return addresses;
 }
 
-void Person::AddAsset(Asset* asset) {
+void Person::AddAsset(shared_ptr<Asset> asset) {
 	assets.push_back(asset);
 }
 
-vector<Asset*>& Person::GetAssets() {
+vector<shared_ptr<Asset>>& Person::GetAssets() {
 	return assets;
 }
 
@@ -87,11 +87,11 @@ vector<EmotionExperience>& Person::GetEmotionExperiences() {
 	return emotionExperiences;
 }
 
-void Person::AddAcquaintance(Person* person, Relation relation) {
+void Person::AddAcquaintance(shared_ptr<Person> person, Relation relation) {
 	acquaintances.push_back(make_pair(person, relation));
 }
 
-vector<pair<Person*, Relation>>& Person::GetAcquaintances() {
+vector<pair<shared_ptr<Person>, Relation>>& Person::GetAcquaintances() {
 	return acquaintances;
 }
 

@@ -44,10 +44,10 @@ public:
 	int GetAcreage();
 
 	// 获取区域中的所有地块
-	std::vector<Plot*>& GetPlots();
+	std::vector<std::shared_ptr<Plot>>& GetPlots();
 
 	// 区域中添加地块
-	bool AddPlot(Plot* plot);
+	bool AddPlot(std::shared_ptr<Plot> plot);
 
 	// 获取/设置区域类型
 	AREA_TYPE GetType();
@@ -74,5 +74,5 @@ private:
 	int distance = -1;
 	int acreage = -1;
 
-	std::vector<Plot*> plots;
+	std::vector<std::shared_ptr<Plot>> plots;
 };

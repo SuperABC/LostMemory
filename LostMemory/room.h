@@ -1131,4 +1131,5 @@ private:
 
 };
 
-Room* CreateRoom(ROOM_TYPE type);
+std::shared_ptr<Room> CreateRoom(ROOM_TYPE type);
+

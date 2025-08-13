@@ -23,17 +23,17 @@ void Zone::SetAreaType(AREA_TYPE type) {
 	area = type;
 }
 
-vector<Building*>& Zone::GetBuildings() {
+vector<shared_ptr<Building>>& Zone::GetBuildings() {
 	return buildings;
 }
 
-vector<Plot*> Zone::GetPlots() {
-	vector<Plot*> plots;
+vector<shared_ptr<Plot>> Zone::GetPlots() {
+	vector<shared_ptr<Plot>> plots;
 	for (auto b : buildings)plots.push_back(b);
 	return plots;
 }
 
-bool Zone::CalcAcreage(Building* building, float scalar) {
+bool Zone::CalcAcreage(shared_ptr<Building> building, float scalar) {
 	int content = 0;
 	for (auto b : buildings) {
 		content += b->GetAcreage();
@@ -76,54 +76,54 @@ bool Zone::CalcAcreage(Building* building, float scalar) {
 	return true;
 }
 
-Zone* CreateZone(ZONE_TYPE type) {
+shared_ptr<Zone> CreateZone(ZONE_TYPE type) {
 	switch (type) {
 	case ZONE_NONE:
 		return nullptr;
 	case ZONE_SPACE:
-		return new SpaceZone();
+		return LM_NEW(SpaceZone);
 	case ZONE_ARMY:
-		return new ArmyZone();
+		return LM_NEW(ArmyZone);
 	case ZONE_GENERATOR:
-		return new GeneratorZone();
+		return LM_NEW(GeneratorZone);
 	case ZONE_WATER:
-		return new WaterZone();
+		return LM_NEW(WaterZone);
 	case ZONE_GARBAGE:
-		return new GarbageZone();
+		return LM_NEW(GarbageZone);
 	case ZONE_PRISON:
-		return new PrisonZone();
+		return LM_NEW(PrisonZone);
 	case ZONE_HOSPITAL:
-		return new HospitalZone();
+		return LM_NEW(HospitalZone);
 	case ZONE_FILM:
-		return new FilmZone();
+		return LM_NEW(FilmZone);
 	case ZONE_SPORT:
-		return new SportZone();
+		return LM_NEW(SportZone);
 	case ZONE_CAMPUS:
-		return new CampusZone();
+		return LM_NEW(CampusZone);
 	case ZONE_COMMUNITY:
-		return new CommunityZone();
+		return LM_NEW(CommunityZone);
 	case ZONE_VILLA:
-		return new VillaZone();
+		return LM_NEW(VillaZone);
 	case ZONE_SHOPPING:
-		return new ShoppingZone();
+		return LM_NEW(ShoppingZone);
 	case ZONE_GOVERNMENT:
-		return new GovernmentZone();
+		return LM_NEW(GovernmentZone);
 	case ZONE_COMPANY:
-		return new CompanyZone();
+		return LM_NEW(CompanyZone);
 	case ZONE_FINANCE:
-		return new FinanceZone();
+		return LM_NEW(FinanceZone);
 	case ZONE_RESEARCHING:
-		return new ResearchingZone();
+		return LM_NEW(ResearchingZone);
 	case ZONE_EXHIBITION:
-		return new ExhibitionZone();
+		return LM_NEW(ExhibitionZone);
 	case ZONE_INDUSTRY:
-		return new IndustryZone();
+		return LM_NEW(IndustryZone);
 	case ZONE_RESOURCE:
-		return new ResourceZone();
+		return LM_NEW(ResourceZone);
 	case ZONE_AMUSEMENT:
-		return new AmusementZone();
+		return LM_NEW(AmusementZone);
 	case ZONE_TOURISM:
-		return new TourismZone();
+		return LM_NEW(TourismZone);
 	default:
 		return nullptr;
 	}

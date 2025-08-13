@@ -12,7 +12,7 @@ using namespace std;
 
 Populace::~Populace() {
 	for (auto citizen : citizens) {
-		if (citizen)delete citizen;
+		if (citizen)LM_DELETE(citizen);
 	}
 }
 
@@ -34,7 +34,7 @@ void Populace::Init(int accomodation) {
 
 void Populace::Destroy() {
 	for (auto citizen : citizens) {
-		if (citizen)delete citizen;
+		if (citizen)LM_DELETE(citizen);
 	}
 	citizens.clear();
 }
@@ -74,7 +74,7 @@ Time Populace::GetTime() {
 	return time;
 }
 
-vector<Person*>& Populace::GetCitizens() {
+vector<shared_ptr<Person>>& Populace::GetCitizens() {
 	return citizens;
 }
 
@@ -212,7 +212,7 @@ void Populace::GenerateCitizens(int num) {
 	// 将活着的男女加入市民列表
 	for (int i = 1; i < females.size(); i++) {
 		if (females[i].life != LIFE_DEAD && GetRandom(20) > 0) {
-			Person* person = new Person();
+			shared_ptr<Person> person = LM_NEW(Person);
 			person->SetId(citizens.size());
 			females[i].idx = citizens.size();
 			person->SetGender(GENDER_FEMALE);
@@ -223,7 +223,7 @@ void Populace::GenerateCitizens(int num) {
 	}
 	for (int i = 1; i < males.size(); i++) {
 		if (males[i].life != LIFE_DEAD && GetRandom(20) > 0) {
-			Person* person = new Person();
+			shared_ptr<Person> person = LM_NEW(Person);
 			person->SetId(citizens.size());
 			males[i].idx = citizens.size();
 			person->SetGender(GENDER_MALE);
@@ -246,7 +246,7 @@ void Populace::GenerateCitizens(int num) {
 	// 记录亲属关系
 	for (auto female : females) {
 		if (female.idx >= 0) {
-			Person* person = citizens[female.idx];
+			shared_ptr<Person> person = citizens[female.idx];
 			if (female.mother >= 0 && females[female.mother].idx >= 0)
 				person->AddRelative(RELATIVE_MOTHER, citizens[females[female.mother].idx]);
 			if (female.father >= 0 && males[female.father].idx >= 0)
@@ -264,7 +264,7 @@ void Populace::GenerateCitizens(int num) {
 	}
 	for (auto male : males) {
 		if (male.idx >= 0) {
-			Person* person = citizens[male.idx];
+			shared_ptr<Person> person = citizens[male.idx];
 			if (male.mother >= 0 && females[male.mother].idx >= 0)
 				person->AddRelative(RELATIVE_MOTHER, citizens[females[male.mother].idx]);
 			if (male.father >= 0 && males[male.father].idx >= 0)
@@ -317,14 +317,14 @@ void Populace::GenerateEducations() {
 		EducationLevel level;
 		int startYear;
 		int grade;
-		vector<Person*> students;
-		Person* teacher = nullptr;
+		vector<shared_ptr<Person>> students;
+		shared_ptr<Person> teacher = nullptr;
 	};
 	vector<SchoolClass> levelClasses[EDUCATION_END];
 
 	// 从120年前开始模拟
 	mt19937 generator(random_device{}());
-	vector<Person*> levelPotentials[EDUCATION_END];
+	vector<shared_ptr<Person>> levelPotentials[EDUCATION_END];
 	for (int year = time.GetYear() - 120; year <= time.GetYear(); year++) {
 		// 班级变动
 		for (int level = EDUCATION_PRIMARY; level <= EDUCATION_POST; level++) {
@@ -652,7 +652,7 @@ void Populace::GenerateEmotions() {
 
 		Time startBound = citizen->GetBirthday() + Time(16, 1, 1);
 		Time endBound;
-		Person* spouse = citizen->GetSpouse();
+		shared_ptr<Person> spouse = citizen->GetSpouse();
 		if (spouse) {
 			endBound = citizen->GetMarryday();
 		}
@@ -706,13 +706,13 @@ void Populace::GenerateEmotions() {
 			if (!validPeriod) continue;
 
 			// 随机寻找伴侣并判断该经历是否符合其时间段
-			Person* partner = nullptr;
+			shared_ptr<Person> partner = nullptr;
 			int candidateAttempts = 0;
 			while (!partner && candidateAttempts < 100) {
 				candidateAttempts++;
 
 				int idx = GetRandom(citizens.size());
-				Person* candidate = citizens[idx];
+				shared_ptr<Person> candidate = citizens[idx];
 				if (candidate->GetGender() == citizen->GetGender())continue;
 				if (candidate == citizen) continue;
 
@@ -750,7 +750,7 @@ void Populace::GenerateEmotions() {
 				}
 				if (!timeAvailable) continue;
 
-				Person* candidateSpouse = candidate->GetSpouse();
+				shared_ptr<Person> candidateSpouse = candidate->GetSpouse();
 				if (candidateSpouse) {
 					Time marryTime = candidate->GetMarryday();
 					if (marryTime < endTime) {
@@ -782,7 +782,7 @@ void Populace::GenerateEmotions() {
 
 		// 四成未婚市民存在正在进行的恋爱
 		if (!spouse && GetRandom(100) < 40) {
-			Person* currentPartner = nullptr;
+			shared_ptr<Person> currentPartner = nullptr;
 			int candidateAttempts = 0;
 
 			Time marrigeBegin = citizen->GetBirthday() + Time(16, 1, 1);
@@ -795,7 +795,7 @@ void Populace::GenerateEmotions() {
 				candidateAttempts++;
 
 				int idx = GetRandom(citizens.size());
-				Person* candidate = citizens[idx];
+				shared_ptr<Person> candidate = citizens[idx];
 				if (candidate->GetGender() == citizen->GetGender())continue;
 				if (candidate == citizen || candidate->GetSpouse()) continue;
 

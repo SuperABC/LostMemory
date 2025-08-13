@@ -51,12 +51,12 @@ int Element::GetBuildingId() {
 }
 
 void Block::Init() {
-	elements = vector<vector<Element*>>(BLOCK_SIZE,
-		vector<Element*>(BLOCK_SIZE, nullptr));
+	elements = vector<vector<shared_ptr<Element>>>(BLOCK_SIZE,
+		vector<shared_ptr<Element>>(BLOCK_SIZE, nullptr));
 
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		for (int j = 0; j < BLOCK_SIZE; j++) {
-			elements[j][i] = new Element();
+			elements[j][i] = LM_NEW(Element);
 		}
 	}
 }
@@ -72,12 +72,12 @@ bool Block::CheckXY(int x, int y) {
 Block::~Block() {
 	for (int i = 0; i < BLOCK_SIZE; i++) {
 		for (int j = 0; j < BLOCK_SIZE; j++) {
-			delete elements[j][i];
+			LM_DELETE(elements[j][i]);
 		}
 	}
 }
 
-Element* Block::GetElement(int x, int y) {
+shared_ptr<Element> Block::GetElement(int x, int y) {
 	if (CheckXY(x, y))
 		return elements[y - offsetY][x - offsetX];
 	else
@@ -103,11 +103,11 @@ int Map::Init(int blockX, int blockY) {
 	height = blockY * BLOCK_SIZE;
 
 	// 构建区块
-	blocks = vector<vector<Block*>>(blockY,
-		vector<Block*>(blockX, nullptr));
+	blocks = vector<vector<shared_ptr<Block>>>(blockY,
+		vector<shared_ptr<Block>>(blockX, nullptr));
 	for (int i = 0; i < blockX; i++) {
 		for (int j = 0; j < blockY; j++) {
-			blocks[j][i] = new Block(i * BLOCK_SIZE, j * BLOCK_SIZE);
+			blocks[j][i] = LM_NEW(Block, i * BLOCK_SIZE, j * BLOCK_SIZE);
 		}
 	}
 
@@ -150,13 +150,13 @@ int Map::Init(int blockX, int blockY) {
 	return accomodation;
 }
 
-void Map::Checkin(vector<Person*> citizens, int year) {
+void Map::Checkin(vector<shared_ptr<Person>> citizens, int year) {
 	// 若无市民则跳过
 	if (citizens.size() == 0)return;
 
 	// 为所有居住房产指定拥有者
 	int idx = 0;
-	vector<Room*> rooms;
+	vector<shared_ptr<Room>> rooms;
 	for (auto building : buildings) {
 		if (building->GetStatus() != CONSTRUCTION_USING)continue;
 		if (building->GetType() == BUILDING_RESIDENT || building->GetType() == BUILDING_VILLA) {
@@ -165,7 +165,7 @@ void Map::Checkin(vector<Person*> citizens, int year) {
 
 				int id = GetRandom(citizens.size());
 				room->SetOwner(id);
-				citizens[id]->AddAsset(new EstateAsset(room));
+				citizens[id]->AddAsset(LM_NEW(EstateAsset, room.get()));
 				rooms.push_back(room);
 			}
 		}
@@ -209,7 +209,7 @@ void Map::Destroy() {
 	if (width != 0 && height != 0) {
 		for (int i = 0; i < width / BLOCK_SIZE; i++) {
 			for (int j = 0; j < height / BLOCK_SIZE; j++) {
-				if (blocks[j][i])delete blocks[j][i];
+				if (blocks[j][i])LM_DELETE(blocks[j][i]);
 			}
 		}
 	}
@@ -217,17 +217,17 @@ void Map::Destroy() {
 	roadnet.Reset();
 
 	for (auto area : areas) {
-		if (area)delete area;
+		if (area)LM_DELETE(area);
 	}
 	areas.clear();
 
 	for (auto zone : zones) {
-		if (zone)delete zone;
+		if (zone)LM_DELETE(zone);
 	}
 	zones.clear();
 
 	for (auto building : buildings) {
-		if (building)delete building;
+		if (building)LM_DELETE(building);
 	}
 	buildings.clear();
 }
@@ -328,12 +328,12 @@ void Map::Print() {
 	for (auto area : areas) {
 		for (auto p : area->GetPlots()) {
 			if (p->plotType == PLOT_ZONE) {
-				Zone* zone = static_cast<Zone*>(p);
+				shared_ptr<Zone> zone = static_pointer_cast<Zone>(p);
 				zoneSize[zone->GetType()] += zone->GetAcreage();
 				zoneNum[zone->GetType()]++;
 			}
 			else if (p->plotType == PLOT_BUILDING) {
-				Building* building = static_cast<Building*>(p);
+				shared_ptr<Building> building = static_pointer_cast<Building>(p);
 				buildingSize[building->GetType()] += building->GetAcreage();
 				buildingNum[building->GetType()]++;
 			}
@@ -367,7 +367,7 @@ bool Map::CheckXY(int x, int y) {
 	return true;
 }
 
-Block* Map::GetBlock(int x, int y) {
+shared_ptr<Block> Map::GetBlock(int x, int y) {
 	if (!CheckXY(x, y)) {
 		throw invalid_argument("invalid block query position.\n");
 		return nullptr;
@@ -379,7 +379,7 @@ Block* Map::GetBlock(int x, int y) {
 	return blocks[blockY][blockX];
 }
 
-Element* Map::GetElement(int x, int y) {
+shared_ptr<Element> Map::GetElement(int x, int y) {
 	if (!CheckXY(x, y)) {
 		throw invalid_argument("invalid block query position.\n");
 		return nullptr;
@@ -391,19 +391,19 @@ Element* Map::GetElement(int x, int y) {
 	return blocks[blockY][blockX]->GetElement(x, y);
 }
 
-vector<Area*>& Map::GetAreas() {
+vector<shared_ptr<Area>>& Map::GetAreas() {
 	return areas;
 }
 
-vector<Zone*>& Map::GetZones() {
+vector<shared_ptr<Zone>>& Map::GetZones() {
 	return zones;
 }
 
-vector<Building*>& Map::GetBuildings() {
+vector<shared_ptr<Building>>& Map::GetBuildings() {
 	return buildings;
 }
 
-void Map::SetPlot(Zone* zone, int area) {
+void Map::SetPlot(shared_ptr<Zone> zone, int area) {
 	for (int i = zone->GetLeft(); i < zone->GetRight(); i++) {
 		for (int j = zone->GetTop(); j < zone->GetBottom(); j++) {
 			auto element = GetElement(i, j);
@@ -413,7 +413,7 @@ void Map::SetPlot(Zone* zone, int area) {
 	}
 }
 
-void Map::SetPlot(Building* building, int area) {
+void Map::SetPlot(shared_ptr<Building> building, int area) {
 	for (int i = building->GetLeft(); i < building->GetRight(); i++) {
 		for (int j = building->GetTop(); j < building->GetBottom(); j++) {
 			auto element = GetElement(i, j);
@@ -1166,7 +1166,7 @@ void Map::PublicRoad() {
 				int seed = GetRandom(20);
 				if (seed == 0) {
 					if (i >= roadX - 2) {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 2] - (publicWidth + 1) / 2, roadnet.posY[j + 2] - (publicWidth + 1) / 2, grid[j][i]));
 						grid[j][i] = -1;
 						continue;
@@ -1189,19 +1189,19 @@ void Map::PublicRoad() {
 						num++;
 					}
 					if (num >= 2 && grid[j][i + 1] >= 0) {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 3] - (publicWidth + 1) / 2, roadnet.posY[j + 2] - (publicWidth + 1) / 2, wrap));
 						grid[j][i] = grid[j][i + 1] = -1;
 					}
 					else {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 2] - (publicWidth + 1) / 2, roadnet.posY[j + 2] - (publicWidth + 1) / 2, grid[j][i]));
 						grid[j][i] = -1;
 					}
 				}
 				else if (seed == 1) {
 					if (j >= roadY - 2) {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 2] - (publicWidth + 1) / 2, roadnet.posY[j + 2] - (publicWidth + 1) / 2, grid[j][i]));
 						grid[j][i] = -1;
 						continue;
@@ -1224,19 +1224,19 @@ void Map::PublicRoad() {
 						num++;
 					}
 					if (num >= 2) {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 2] - (publicWidth + 1) / 2, roadnet.posY[j + 3] - (publicWidth + 1) / 2, wrap));
 						grid[j][i] = grid[j + 1][i] = -1;
 					}
 					else {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 2] - (publicWidth + 1) / 2, roadnet.posY[j + 2] - (publicWidth + 1) / 2, grid[j][i]));
 						grid[j][i] = -1;
 					}
 				}
 				else if (seed == 2) {
 					if (i >= roadX - 2 || j >= roadY - 2) {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 2] - (publicWidth + 1) / 2, roadnet.posY[j + 2] - (publicWidth + 1) / 2, grid[j][i]));
 						grid[j][i] = -1;
 						continue;
@@ -1259,18 +1259,18 @@ void Map::PublicRoad() {
 						num++;
 					}
 					if (num >= 2 && grid[j][i + 1] >= 0) {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 3] - (publicWidth + 1) / 2, roadnet.posY[j + 3] - (publicWidth + 1) / 2, wrap));
 						grid[j][i] = grid[j][i + 1] = grid[j + 1][i] = grid[j + 1][i + 1] = -1;
 					}
 					else {
-						areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+						areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 							roadnet.posX[i + 2] - (publicWidth + 1) / 2, roadnet.posY[j + 2] - (publicWidth + 1) / 2, grid[j][i]));
 						grid[j][i] = -1;
 					}
 				}
 				else {
-					areas.push_back(new Area(roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
+					areas.push_back(LM_NEW(Area, roadnet.posX[i + 1] + 1 + publicWidth / 2, roadnet.posY[j + 1] + 1 + publicWidth / 2,
 						roadnet.posX[i + 2] - (publicWidth + 1) / 2, roadnet.posY[j + 2] - (publicWidth + 1) / 2, grid[j][i]));
 					grid[j][i] = -1;
 				}
@@ -1356,7 +1356,7 @@ void Map::PublicRoad() {
 	}
 
 	// 给地图每点赋值功能区信息
-	sort(areas.begin(), areas.end(), [&](Area* a, Area* b) {return a->GetAcreage() > b->GetAcreage(); });
+	sort(areas.begin(), areas.end(), [&](shared_ptr<Area> a, shared_ptr<Area> b) {return a->GetAcreage() > b->GetAcreage(); });
 	for (int k = 0; k < areas.size(); k++) {
 		for (int i = areas[k]->GetLeft(); i <= areas[k]->GetRight(); i++) {
 			for (int j = areas[k]->GetTop(); j <= areas[k]->GetBottom(); j++) {
@@ -1487,9 +1487,9 @@ void Map::DistributeZone() {
 	// 其他园区
 	for (auto area : areas) {
 		float prob = GetRandom(1000) / 1000.0f;
-		Zone* tmp = CreateZone(RandomZone(area->GetType(), prob));
+		shared_ptr<Zone> tmp = CreateZone(RandomZone(area->GetType(), prob));
 		if (tmp) {
-			if (!area->AddPlot(tmp))delete tmp;
+			if (!area->AddPlot(tmp))LM_DELETE(tmp);
 			else {
 				tmp->SetId(zones.size());
 				zones.push_back(tmp);
@@ -1521,10 +1521,10 @@ void Map::DistributeBuilding() {
 	for (auto area : areas) {
 		while (true) {
 			float prob = GetRandom(1000) / 1000.0f;
-			Building* tmp = CreateBuilding(RandomBuilding(area->GetType(), prob));
+			shared_ptr<Building> tmp = CreateBuilding(RandomBuilding(area->GetType(), prob));
 			if (tmp) {
 				if (!area->AddPlot(tmp)) {
-					delete tmp;
+					LM_DELETE(tmp);
 					break;
 				}
 				else {
@@ -1550,10 +1550,10 @@ void Map::DistributeBuilding() {
 void Map::ArrangeArea() {
 	// 二分治布局区域
 	for (auto area : areas) {
-		auto plots = vector<Plot*>(area->GetPlots());
+		auto plots = vector<shared_ptr<Plot>>(area->GetPlots());
 		if (plots.size() == 0)continue;
 
-		sort(plots.begin(), plots.end(), [](Plot* a, Plot* b) {
+		sort(plots.begin(), plots.end(), [](shared_ptr<Plot> a, shared_ptr<Plot> b) {
 			return a->GetAcreage() > b->GetAcreage();
 			});
 
@@ -1562,7 +1562,7 @@ void Map::ArrangeArea() {
 		}
 		else {
 			while (plots.size() > 2) {
-				Chunk* tmp = new Chunk(plots[plots.size() - 1], plots[plots.size() - 2]);
+				shared_ptr<Chunk> tmp = LM_NEW(Chunk, plots[plots.size() - 1], plots[plots.size() - 2]);
 				plots.pop_back();
 				int i = plots.size() - 2;
 				for (; i >= 0; i--) {
@@ -1618,8 +1618,8 @@ void Map::ArrangeArea() {
 				auto tmp = plots.back();
 				plots.pop_back();
 				if (tmp->plotType == PLOT_OTHER) {
-					Chunk* block = static_cast<Chunk*>(tmp);
-					Plot* plot1, * plot2;
+					shared_ptr<Chunk> block = static_pointer_cast<Chunk>(tmp);
+					shared_ptr<Plot> plot1, plot2;
 					if (block->blocks.size() > 0) {
 						plot1 = block->blocks[0];
 						if (block->blocks.size() > 1) {
@@ -1674,16 +1674,16 @@ void Map::ArrangeArea() {
 						if (plot1->plotType == PLOT_OTHER)plots.push_back(plot1);
 						if (plot2->plotType == PLOT_OTHER)plots.push_back(plot2);
 					}
-					delete tmp;
+					LM_DELETE(tmp);
 				}
 			}
 		}
 		for (auto plot : area->GetPlots()) {
 			if (plot->plotType == PLOT_ZONE) {
-				SetPlot((Zone*)plot, area->GetId());
+				SetPlot(static_pointer_cast<Zone>(plot), area->GetId());
 			}
 			if (plot->plotType == PLOT_BUILDING) {
-				SetPlot((Building*)plot, area->GetId());
+				SetPlot(static_pointer_cast<Building>(plot), area->GetId());
 			}
 		}
 	}
@@ -1695,7 +1695,7 @@ void Map::ArrangeZone() {
 		auto plots = zone->GetPlots();
 		if (plots.size() == 0)continue;
 
-		sort(plots.begin(), plots.end(), [](Plot* a, Plot* b) {
+		sort(plots.begin(), plots.end(), [](shared_ptr<Plot> a, shared_ptr<Plot> b) {
 			return a->GetAcreage() > b->GetAcreage();
 			});
 
@@ -1704,7 +1704,7 @@ void Map::ArrangeZone() {
 		}
 		else {
 			while (plots.size() > 2) {
-				Chunk* tmp = new Chunk(plots[plots.size() - 1], plots[plots.size() - 2]);
+				shared_ptr<Chunk> tmp = LM_NEW(Chunk, plots[plots.size() - 1], plots[plots.size() - 2]);
 				plots.pop_back();
 				int i = plots.size() - 2;
 				for (; i >= 0; i--) {
@@ -1760,8 +1760,8 @@ void Map::ArrangeZone() {
 				auto tmp = plots.back();
 				plots.pop_back();
 				if (tmp->plotType == PLOT_OTHER) {
-					Chunk* block = static_cast<Chunk*>(tmp);
-					Plot* plot1, * plot2;
+					shared_ptr<Chunk> block = static_pointer_cast<Chunk>(tmp);
+					shared_ptr<Plot> plot1, plot2;
 					if (block->blocks.size() > 0) {
 						plot1 = block->blocks[0];
 						if (block->blocks.size() > 1) {
@@ -1816,7 +1816,7 @@ void Map::ArrangeZone() {
 						if (plot1->plotType == PLOT_OTHER)plots.push_back(plot1);
 						if (plot2->plotType == PLOT_OTHER)plots.push_back(plot2);
 					}
-					delete tmp;
+					LM_DELETE(tmp);
 				}
 			}
 		}

@@ -11,15 +11,15 @@ using namespace std;
 std::unordered_map<std::string, std::vector<std::pair<Facility::FACILITY_TYPE, std::vector<float>>>> Building::templateFacility = {};
 std::unordered_map<std::string, std::vector<std::pair<FACE_DIRECTION, std::vector<float>>>> Building::templateUsage = {};
 
-Room* Floor::SampleRoom(vector<Room> & complement, int idx, int start) {
-    if (idx < rooms.size())return rooms[idx];
+Room *Floor::SampleRoom(vector<Room> &complement, int idx, int start) {
+    if (idx < rooms.size())return rooms[idx].get();
     else return &complement[(idx - start) % complement.size()];
 }
 
-Room* Floor::ApplyRoom(vector<Room>& complement, int idx, int start) {
+shared_ptr<Room> Floor::ApplyRoom(vector<Room>& complement, int idx, int start) {
     if (idx < rooms.size())return rooms[idx];
 
-    Room* room = new Room(complement[(idx - start) % complement.size()]);
+    shared_ptr<Room> room = LM_NEW(Room, complement[(idx - start) % complement.size()]);
     room->SetLayer(level);
     rooms.push_back(room);
     return room;
@@ -37,7 +37,7 @@ int Floor::UsageLayout(vector<Room> complement) {
                 Room* sample = SampleRoom(complement, idx, start);
                 float step = (sample->GetAcreage() / 100.f) / usage.first.GetSizeX();
                 if (y + step > usage.first.GetSizeY() + GLOBAL_EPS)break;
-                Room *room = ApplyRoom(complement, idx++, start);
+                shared_ptr<Room> room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft(), usage.first.GetRight(),
                     usage.first.GetTop() + y, usage.first.GetTop() + y + step);
@@ -45,7 +45,7 @@ int Floor::UsageLayout(vector<Room> complement) {
                 y += step;
             }
             if (samples.size() == 0) {
-                Room* room = ApplyRoom(complement, idx++, start);
+                shared_ptr<Room> room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft(), usage.first.GetRight(),
                     usage.first.GetTop(), usage.first.GetBottom());
@@ -71,7 +71,7 @@ int Floor::UsageLayout(vector<Room> complement) {
                 Room* sample = SampleRoom(complement, idx, start);
                 float step = (sample->GetAcreage() / 100.f) / usage.first.GetSizeY();
                 if (x + step > usage.first.GetSizeX() + GLOBAL_EPS)break;
-                Room* room = ApplyRoom(complement, idx++, start);
+                shared_ptr<Room> room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft() + x, usage.first.GetLeft() + x + step,
                     usage.first.GetTop(), usage.first.GetBottom());
@@ -79,7 +79,7 @@ int Floor::UsageLayout(vector<Room> complement) {
                 x += step;
             }
             if (samples.size() == 0) {
-                Room* room = ApplyRoom(complement, idx++, start);
+                shared_ptr<Room> room = ApplyRoom(complement, idx++, start);
                 room->SetPosition(
                     usage.first.GetLeft(), usage.first.GetRight(),
                     usage.first.GetTop(), usage.first.GetBottom());
@@ -298,162 +298,162 @@ void Building::ReadTemplates(std::string path) {
     }
 }
 
-Building* CreateBuilding(BUILDING_TYPE type) {
+shared_ptr<Building> CreateBuilding(BUILDING_TYPE type) {
     switch (type) {
     case BUILDING_ROADFIX:
-        return new RoadfixBuilding();
+        return LM_NEW(RoadfixBuilding);
     case BUILDING_PARKING:
-        return new ParkingBuilding();
+        return LM_NEW(ParkingBuilding);
     case BUILDING_BANK:
-        return new BankBuilding();
+        return LM_NEW(BankBuilding);
     case BUILDING_LIBRARY:
-        return new LibraryBuilding();
+        return LM_NEW(LibraryBuilding);
     case BUILDING_CLINIC:
-        return new ClinicBuilding();
+        return LM_NEW(ClinicBuilding);
     case BUILDING_HOSPITAL:
-        return new HospitalBuilding();
+        return LM_NEW(HospitalBuilding);
     case BUILDING_SANATORIUM:
-        return new SanatoriumBuilding();
+        return LM_NEW(SanatoriumBuilding);
     case BUILDING_POLICE:
-        return new PoliceBuilding();
+        return LM_NEW(PoliceBuilding);
     case BUILDING_FIRE:
-        return new FireBuilding();
+        return LM_NEW(FireBuilding);
     case BUILDING_SCHOOL:
-        return new SchoolBuilding();
+        return LM_NEW(SchoolBuilding);
     case BUILDING_CREMATORIUM:
-        return new CrematoriumBuilding();
+        return LM_NEW(CrematoriumBuilding);
     case BUILDING_CEMETRY:
-        return new CemetryBuilding();
+        return LM_NEW(CemetryBuilding);
     case BUILDING_TVSTATION:
-        return new TVStationBuilding();
+        return LM_NEW(TVStationBuilding);
     case BUILDING_GASOLINE:
-        return new GasolineBuilding();
+        return LM_NEW(GasolineBuilding);
     case BUILDING_TOILET:
-        return new ToiletBuilding();
+        return LM_NEW(ToiletBuilding);
     case BUILDING_WATER:
-        return new WaterBuilding();
+        return LM_NEW(WaterBuilding);
     case BUILDING_SEWAGE:
-        return new SewageBuilding();
+        return LM_NEW(SewageBuilding);
     case BUILDING_SUBSTATION:
-        return new SubstationBuilding();
+        return LM_NEW(SubstationBuilding);
     case BUILDING_POWER:
-        return new PowerBuilding();
+        return LM_NEW(PowerBuilding);
     case BUILDING_WINDMILL:
-        return new WindmillBuilding();
+        return LM_NEW(WindmillBuilding);
     case BUILDING_NUCLEAR:
-        return new NuclearBuilding();
+        return LM_NEW(NuclearBuilding);
     case BUILDING_RECYCLE:
-        return new RecycleBuilding();
+        return LM_NEW(RecycleBuilding);
     case BUILDING_TRASH:
-        return new TrashBuilding();
+        return LM_NEW(TrashBuilding);
     case BUILDING_INCINERATION:
-        return new IncinerationBuilding();
+        return LM_NEW(IncinerationBuilding);
     case BUILDING_POST:
-        return new PostBuilding();
+        return LM_NEW(PostBuilding);
     case BUILDING_METRO:
-        return new MetroBuilding();
+        return LM_NEW(MetroBuilding);
     case BUILDING_TRAIN:
-        return new TrainBuilding();
+        return LM_NEW(TrainBuilding);
     case BUILDING_PLANE:
-        return new PlaneBuilding();
+        return LM_NEW(PlaneBuilding);
     case BUILDING_SHIP:
-        return new ShipBuilding();
+        return LM_NEW(ShipBuilding);
     case BUILDING_RESIDENT:
-        return new ResidentBuilding();
+        return LM_NEW(ResidentBuilding);
     case BUILDING_VILLA:
-        return new VillaBuilding();
+        return LM_NEW(VillaBuilding);
     case BUILDING_ESTATE:
-        return new EstateBuilding();
+        return LM_NEW(EstateBuilding);
     case BUILDING_PROPERTY:
-        return new PropertyBuilding();
+        return LM_NEW(PropertyBuilding);
     case BUILDING_PACKAGE:
-        return new PackageBuilding();
+        return LM_NEW(PackageBuilding);
     case BUILDING_HOTEL:
-        return new HotelBuilding();
+        return LM_NEW(HotelBuilding);
     case BUILDING_RESTAURANT:
-        return new RestaurantBuilding();
+        return LM_NEW(RestaurantBuilding);
     case BUILDING_MALL:
-        return new MallBuilding();
+        return LM_NEW(MallBuilding);
     case BUILDING_MARKET:
-        return new MarketBuilding();
+        return LM_NEW(MarketBuilding);
     case BUILDING_MUSIC:
-        return new MusicBuilding();
+        return LM_NEW(MusicBuilding);
     case BUILDING_INGREDIENT:
-        return new IngredientBuilding();
+        return LM_NEW(IngredientBuilding);
     case BUILDING_BRAND:
-        return new BrandBuilding();
+        return LM_NEW(BrandBuilding);
     case BUILDING_CARRENT:
-        return new CarRentBuilding();
+        return LM_NEW(CarRentBuilding);
     case BUILDING_THEATER:
-        return new TheaterBuilding();
+        return LM_NEW(TheaterBuilding);
     case BUILDING_MUSEUM:
-        return new MuseumBuilding();
+        return LM_NEW(MuseumBuilding);
     case BUILDING_ZOO:
-        return new ZooBuilding();
+        return LM_NEW(ZooBuilding);
     case BUILDING_BOTANIC:
-        return new BotanicBuilding();
+        return LM_NEW(BotanicBuilding);
     case BUILDING_AQUARIUM:
-        return new AquariumBuilding();
+        return LM_NEW(AquariumBuilding);
     case BUILDING_CINEMA:
-        return new CinemaBuilding();
+        return LM_NEW(CinemaBuilding);
     case BUILDING_PUB:
-        return new PubBuilding();
+        return LM_NEW(PubBuilding);
     case BUILDING_MASAGE:
-        return new MasageBuilding();
+        return LM_NEW(MasageBuilding);
     case BUILDING_AMUSEMENT:
-        return new AmusementBuilding();
+        return LM_NEW(AmusementBuilding);
     case BUILDING_OFFICE:
-        return new OfficeBuilding();
+        return LM_NEW(OfficeBuilding);
     case BUILDING_STOCK:
-        return new StockBuilding();
+        return LM_NEW(StockBuilding);
     case BUILDING_COURT:
-        return new CourtBuilding();
+        return LM_NEW(CourtBuilding);
     case BUILDING_GOVERNMENT:
-        return new GovernmentBuilding();
+        return LM_NEW(GovernmentBuilding);
     case BUILDING_LAB:
-        return new LabBuilding();
+        return LM_NEW(LabBuilding);
     case BUILDING_FACTORY:
-        return new FactoryBuilding();
+        return LM_NEW(FactoryBuilding);
     case BUILDING_WAREHOUSE:
-        return new WarehouseBuilding();
+        return LM_NEW(WarehouseBuilding);
     case BUILDING_REPAIR:
-        return new RepairBuilding();
+        return LM_NEW(RepairBuilding);
     case BUILDING_MINING:
-        return new MiningBuilding();
+        return LM_NEW(MiningBuilding);
     case BUILDING_OILING:
-        return new OilingBuilding();
+        return LM_NEW(OilingBuilding);
     case BUILDING_QUARRY:
-        return new QuarryBuilding();
+        return LM_NEW(QuarryBuilding);
     case BUILDING_FARM:
-        return new FarmBuilding();
+        return LM_NEW(FarmBuilding);
     case BUILDING_PASTURE:
-        return new PastureBuilding();
+        return LM_NEW(PastureBuilding);
     case BUILDING_BREEDING:
-        return new BreedingBuilding();
+        return LM_NEW(BreedingBuilding);
     case BUILDING_FISHING:
-        return new FishingBuilding();
+        return LM_NEW(FishingBuilding);
     case BUILDING_ORCHARD:
-        return new OrchardBuilding();
+        return LM_NEW(OrchardBuilding);
     case BUILDING_FOREST:
-        return new ForestBuilding();
+        return LM_NEW(ForestBuilding);
     case BUILDING_PARK:
-        return new ParkBuilding();
+        return LM_NEW(ParkBuilding);
     case BUILDING_PLAZA:
-        return new PlazaBuilding();
+        return LM_NEW(PlazaBuilding);
     case BUILDING_STATUE:
-        return new StatueBuilding();
+        return LM_NEW(StatueBuilding);
     case BUILDING_GYM:
-        return new GymBuilding();
+        return LM_NEW(GymBuilding);
     case BUILDING_RESORT:
-        return new ResortBuilding();
+        return LM_NEW(ResortBuilding);
     case BUILDING_REMAINS:
-        return new RemainsBuilding();
+        return LM_NEW(RemainsBuilding);
     case BUILDING_GUARD:
-        return new GuardBuilding();
+        return LM_NEW(GuardBuilding);
     case BUILDING_CANTEEN:
-        return new CanteenBuilding();
+        return LM_NEW(CanteenBuilding);
     case BUILDING_DORMITRY:
-        return new DormitryBuilding();
+        return LM_NEW(DormitryBuilding);
     default:
         return nullptr;;
     }
@@ -1406,9 +1406,9 @@ void MallBuilding::DistributeInside() {
                     break;
                 }
             }
-            Room* room = ::CreateRoom(roomType);
+            shared_ptr<Room> room = ::CreateRoom(roomType);
             complement.push_back(Room(*room));
-            delete room;
+            LM_DELETE(room);
             complement.back().SetAcreage(standard * exp(GetRandom(1000) / 1000.0f - 0.5f));
         }
     }
@@ -2518,3 +2518,4 @@ void IncinerationBuilding::DistributeInside() {
 vector<pair<Job*, int>> IncinerationBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
+

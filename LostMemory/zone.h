@@ -71,7 +71,7 @@ public:
 	}
 	~Zone() {
 		for(auto building : buildings){
-			delete building;
+			LM_DELETE(building);
 		}
 		buildings.clear();
 	}
@@ -85,7 +85,7 @@ public:
 	void SetAreaType(AREA_TYPE type);
 
 	// 获取园区内所有建筑
-	std::vector<Building*>& GetBuildings();
+	std::vector<std::shared_ptr<Building>>& GetBuildings();
 
 	// 填充园区
 	virtual void ArrangeBuilding() = 0;
@@ -99,16 +99,16 @@ public:
 	void FillWithBuilding();
 
 	// 获取园区内所有地块
-	std::vector<Plot*> GetPlots();
+	std::vector<std::shared_ptr<Plot>> GetPlots();
 
 protected:
 	ZONE_TYPE type;
 	AREA_TYPE area;
 
-	std::vector<Building*> buildings;
+	std::vector<std::shared_ptr<Building>> buildings;
 
 	// 为建筑分配面积
-	bool CalcAcreage(Building* building, float scalar);
+	bool CalcAcreage(std::shared_ptr<Building> building, float scalar);
 };
 
 class SpaceZone : public Zone {
@@ -379,14 +379,14 @@ private:
 
 };
 
-Zone* CreateZone(ZONE_TYPE type);
+std::shared_ptr<Zone> CreateZone(ZONE_TYPE type);
 ZONE_TYPE RandomZone(AREA_TYPE area, float prob);
 
 template<class T>
 bool Zone::AddBuilding(int avg, float scalar = 1.0f) {
 	int count = 0;
 	while (true) {
-		T* building = new T();
+		std::shared_ptr<T> building = LM_NEW(T);
 
 		if (CalcAcreage(building, scalar)) {
 			building->SetId(buildings.size());
@@ -395,7 +395,7 @@ bool Zone::AddBuilding(int avg, float scalar = 1.0f) {
 			count++;
 		}
 		else {
-			delete building;
+			LM_DELETE(building);
 			return false;
 		}
 

@@ -14,316 +14,316 @@ void Organization::SetType(ORGANIZATION_TYPE type) {
     this->type = type;
 }
 
-Organization* CreateOrganization(ORGANIZATION_TYPE type) {
+shared_ptr<Organization> CreateOrganization(ORGANIZATION_TYPE type) {
     switch (type) {
     case ORGANIZATION_NONE:
-        return new Organization(type);
+        return LM_NEW(Organization, type);
     case ORGANIZATION_ROADFIX:
-        return new RoadfixOrganization();
+        return LM_NEW(RoadfixOrganization);
     case ORGANIZATION_PARKING:
-        return new ParkingOrganization();
+        return LM_NEW(ParkingOrganization);
     case ORGANIZATION_BANK:
-        return new BankOrganization();
+        return LM_NEW(BankOrganization);
     case ORGANIZATION_LIBRARY:
-        return new LibraryOrganization();
+        return LM_NEW(LibraryOrganization);
     case ORGANIZATION_CLINIC:
-        return new ClinicOrganization();
+        return LM_NEW(ClinicOrganization);
     case ORGANIZATION_HOSPITAL:
-        return new HospitalOrganization();
+        return LM_NEW(HospitalOrganization);
     case ORGANIZATION_INPATIENT:
-        return new InpatientOrganization();
+        return LM_NEW(InpatientOrganization);
     case ORGANIZATION_SANATORIUM:
-        return new SanatoriumOrganization();
+        return LM_NEW(SanatoriumOrganization);
     case ORGANIZATION_POLICE:
-        return new PoliceOrganization();
+        return LM_NEW(PoliceOrganization);
     case ORGANIZATION_FIRE:
-        return new FireOrganization();
+        return LM_NEW(FireOrganization);
     case ORGANIZATION_KINDER:
-        return new KinderOrganization();
+        return LM_NEW(KinderOrganization);
     case ORGANIZATION_PRIMARY:
-        return new PrimaryOrganization();
+        return LM_NEW(PrimaryOrganization);
     case ORGANIZATION_MIDDLE:
-        return new MiddleOrganization();
+        return LM_NEW(MiddleOrganization);
     case ORGANIZATION_UNIVERSITY:
-        return new UniversityOrganization();
+        return LM_NEW(UniversityOrganization);
     case ORGANIZATION_VOCATIONAL:
-        return new VocationalOrganization();
+        return LM_NEW(VocationalOrganization);
     case ORGANIZATION_CREMATORIUM:
-        return new CrematoriumOrganization();
+        return LM_NEW(CrematoriumOrganization);
     case ORGANIZATION_CEMETRY:
-        return new CemetryOrganization();
+        return LM_NEW(CemetryOrganization);
     case ORGANIZATION_TVSTATION:
-        return new TVStationOrganization();
+        return LM_NEW(TVStationOrganization);
     case ORGANIZATION_GASOLINE:
-        return new GasolineOrganization();
+        return LM_NEW(GasolineOrganization);
     case ORGANIZATION_TOILET:
-        return new ToiletOrganization();
+        return LM_NEW(ToiletOrganization);
     case ORGANIZATION_DEVICE:
-        return new DeviceOrganization();
+        return LM_NEW(DeviceOrganization);
     case ORGANIZATION_POST:
-        return new PostOrganization();
+        return LM_NEW(PostOrganization);
     case ORGANIZATION_STATION:
-        return new StationOrganization();
+        return LM_NEW(StationOrganization);
     case ORGANIZATION_COMMUNITY:
-        return new CommunityOrganization();
+        return LM_NEW(CommunityOrganization);
     case ORGANIZATION_ESTATE:
-        return new EstateOrganization();
+        return LM_NEW(EstateOrganization);
     case ORGANIZATION_PROPERTY:
-        return new PropertyOrganization();
+        return LM_NEW(PropertyOrganization);
     case ORGANIZATION_PACKAGE:
-        return new PackageOrganization();
+        return LM_NEW(PackageOrganization);
     case ORGANIZATION_HOTEL:
-        return new HotelOrganization();
+        return LM_NEW(HotelOrganization);
     case ORGANIZATION_RESTAURANT:
-        return new RestaurantOrganization();
+        return LM_NEW(RestaurantOrganization);
     case ORGANIZATION_FASTFOOD:
-        return new FastfoodOrganization();
+        return LM_NEW(FastfoodOrganization);
     case ORGANIZATION_BUFFET:
-        return new BuffetOrganization();
+        return LM_NEW(BuffetOrganization);
     case ORGANIZATION_COFFEE:
-        return new CoffeeOrganization();
+        return LM_NEW(CoffeeOrganization);
     case ORGANIZATION_DRINK:
-        return new DrinkOrganization();
+        return LM_NEW(DrinkOrganization);
     case ORGANIZATION_MALL:
-        return new MallOrganization();
+        return LM_NEW(MallOrganization);
     case ORGANIZATION_MARKET:
-        return new MarketOrganization();
+        return LM_NEW(MarketOrganization);
     case ORGANIZATION_MUSIC:
-        return new MusicOrganization();
+        return LM_NEW(MusicOrganization);
     case ORGANIZATION_INGREDIENT:
-        return new IngredientOrganization();
+        return LM_NEW(IngredientOrganization);
     case ORGANIZATION_BRAND:
-        return new BrandOrganization();
+        return LM_NEW(BrandOrganization);
     case ORGANIZATION_CARRENT:
-        return new CarrentOrganization();
+        return LM_NEW(CarrentOrganization);
     case ORGANIZATION_THEATER:
-        return new TheaterOrganization();
+        return LM_NEW(TheaterOrganization);
     case ORGANIZATION_MUSEUM:
-        return new MuseumOrganization();
+        return LM_NEW(MuseumOrganization);
     case ORGANIZATION_ZOO:
-        return new ZooOrganization();
+        return LM_NEW(ZooOrganization);
     case ORGANIZATION_BOTANIC:
-        return new BotanicOrganization();
+        return LM_NEW(BotanicOrganization);
     case ORGANIZATION_AQUARIUM:
-        return new AquariumOrganization();
+        return LM_NEW(AquariumOrganization);
     case ORGANIZATION_CINEMA:
-        return new CinemaOrganization();
+        return LM_NEW(CinemaOrganization);
     case ORGANIZATION_PUB:
-        return new PubOrganization();
+        return LM_NEW(PubOrganization);
     case ORGANIZATION_MASSAGE:
-        return new MassageOrganization();
+        return LM_NEW(MassageOrganization);
     case ORGANIZATION_AMUSEMENT:
-        return new AmusementOrganization();
+        return LM_NEW(AmusementOrganization);
     case ORGANIZATION_FURNISH:
-        return new FurnishOrganization();
+        return LM_NEW(FurnishOrganization);
     case ORGANIZATION_MOVING:
-        return new MovingOrganization();
+        return LM_NEW(MovingOrganization);
     case ORGANIZATION_OPERATOR:
-        return new OperatorOrganization();
+        return LM_NEW(OperatorOrganization);
     case ORGANIZATION_GAME:
-        return new GameOrganization();
+        return LM_NEW(GameOrganization);
     case ORGANIZATION_LEASE:
-        return new LeaseOrganization();
+        return LM_NEW(LeaseOrganization);
     case ORGANIZATION_FINANCE:
-        return new FinanceOrganization();
+        return LM_NEW(FinanceOrganization);
     case ORGANIZATION_LENDING:
-        return new LendingOrganization();
+        return LM_NEW(LendingOrganization);
     case ORGANIZATION_SALE:
-        return new SaleOrganization();
+        return LM_NEW(SaleOrganization);
     case ORGANIZATION_MEDICAL:
-        return new MedicalOrganization();
+        return LM_NEW(MedicalOrganization);
     case ORGANIZATION_RELATION:
-        return new RelationOrganization();
+        return LM_NEW(RelationOrganization);
     case ORGANIZATION_ESHOP:
-        return new EshopOrganization();
+        return LM_NEW(EshopOrganization);
     case ORGANIZATION_STAR:
-        return new StarOrganization();
+        return LM_NEW(StarOrganization);
     case ORGANIZATION_ENGINEER:
-        return new EngineerOrganization();
+        return LM_NEW(EngineerOrganization);
     case ORGANIZATION_CONSTRUCT:
-        return new ConstructOrganization();
+        return LM_NEW(ConstructOrganization);
     case ORGANIZATION_ART:
-        return new ArtOrganization();
+        return LM_NEW(ArtOrganization);
     case ORGANIZATION_PUBLISHER:
-        return new PublisherOrganization();
+        return LM_NEW(PublisherOrganization);
     case ORGANIZATION_TRAVEL:
-        return new TravelOrganization();
+        return LM_NEW(TravelOrganization);
     case ORGANIZATION_MEDIA:
-        return new MediaOrganization();
+        return LM_NEW(MediaOrganization);
     case ORGANIZATION_LAWYER:
-        return new LawyerOrganization();
+        return LM_NEW(LawyerOrganization);
     case ORGANIZATION_CREW:
-        return new CrewOrganization();
+        return LM_NEW(CrewOrganization);
     case ORGANIZATION_INSURANCE:
-        return new InsuranceOrganization();
+        return LM_NEW(InsuranceOrganization);
     case ORGANIZATION_SECURITY:
-        return new SecurityOrganization();
+        return LM_NEW(SecurityOrganization);
     case ORGANIZATION_CLEANING:
-        return new CleaningOrganization();
+        return LM_NEW(CleaningOrganization);
     case ORGANIZATION_GREEN:
-        return new GreenOrganization();
+        return LM_NEW(GreenOrganization);
     case ORGANIZATION_INTERMEDIARY:
-        return new IntermediaryOrganization();
+        return LM_NEW(IntermediaryOrganization);
     case ORGANIZATION_STOCK:
-        return new StockOrganization();
+        return LM_NEW(StockOrganization);
     case ORGANIZATION_COURT:
-        return new CourtOrganization();
+        return LM_NEW(CourtOrganization);
     case ORGANIZATION_ADMIN:
-        return new AdminOrganization();
+        return LM_NEW(AdminOrganization);
     case ORGANIZATION_EDUCATIONDEPT:
-        return new EducationdeptOrganization();
+        return LM_NEW(EducationdeptOrganization);
     case ORGANIZATION_INFODEPT:
-        return new InfodeptOrganization();
+        return LM_NEW(InfodeptOrganization);
     case ORGANIZATION_FINANCEDEPT:
-        return new FinancedeptOrganization();
+        return LM_NEW(FinancedeptOrganization);
     case ORGANIZATION_TRADEDEPT:
-        return new TradedeptOrganization();
+        return LM_NEW(TradedeptOrganization);
     case ORGANIZATION_PETITIONDEPT:
-        return new PetitiondeptOrganization();
+        return LM_NEW(PetitiondeptOrganization);
     case ORGANIZATION_WEATHERDEPT:
-        return new WeatherdeptOrganization();
+        return LM_NEW(WeatherdeptOrganization);
     case ORGANIZATION_TAXDEPT:
-        return new TaxdeptOrganization();
+        return LM_NEW(TaxdeptOrganization);
     case ORGANIZATION_CIVILDEPT:
-        return new CivildeptOrganization();
+        return LM_NEW(CivildeptOrganization);
     case ORGANIZATION_SCIENCEDEPT:
-        return new SciencedeptOrganization();
+        return LM_NEW(SciencedeptOrganization);
     case ORGANIZATION_ENGINEERDEPT:
-        return new EngineerdeptOrganization();
+        return LM_NEW(EngineerdeptOrganization);
     case ORGANIZATION_SOCIALDEPT:
-        return new SocialdeptOrganization();
+        return LM_NEW(SocialdeptOrganization);
     case ORGANIZATION_CUSTOMHOUSE:
-        return new CustomhouseOrganization();
+        return LM_NEW(CustomhouseOrganization);
     case ORGANIZATION_DOGE:
-        return new DogeOrganization();
+        return LM_NEW(DogeOrganization);
     case ORGANIZATION_COMMITTEE:
-        return new CommitteeOrganization();
+        return LM_NEW(CommitteeOrganization);
     case ORGANIZATION_LAB:
-        return new LabOrganization();
+        return LM_NEW(LabOrganization);
     case ORGANIZATION_FACTORY:
-        return new FactoryOrganization();
+        return LM_NEW(FactoryOrganization);
     case ORGANIZATION_WAREHOUSE:
-        return new WarehouseOrganization();
+        return LM_NEW(WarehouseOrganization);
     case ORGANIZATION_REPAIR:
-        return new RepairOrganization();
+        return LM_NEW(RepairOrganization);
     case ORGANIZATION_RESOURCE:
-        return new ResourceOrganization();
+        return LM_NEW(ResourceOrganization);
     case ORGANIZATION_PARK:
-        return new ParkOrganization();
+        return LM_NEW(ParkOrganization);
     case ORGANIZATION_PLAZA:
-        return new PlazaOrganization();
+        return LM_NEW(PlazaOrganization);
     case ORGANIZATION_STATUE:
-        return new StatueOrganization();
+        return LM_NEW(StatueOrganization);
     case ORGANIZATION_GYM:
-        return new GymOrganization();
+        return LM_NEW(GymOrganization);
     case ORGANIZATION_STADIUM:
-        return new StadiumOrganization();
+        return LM_NEW(StadiumOrganization);
     case ORGANIZATION_FOOTBALL:
-        return new FootballOrganization();
+        return LM_NEW(FootballOrganization);
     case ORGANIZATION_BASKETBALL:
-        return new BasketballOrganization();
+        return LM_NEW(BasketballOrganization);
     case ORGANIZATION_VOLLEYBALL:
-        return new VolleyballOrganization();
+        return LM_NEW(VolleyballOrganization);
     case ORGANIZATION_TENNIS:
-        return new TennisOrganization();
+        return LM_NEW(TennisOrganization);
     case ORGANIZATION_TABLETENNIS:
-        return new TabletennisOrganization();
+        return LM_NEW(TabletennisOrganization);
     case ORGANIZATION_BADMINTON:
-        return new BadmintonOrganization();
+        return LM_NEW(BadmintonOrganization);
     case ORGANIZATION_GOLF:
-        return new GolfOrganization();
+        return LM_NEW(GolfOrganization);
     case ORGANIZATION_SKI:
-        return new SkiOrganization();
+        return LM_NEW(SkiOrganization);
     case ORGANIZATION_SKATE:
-        return new SkateOrganization();
+        return LM_NEW(SkateOrganization);
     case ORGANIZATION_SWIM:
-        return new SwimOrganization();
+        return LM_NEW(SwimOrganization);
     case ORGANIZATION_RESORT:
-        return new ResortOrganization();
+        return LM_NEW(ResortOrganization);
     case ORGANIZATION_REMAINS:
-        return new RemainsOrganization();
+        return LM_NEW(RemainsOrganization);
     case ORGANIZATION_ROCKET:
-        return new RocketOrganization();
+        return LM_NEW(RocketOrganization);
     case ORGANIZATION_PLAYGROUND:
-        return new PlaygroundOrganization();
+        return LM_NEW(PlaygroundOrganization);
     case ORGANIZATION_PRISON:
-        return new PrisonOrganization();
+        return LM_NEW(PrisonOrganization);
     case ORGANIZATION_GUARD:
-        return new GuardOrganization();
+        return LM_NEW(GuardOrganization);
     case ORGANIZATION_CANTEEN:
-        return new CanteenOrganization();
+        return LM_NEW(CanteenOrganization);
     case ORGANIZATION_DORMITRY:
-        return new DormitryOrganization();
+        return LM_NEW(DormitryOrganization);
     case ORGANIZATION_DATA:
-        return new DataOrganization();
+        return LM_NEW(DataOrganization);
     case ORGANIZATION_WATER:
-        return new WaterOrganization();
+        return LM_NEW(WaterOrganization);
     case ORGANIZATION_SEWAGE:
-        return new SewageOrganization();
+        return LM_NEW(SewageOrganization);
     case ORGANIZATION_POWER:
-        return new PowerOrganization();
+        return LM_NEW(PowerOrganization);
     case ORGANIZATION_WINDMILL:
-        return new WindmillOrganization();
+        return LM_NEW(WindmillOrganization);
     case ORGANIZATION_NUCLEAR:
-        return new NuclearOrganization();
+        return LM_NEW(NuclearOrganization);
     case ORGANIZATION_RECYCLE:
-        return new RecycleOrganization();
+        return LM_NEW(RecycleOrganization);
     case ORGANIZATION_TRASH:
-        return new TrashOrganization();
+        return LM_NEW(TrashOrganization);
     case ORGANIZATION_INCINERATION:
-        return new IncinerationOrganization();
+        return LM_NEW(IncinerationOrganization);
     case ORGANIZATION_BODY:
-        return new BodyOrganization();
+        return LM_NEW(BodyOrganization);
     case ORGANIZATION_DENTIST:
-        return new DentistOrganization();
+        return LM_NEW(DentistOrganization);
     case ORGANIZATION_MENTAL:
-        return new MentalOrganization();
+        return LM_NEW(MentalOrganization);
     case ORGANIZATION_AFFAIR:
-        return new AffairOrganization();
+        return LM_NEW(AffairOrganization);
     case ORGANIZATION_GOLD:
-        return new GoldOrganization();
+        return LM_NEW(GoldOrganization);
     case ORGANIZATION_GROCERY:
-        return new GroceryOrganization();
+        return LM_NEW(GroceryOrganization);
     case ORGANIZATION_CLOTHES:
-        return new ClothesOrganization();
+        return LM_NEW(ClothesOrganization);
     case ORGANIZATION_COSMETIC:
-        return new CosmeticOrganization();
+        return LM_NEW(CosmeticOrganization);
     case ORGANIZATION_HAIRCUT:
-        return new HaircutOrganization();
+        return LM_NEW(HaircutOrganization);
     case ORGANIZATION_DRUG:
-        return new DrugOrganization();
+        return LM_NEW(DrugOrganization);
     case ORGANIZATION_SMOKEWINETEA:
-        return new SmokewineteaOrganization();
+        return LM_NEW(SmokewineteaOrganization);
     case ORGANIZATION_JEWELRY:
-        return new JewelryOrganization();
+        return LM_NEW(JewelryOrganization);
     case ORGANIZATION_EXTRACURRICULAR:
-        return new ExtracurricularOrganization();
+        return LM_NEW(ExtracurricularOrganization);
     case ORGANIZATION_CHESSCARD:
-        return new ChesscardOrganization();
+        return LM_NEW(ChesscardOrganization);
     case ORGANIZATION_PET:
-        return new PetOrganization();
+        return LM_NEW(PetOrganization);
     case ORGANIZATION_ELECTRONIC:
-        return new ElectronicOrganization();
+        return LM_NEW(ElectronicOrganization);
     case ORGANIZATION_COPY:
-        return new CopyOrganization();
+        return LM_NEW(CopyOrganization);
     case ORGANIZATION_STUDIO:
-        return new StudioOrganization();
+        return LM_NEW(StudioOrganization);
     case ORGANIZATION_CARWASH:
-        return new CarwashOrganization();
+        return LM_NEW(CarwashOrganization);
     case ORGANIZATION_BICYCLE:
-        return new BicycleOrganization();
+        return LM_NEW(BicycleOrganization);
     case ORGANIZATION_HARDWARE:
-        return new HardwareOrganization();
+        return LM_NEW(HardwareOrganization);
     case ORGANIZATION_BOOK:
-        return new BookOrganization();
+        return LM_NEW(BookOrganization);
     case ORGANIZATION_BILLIARD:
-        return new BilliardOrganization();
+        return LM_NEW(BilliardOrganization);
     case ORGANIZATION_NET:
-        return new NetOrganization();
+        return LM_NEW(NetOrganization);
     case ORGANIZATION_KTV:
-        return new KtvOrganization();
+        return LM_NEW(KtvOrganization);
     case ORGANIZATION_VENDOR:
-        return new VendorOrganization();
+        return LM_NEW(VendorOrganization);
     default:
         return nullptr;
     }
