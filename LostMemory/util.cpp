@@ -1,4 +1,5 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
 
 #include "util.h"
 
@@ -13,7 +14,7 @@
 
 using namespace std;
 
-int GetRandom(int range, int (*cdf)(int)) {
+int GetRandom(int range, int (*cdf)(int, int)) {
 	if (range <= 0)return 0;
 
 	mt19937 rng(random_device{}());
@@ -23,7 +24,7 @@ int GetRandom(int range, int (*cdf)(int)) {
 	if (cdf == nullptr)
 		return ret;
 	else {
-		return clamp(cdf(ret), 0, range - 1);
+		return clamp(cdf(ret, range), 0, range - 1);
 	}
 }
 
@@ -481,7 +482,7 @@ int Time::OrdinalDate() const {
     return days;
 }
 
-Time GetRandom(Time begin, Time end, int (*cdf)(int)) {
+Time GetRandom(Time begin, Time end, int (*cdf)(int, int)) {
 	// 矫正起始与结束时间
     if (begin > end) {
         swap(begin, end);

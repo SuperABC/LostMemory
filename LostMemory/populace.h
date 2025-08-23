@@ -36,6 +36,8 @@ public:
 private:
 	Time time;
 
+	ChineseNameGenerator nameGenerator;
+
 	std::vector<std::shared_ptr<Person>> citizens;
 	std::unordered_map<int, std::shared_ptr<Person>> phoneRoll;
 

@@ -146,6 +146,7 @@
     <ClCompile Include="asset.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="commodity.cpp" />
+    <ClCompile Include="name.cpp" />
     <ClCompile Include="phone.cpp" />
     <ClCompile Include="plot.cpp" />
     <ClCompile Include="relation.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="asset.h" />
     <ClInclude Include="character.h" />
     <ClInclude Include="commodity.h" />
+    <ClInclude Include="name.h" />
     <ClInclude Include="phone.h" />
     <ClInclude Include="plot.h" />
     <ClInclude Include="relation.h" />

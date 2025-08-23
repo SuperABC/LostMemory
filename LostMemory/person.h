@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "name.h"
 #include "relation.h"
 #include "character.h"
 #include "job.h"
@@ -8,6 +9,10 @@
 
 #include <string>
 #include <vector>
+
+#undef GetJob
+#undef SetJob
+
 
 class Time;
 class JobExperience;
@@ -77,6 +82,9 @@ public:
 	std::vector<JobExperience>& GetJobExperiences();
 	void AddAcquaintance(std::shared_ptr<Person> person, Relation relation);
 	std::vector<std::pair<std::shared_ptr<Person>, Relation>>& GetAcquaintances();
+
+	// 随机生成姓名
+	void RandomName();
 
 	// 组合相同经历
 	void ExpComposition();

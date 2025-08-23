@@ -228,6 +228,12 @@ void Populace::GenerateCitizens(int num) {
 		}
 	}
 
+	// 为所有人分配姓名
+	for (auto& citizen : citizens) {
+		citizen->SetName(nameGenerator.GenerateName(
+			citizen->GetGender() == GENDER_MALE, citizen->GetGender() == GENDER_FEMALE));
+	}
+
 	// 记录有配偶的市民的结婚日期
 	for (int i = 1; i < females.size(); i++) {
 		if (females[i].spouse >= 0 && females[i].idx >= 0 && males[females[i].spouse].idx >= 0) {
@@ -628,7 +634,7 @@ void Populace::GenerateEducations() {
 	debugf("generate educations.\n");
 }
 
-int relationCdf(int x) {
+int relationCdf(int x, int max) {
 	float y = log(log(x + 3)) / log(log(40000));
 	if (y < 0.5f) {
 		y = -0.75 / (4 * y + 1) + 0.75;

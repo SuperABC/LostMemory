@@ -93,6 +93,10 @@ vector<pair<shared_ptr<Person>, Relation>>& Person::GetAcquaintances() {
 	return acquaintances;
 }
 
+void Person::RandomName() {
+
+}
+
 void Person::ExpComposition() {
 	if (educationExperiences.size() == 0)return;
 
