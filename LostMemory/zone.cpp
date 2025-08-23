@@ -347,25 +347,19 @@ void VillaZone::ArrangeBuilding() {
 void ShoppingZone::ArrangeBuilding() {
 	AddBuilding<RestaurantBuilding>(1);
 	AddBuilding<MallBuilding>(1);
-	AddBuilding<MarketBuilding>(1);
-	AddBuilding<BrandBuilding>(2);
+	AddBuilding<ShopBuilding>(3);
 	AddBuilding<GuardBuilding>(1);
 	AddBuilding<RestaurantBuilding>(2);
 	AddBuilding<HotelBuilding>(2);
-	AddBuilding<IngredientBuilding>(1);
-	AddBuilding<BrandBuilding>(2);
-	AddBuilding<MusicBuilding>(1);
 	AddBuilding<CarRentBuilding>(2);
 	AddBuilding<TheaterBuilding>(1);
 	AddBuilding<CinemaBuilding>(1);
-	AddBuilding<PubBuilding>(4);
 	AddBuilding<MasageBuilding>(1);
-	AddBuilding<BrandBuilding>(2);
+	AddBuilding<ShopBuilding>(3);
 	AddBuilding<RestaurantBuilding>(4);
 	AddBuilding<HotelBuilding>(2);
 	AddBuilding<MallBuilding>(1);
-	AddBuilding<MarketBuilding>(1);
-	FillWithBuilding<BrandBuilding>();
+	FillWithBuilding<ShopBuilding>();
 }
 
 void GovernmentZone::ArrangeBuilding() {

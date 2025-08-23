@@ -16,104 +16,30 @@ void Organization::SetType(ORGANIZATION_TYPE type) {
 
 shared_ptr<Organization> CreateOrganization(ORGANIZATION_TYPE type) {
     switch (type) {
-    case ORGANIZATION_NONE:
-        return LM_NEW(Organization, type);
-    case ORGANIZATION_ROADFIX:
-        return LM_NEW(RoadfixOrganization);
-    case ORGANIZATION_PARKING:
-        return LM_NEW(ParkingOrganization);
-    case ORGANIZATION_BANK:
-        return LM_NEW(BankOrganization);
-    case ORGANIZATION_LIBRARY:
-        return LM_NEW(LibraryOrganization);
-    case ORGANIZATION_CLINIC:
-        return LM_NEW(ClinicOrganization);
-    case ORGANIZATION_HOSPITAL:
-        return LM_NEW(HospitalOrganization);
-    case ORGANIZATION_INPATIENT:
-        return LM_NEW(InpatientOrganization);
-    case ORGANIZATION_SANATORIUM:
-        return LM_NEW(SanatoriumOrganization);
-    case ORGANIZATION_POLICE:
-        return LM_NEW(PoliceOrganization);
-    case ORGANIZATION_FIRE:
-        return LM_NEW(FireOrganization);
-    case ORGANIZATION_KINDER:
-        return LM_NEW(KinderOrganization);
-    case ORGANIZATION_PRIMARY:
-        return LM_NEW(PrimaryOrganization);
-    case ORGANIZATION_MIDDLE:
-        return LM_NEW(MiddleOrganization);
-    case ORGANIZATION_UNIVERSITY:
-        return LM_NEW(UniversityOrganization);
-    case ORGANIZATION_VOCATIONAL:
-        return LM_NEW(VocationalOrganization);
-    case ORGANIZATION_CREMATORIUM:
-        return LM_NEW(CrematoriumOrganization);
-    case ORGANIZATION_CEMETRY:
-        return LM_NEW(CemetryOrganization);
-    case ORGANIZATION_TVSTATION:
-        return LM_NEW(TVStationOrganization);
-    case ORGANIZATION_GASOLINE:
-        return LM_NEW(GasolineOrganization);
-    case ORGANIZATION_TOILET:
-        return LM_NEW(ToiletOrganization);
-    case ORGANIZATION_DEVICE:
-        return LM_NEW(DeviceOrganization);
-    case ORGANIZATION_POST:
-        return LM_NEW(PostOrganization);
-    case ORGANIZATION_STATION:
-        return LM_NEW(StationOrganization);
     case ORGANIZATION_COMMUNITY:
         return LM_NEW(CommunityOrganization);
-    case ORGANIZATION_ESTATE:
-        return LM_NEW(EstateOrganization);
-    case ORGANIZATION_PROPERTY:
-        return LM_NEW(PropertyOrganization);
-    case ORGANIZATION_PACKAGE:
-        return LM_NEW(PackageOrganization);
     case ORGANIZATION_HOTEL:
         return LM_NEW(HotelOrganization);
-    case ORGANIZATION_RESTAURANT:
-        return LM_NEW(RestaurantOrganization);
-    case ORGANIZATION_FASTFOOD:
-        return LM_NEW(FastfoodOrganization);
-    case ORGANIZATION_BUFFET:
-        return LM_NEW(BuffetOrganization);
-    case ORGANIZATION_COFFEE:
-        return LM_NEW(CoffeeOrganization);
-    case ORGANIZATION_DRINK:
-        return LM_NEW(DrinkOrganization);
     case ORGANIZATION_MALL:
         return LM_NEW(MallOrganization);
-    case ORGANIZATION_MARKET:
-        return LM_NEW(MarketOrganization);
-    case ORGANIZATION_MUSIC:
-        return LM_NEW(MusicOrganization);
-    case ORGANIZATION_INGREDIENT:
-        return LM_NEW(IngredientOrganization);
-    case ORGANIZATION_BRAND:
-        return LM_NEW(BrandOrganization);
+    case ORGANIZATION_SHOP:
+        return LM_NEW(ShopOrganization);
+    case ORGANIZATION_RESTAURANT:
+        return LM_NEW(RestaurantOrganization);
     case ORGANIZATION_CARRENT:
-        return LM_NEW(CarrentOrganization);
+        return LM_NEW(CarRentOrganization);
     case ORGANIZATION_THEATER:
         return LM_NEW(TheaterOrganization);
-    case ORGANIZATION_MUSEUM:
-        return LM_NEW(MuseumOrganization);
-    case ORGANIZATION_ZOO:
-        return LM_NEW(ZooOrganization);
-    case ORGANIZATION_BOTANIC:
-        return LM_NEW(BotanicOrganization);
-    case ORGANIZATION_AQUARIUM:
-        return LM_NEW(AquariumOrganization);
     case ORGANIZATION_CINEMA:
         return LM_NEW(CinemaOrganization);
-    case ORGANIZATION_PUB:
-        return LM_NEW(PubOrganization);
-    case ORGANIZATION_MASSAGE:
-        return LM_NEW(MassageOrganization);
-    case ORGANIZATION_AMUSEMENT:
-        return LM_NEW(AmusementOrganization);
+    case ORGANIZATION_MUSEUM:
+        return LM_NEW(MuseumOrganization);
+    case ORGANIZATION_MASAGE:
+        return LM_NEW(MasageOrganization);
+    case ORGANIZATION_PACKAGE:
+        return LM_NEW(PackageOrganization);
+    case ORGANIZATION_OFFICE:
+        return LM_NEW(OfficeOrganization);
     case ORGANIZATION_FURNISH:
         return LM_NEW(FurnishOrganization);
     case ORGANIZATION_MOVING:
@@ -164,48 +90,38 @@ shared_ptr<Organization> CreateOrganization(ORGANIZATION_TYPE type) {
         return LM_NEW(GreenOrganization);
     case ORGANIZATION_INTERMEDIARY:
         return LM_NEW(IntermediaryOrganization);
-    case ORGANIZATION_STOCK:
-        return LM_NEW(StockOrganization);
-    case ORGANIZATION_COURT:
-        return LM_NEW(CourtOrganization);
-    case ORGANIZATION_ADMIN:
-        return LM_NEW(AdminOrganization);
+    case ORGANIZATION_LAB:
+        return LM_NEW(LabOrganization);
+    case ORGANIZATION_GOVERNMENT:
+        return LM_NEW(GovernmentOrganization);
     case ORGANIZATION_EDUCATIONDEPT:
-        return LM_NEW(EducationdeptOrganization);
+        return LM_NEW(EducationDeptOrganization);
     case ORGANIZATION_INFODEPT:
-        return LM_NEW(InfodeptOrganization);
+        return LM_NEW(InfoDeptOrganization);
     case ORGANIZATION_FINANCEDEPT:
-        return LM_NEW(FinancedeptOrganization);
+        return LM_NEW(FinanceDeptOrganization);
     case ORGANIZATION_TRADEDEPT:
-        return LM_NEW(TradedeptOrganization);
+        return LM_NEW(TradeDeptOrganization);
     case ORGANIZATION_PETITIONDEPT:
-        return LM_NEW(PetitiondeptOrganization);
+        return LM_NEW(PetitionDeptOrganization);
     case ORGANIZATION_WEATHERDEPT:
-        return LM_NEW(WeatherdeptOrganization);
+        return LM_NEW(WeatherDeptOrganization);
     case ORGANIZATION_TAXDEPT:
-        return LM_NEW(TaxdeptOrganization);
+        return LM_NEW(TaxDeptOrganization);
     case ORGANIZATION_CIVILDEPT:
-        return LM_NEW(CivildeptOrganization);
+        return LM_NEW(CivilDeptOrganization);
     case ORGANIZATION_SCIENCEDEPT:
-        return LM_NEW(SciencedeptOrganization);
+        return LM_NEW(ScienceDeptOrganization);
     case ORGANIZATION_ENGINEERDEPT:
-        return LM_NEW(EngineerdeptOrganization);
+        return LM_NEW(EngineerDeptOrganization);
     case ORGANIZATION_SOCIALDEPT:
-        return LM_NEW(SocialdeptOrganization);
-    case ORGANIZATION_CUSTOMHOUSE:
-        return LM_NEW(CustomhouseOrganization);
+        return LM_NEW(SocialDeptOrganization);
     case ORGANIZATION_DOGE:
         return LM_NEW(DogeOrganization);
     case ORGANIZATION_COMMITTEE:
         return LM_NEW(CommitteeOrganization);
-    case ORGANIZATION_LAB:
-        return LM_NEW(LabOrganization);
     case ORGANIZATION_FACTORY:
         return LM_NEW(FactoryOrganization);
-    case ORGANIZATION_WAREHOUSE:
-        return LM_NEW(WarehouseOrganization);
-    case ORGANIZATION_REPAIR:
-        return LM_NEW(RepairOrganization);
     case ORGANIZATION_RESOURCE:
         return LM_NEW(ResourceOrganization);
     case ORGANIZATION_PARK:
@@ -214,48 +130,66 @@ shared_ptr<Organization> CreateOrganization(ORGANIZATION_TYPE type) {
         return LM_NEW(PlazaOrganization);
     case ORGANIZATION_STATUE:
         return LM_NEW(StatueOrganization);
+    case ORGANIZATION_ZOO:
+        return LM_NEW(ZooOrganization);
+    case ORGANIZATION_BOTANIC:
+        return LM_NEW(BotanicOrganization);
+    case ORGANIZATION_AQUARIUM:
+        return LM_NEW(AquariumOrganization);
+    case ORGANIZATION_AMUSEMENT:
+        return LM_NEW(AmusementOrganization);
     case ORGANIZATION_GYM:
         return LM_NEW(GymOrganization);
     case ORGANIZATION_STADIUM:
         return LM_NEW(StadiumOrganization);
-    case ORGANIZATION_FOOTBALL:
-        return LM_NEW(FootballOrganization);
-    case ORGANIZATION_BASKETBALL:
-        return LM_NEW(BasketballOrganization);
-    case ORGANIZATION_VOLLEYBALL:
-        return LM_NEW(VolleyballOrganization);
-    case ORGANIZATION_TENNIS:
-        return LM_NEW(TennisOrganization);
-    case ORGANIZATION_TABLETENNIS:
-        return LM_NEW(TabletennisOrganization);
-    case ORGANIZATION_BADMINTON:
-        return LM_NEW(BadmintonOrganization);
-    case ORGANIZATION_GOLF:
-        return LM_NEW(GolfOrganization);
-    case ORGANIZATION_SKI:
-        return LM_NEW(SkiOrganization);
-    case ORGANIZATION_SKATE:
-        return LM_NEW(SkateOrganization);
-    case ORGANIZATION_SWIM:
-        return LM_NEW(SwimOrganization);
     case ORGANIZATION_RESORT:
         return LM_NEW(ResortOrganization);
     case ORGANIZATION_REMAINS:
         return LM_NEW(RemainsOrganization);
-    case ORGANIZATION_ROCKET:
-        return LM_NEW(RocketOrganization);
-    case ORGANIZATION_PLAYGROUND:
-        return LM_NEW(PlaygroundOrganization);
+    case ORGANIZATION_KINDER:
+        return LM_NEW(KinderOrganization);
+    case ORGANIZATION_PRIMARY:
+        return LM_NEW(PrimaryOrganization);
+    case ORGANIZATION_MIDDLE:
+        return LM_NEW(MiddleOrganization);
+    case ORGANIZATION_UNIVERSITY:
+        return LM_NEW(UniversityOrganization);
+    case ORGANIZATION_VOCATIONAL:
+        return LM_NEW(VocationalOrganization);
+    case ORGANIZATION_CLINIC:
+        return LM_NEW(ClinicOrganization);
+    case ORGANIZATION_HOSPITAL:
+        return LM_NEW(HospitalOrganization);
+    case ORGANIZATION_INPATIENT:
+        return LM_NEW(InpatientOrganization);
+    case ORGANIZATION_SANATORIUM:
+        return LM_NEW(SanatoriumOrganization);
+    case ORGANIZATION_POLICE:
+        return LM_NEW(PoliceOrganization);
     case ORGANIZATION_PRISON:
         return LM_NEW(PrisonOrganization);
-    case ORGANIZATION_GUARD:
-        return LM_NEW(GuardOrganization);
-    case ORGANIZATION_CANTEEN:
-        return LM_NEW(CanteenOrganization);
-    case ORGANIZATION_DORMITRY:
-        return LM_NEW(DormitryOrganization);
-    case ORGANIZATION_DATA:
-        return LM_NEW(DataOrganization);
+    case ORGANIZATION_FIRE:
+        return LM_NEW(FireOrganization);
+    case ORGANIZATION_COURT:
+        return LM_NEW(CourtOrganization);
+    case ORGANIZATION_TVSTATION:
+        return LM_NEW(TVStationOrganization);
+    case ORGANIZATION_POST:
+        return LM_NEW(PostOrganization);
+    case ORGANIZATION_BANK:
+        return LM_NEW(BankOrganization);
+    case ORGANIZATION_STOCK:
+        return LM_NEW(StockOrganization);
+    case ORGANIZATION_LIBRARY:
+        return LM_NEW(LibraryOrganization);
+    case ORGANIZATION_ROADFIX:
+        return LM_NEW(RoadFixOrganization);
+    case ORGANIZATION_GASOLINE:
+        return LM_NEW(GasolineOrganization);
+    case ORGANIZATION_CREMATORIUM:
+        return LM_NEW(CrematoriumOrganization);
+    case ORGANIZATION_CEMETRY:
+        return LM_NEW(CemeteryOrganization);
     case ORGANIZATION_WATER:
         return LM_NEW(WaterOrganization);
     case ORGANIZATION_SEWAGE:
@@ -266,65 +200,35 @@ shared_ptr<Organization> CreateOrganization(ORGANIZATION_TYPE type) {
         return LM_NEW(WindmillOrganization);
     case ORGANIZATION_NUCLEAR:
         return LM_NEW(NuclearOrganization);
+    case ORGANIZATION_BATTERY:
+        return LM_NEW(BatteryOrganization);
+    case ORGANIZATION_DATA:
+        return LM_NEW(DataOrganization);
     case ORGANIZATION_RECYCLE:
         return LM_NEW(RecycleOrganization);
     case ORGANIZATION_TRASH:
         return LM_NEW(TrashOrganization);
     case ORGANIZATION_INCINERATION:
         return LM_NEW(IncinerationOrganization);
-    case ORGANIZATION_BODY:
-        return LM_NEW(BodyOrganization);
-    case ORGANIZATION_DENTIST:
-        return LM_NEW(DentistOrganization);
-    case ORGANIZATION_MENTAL:
-        return LM_NEW(MentalOrganization);
-    case ORGANIZATION_AFFAIR:
-        return LM_NEW(AffairOrganization);
-    case ORGANIZATION_GOLD:
-        return LM_NEW(GoldOrganization);
-    case ORGANIZATION_GROCERY:
-        return LM_NEW(GroceryOrganization);
-    case ORGANIZATION_CLOTHES:
-        return LM_NEW(ClothesOrganization);
-    case ORGANIZATION_COSMETIC:
-        return LM_NEW(CosmeticOrganization);
-    case ORGANIZATION_HAIRCUT:
-        return LM_NEW(HaircutOrganization);
-    case ORGANIZATION_DRUG:
-        return LM_NEW(DrugOrganization);
-    case ORGANIZATION_SMOKEWINETEA:
-        return LM_NEW(SmokewineteaOrganization);
-    case ORGANIZATION_JEWELRY:
-        return LM_NEW(JewelryOrganization);
-    case ORGANIZATION_EXTRACURRICULAR:
-        return LM_NEW(ExtracurricularOrganization);
-    case ORGANIZATION_CHESSCARD:
-        return LM_NEW(ChesscardOrganization);
-    case ORGANIZATION_PET:
-        return LM_NEW(PetOrganization);
-    case ORGANIZATION_ELECTRONIC:
-        return LM_NEW(ElectronicOrganization);
-    case ORGANIZATION_COPY:
-        return LM_NEW(CopyOrganization);
-    case ORGANIZATION_STUDIO:
-        return LM_NEW(StudioOrganization);
-    case ORGANIZATION_CARWASH:
-        return LM_NEW(CarwashOrganization);
-    case ORGANIZATION_BICYCLE:
-        return LM_NEW(BicycleOrganization);
-    case ORGANIZATION_HARDWARE:
-        return LM_NEW(HardwareOrganization);
-    case ORGANIZATION_BOOK:
-        return LM_NEW(BookOrganization);
-    case ORGANIZATION_BILLIARD:
-        return LM_NEW(BilliardOrganization);
-    case ORGANIZATION_NET:
-        return LM_NEW(NetOrganization);
-    case ORGANIZATION_KTV:
-        return LM_NEW(KtvOrganization);
-    case ORGANIZATION_VENDOR:
-        return LM_NEW(VendorOrganization);
+    case ORGANIZATION_DEVICE:
+        return LM_NEW(DeviceOrganization);
+    case ORGANIZATION_PARKING:
+        return LM_NEW(ParkingOrganization);
+    case ORGANIZATION_GUARD:
+        return LM_NEW(GuardOrganization);
+    case ORGANIZATION_TOILET:
+        return LM_NEW(ToiletOrganization);
+    case ORGANIZATION_CANTEEN:
+        return LM_NEW(CanteenOrganization);
+    case ORGANIZATION_DORMITRY:
+        return LM_NEW(DormitoryOrganization);
+    case ORGANIZATION_PLAYGROUND:
+        return LM_NEW(PlaygroundOrganization);
+    case ORGANIZATION_STATION:
+        return LM_NEW(StationOrganization);
     default:
-        return nullptr;
+        break;
     }
+
+    return nullptr;
 }

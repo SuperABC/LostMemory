@@ -351,124 +351,40 @@ void Building::ReadTemplates(std::string path) {
 
 shared_ptr<Building> CreateBuilding(BUILDING_TYPE type) {
     switch (type) {
-    case BUILDING_ROADFIX:
-        return LM_NEW(RoadfixBuilding);
-    case BUILDING_PARKING:
-        return LM_NEW(ParkingBuilding);
-    case BUILDING_BANK:
-        return LM_NEW(BankBuilding);
-    case BUILDING_LIBRARY:
-        return LM_NEW(LibraryBuilding);
-    case BUILDING_CLINIC:
-        return LM_NEW(ClinicBuilding);
-    case BUILDING_HOSPITAL:
-        return LM_NEW(HospitalBuilding);
-    case BUILDING_SANATORIUM:
-        return LM_NEW(SanatoriumBuilding);
-    case BUILDING_POLICE:
-        return LM_NEW(PoliceBuilding);
-    case BUILDING_FIRE:
-        return LM_NEW(FireBuilding);
-    case BUILDING_SCHOOL:
-        return LM_NEW(SchoolBuilding);
-    case BUILDING_CREMATORIUM:
-        return LM_NEW(CrematoriumBuilding);
-    case BUILDING_CEMETRY:
-        return LM_NEW(CemetryBuilding);
-    case BUILDING_TVSTATION:
-        return LM_NEW(TVStationBuilding);
-    case BUILDING_GASOLINE:
-        return LM_NEW(GasolineBuilding);
-    case BUILDING_TOILET:
-        return LM_NEW(ToiletBuilding);
-    case BUILDING_WATER:
-        return LM_NEW(WaterBuilding);
-    case BUILDING_SEWAGE:
-        return LM_NEW(SewageBuilding);
-    case BUILDING_SUBSTATION:
-        return LM_NEW(SubstationBuilding);
-    case BUILDING_POWER:
-        return LM_NEW(PowerBuilding);
-    case BUILDING_WINDMILL:
-        return LM_NEW(WindmillBuilding);
-    case BUILDING_NUCLEAR:
-        return LM_NEW(NuclearBuilding);
-    case BUILDING_RECYCLE:
-        return LM_NEW(RecycleBuilding);
-    case BUILDING_TRASH:
-        return LM_NEW(TrashBuilding);
-    case BUILDING_INCINERATION:
-        return LM_NEW(IncinerationBuilding);
-    case BUILDING_POST:
-        return LM_NEW(PostBuilding);
-    case BUILDING_METRO:
-        return LM_NEW(MetroBuilding);
-    case BUILDING_TRAIN:
-        return LM_NEW(TrainBuilding);
-    case BUILDING_PLANE:
-        return LM_NEW(PlaneBuilding);
-    case BUILDING_SHIP:
-        return LM_NEW(ShipBuilding);
     case BUILDING_RESIDENT:
         return LM_NEW(ResidentBuilding);
     case BUILDING_VILLA:
         return LM_NEW(VillaBuilding);
-    case BUILDING_ESTATE:
-        return LM_NEW(EstateBuilding);
-    case BUILDING_PROPERTY:
-        return LM_NEW(PropertyBuilding);
-    case BUILDING_PACKAGE:
-        return LM_NEW(PackageBuilding);
     case BUILDING_HOTEL:
         return LM_NEW(HotelBuilding);
-    case BUILDING_RESTAURANT:
-        return LM_NEW(RestaurantBuilding);
     case BUILDING_MALL:
         return LM_NEW(MallBuilding);
-    case BUILDING_MARKET:
-        return LM_NEW(MarketBuilding);
-    case BUILDING_MUSIC:
-        return LM_NEW(MusicBuilding);
-    case BUILDING_INGREDIENT:
-        return LM_NEW(IngredientBuilding);
-    case BUILDING_BRAND:
-        return LM_NEW(BrandBuilding);
+    case BUILDING_SHOP:
+        return LM_NEW(ShopBuilding);
+    case BUILDING_RESTAURANT:
+        return LM_NEW(RestaurantBuilding);
     case BUILDING_CARRENT:
         return LM_NEW(CarRentBuilding);
     case BUILDING_THEATER:
         return LM_NEW(TheaterBuilding);
-    case BUILDING_MUSEUM:
-        return LM_NEW(MuseumBuilding);
-    case BUILDING_ZOO:
-        return LM_NEW(ZooBuilding);
-    case BUILDING_BOTANIC:
-        return LM_NEW(BotanicBuilding);
-    case BUILDING_AQUARIUM:
-        return LM_NEW(AquariumBuilding);
     case BUILDING_CINEMA:
         return LM_NEW(CinemaBuilding);
-    case BUILDING_PUB:
-        return LM_NEW(PubBuilding);
+    case BUILDING_MUSEUM:
+        return LM_NEW(MuseumBuilding);
     case BUILDING_MASAGE:
         return LM_NEW(MasageBuilding);
-    case BUILDING_AMUSEMENT:
-        return LM_NEW(AmusementBuilding);
+    case BUILDING_PACKAGE:
+        return LM_NEW(PackageBuilding);
     case BUILDING_OFFICE:
         return LM_NEW(OfficeBuilding);
-    case BUILDING_STOCK:
-        return LM_NEW(StockBuilding);
-    case BUILDING_COURT:
-        return LM_NEW(CourtBuilding);
-    case BUILDING_GOVERNMENT:
-        return LM_NEW(GovernmentBuilding);
     case BUILDING_LAB:
         return LM_NEW(LabBuilding);
+    case BUILDING_GOVERNMENT:
+        return LM_NEW(GovernmentBuilding);
     case BUILDING_FACTORY:
         return LM_NEW(FactoryBuilding);
     case BUILDING_WAREHOUSE:
         return LM_NEW(WarehouseBuilding);
-    case BUILDING_REPAIR:
-        return LM_NEW(RepairBuilding);
     case BUILDING_MINING:
         return LM_NEW(MiningBuilding);
     case BUILDING_OILING:
@@ -493,20 +409,104 @@ shared_ptr<Building> CreateBuilding(BUILDING_TYPE type) {
         return LM_NEW(PlazaBuilding);
     case BUILDING_STATUE:
         return LM_NEW(StatueBuilding);
+    case BUILDING_ZOO:
+        return LM_NEW(ZooBuilding);
+    case BUILDING_BOTANIC:
+        return LM_NEW(BotanicBuilding);
+    case BUILDING_AQUARIUM:
+        return LM_NEW(AquariumBuilding);
+    case BUILDING_AMUSEMENT:
+        return LM_NEW(AmusementBuilding);
     case BUILDING_GYM:
         return LM_NEW(GymBuilding);
+    case BUILDING_STADIUM:
+        return LM_NEW(StadiumBuilding);
     case BUILDING_RESORT:
         return LM_NEW(ResortBuilding);
     case BUILDING_REMAINS:
         return LM_NEW(RemainsBuilding);
+    case BUILDING_SCHOOL:
+        return LM_NEW(SchoolBuilding);
+    case BUILDING_CLINIC:
+        return LM_NEW(ClinicBuilding);
+    case BUILDING_HOSPITAL:
+        return LM_NEW(HospitalBuilding);
+    case BUILDING_INPATIENT:
+        return LM_NEW(InpatientBuilding);
+    case BUILDING_SANATORIUM:
+        return LM_NEW(SanatoriumBuilding);
+    case BUILDING_POLICE:
+        return LM_NEW(PoliceBuilding);
+    case BUILDING_PRISON:
+        return LM_NEW(PrisonBuilding);
+    case BUILDING_FIRE:
+        return LM_NEW(FireBuilding);
+    case BUILDING_COURT:
+        return LM_NEW(CourtBuilding);
+    case BUILDING_TVSTATION:
+        return LM_NEW(TVStationBuilding);
+    case BUILDING_POST:
+        return LM_NEW(PostBuilding);
+    case BUILDING_BANK:
+        return LM_NEW(BankBuilding);
+    case BUILDING_STOCK:
+        return LM_NEW(StockBuilding);
+    case BUILDING_LIBRARY:
+        return LM_NEW(LibraryBuilding);
+    case BUILDING_ROADFIX:
+        return LM_NEW(RoadfixBuilding);
+    case BUILDING_GASOLINE:
+        return LM_NEW(GasolineBuilding);
+    case BUILDING_CREMATORIUM:
+        return LM_NEW(CrematoriumBuilding);
+    case BUILDING_CEMETRY:
+        return LM_NEW(CemetryBuilding);
+    case BUILDING_WATER:
+        return LM_NEW(WaterBuilding);
+    case BUILDING_SEWAGE:
+        return LM_NEW(SewageBuilding);
+    case BUILDING_POWER:
+        return LM_NEW(PowerBuilding);
+    case BUILDING_WINDMILL:
+        return LM_NEW(WindmillBuilding);
+    case BUILDING_NUCLEAR:
+        return LM_NEW(NuclearBuilding);
+    case BUILDING_BATTERY:
+        return LM_NEW(BatteryBuilding);
+    case BUILDING_DATA:
+        return LM_NEW(DataBuilding);
+    case BUILDING_RECYCLE:
+        return LM_NEW(RecycleBuilding);
+    case BUILDING_TRASH:
+        return LM_NEW(TrashBuilding);
+    case BUILDING_INCINERATION:
+        return LM_NEW(IncinerationBuilding);
+    case BUILDING_ROCKET:
+        return LM_NEW(RocketBuilding);
+    case BUILDING_SUBSTATION:
+        return LM_NEW(SubstationBuilding);
+    case BUILDING_PARKING:
+        return LM_NEW(ParkingBuilding);
     case BUILDING_GUARD:
         return LM_NEW(GuardBuilding);
+    case BUILDING_TOILET:
+        return LM_NEW(ToiletBuilding);
     case BUILDING_CANTEEN:
         return LM_NEW(CanteenBuilding);
     case BUILDING_DORMITRY:
         return LM_NEW(DormitryBuilding);
+    case BUILDING_PLAYGROUND:
+        return LM_NEW(PlaygroundBuilding);
+    case BUILDING_METRO:
+        return LM_NEW(MetroBuilding);
+    case BUILDING_TRAIN:
+        return LM_NEW(TrainBuilding);
+    case BUILDING_PLANE:
+        return LM_NEW(PlaneBuilding);
+    case BUILDING_SHIP:
+        return LM_NEW(ShipBuilding);
     default:
-        return nullptr;;
+        break;
     }
     return nullptr;
 }
@@ -520,56 +520,46 @@ BUILDING_TYPE RandomBuilding(AREA_TYPE area, float prob) {
     case AREA_CENTER:
         break;
     case AREA_RESIDENTH:
-        if (prob < 0.8f)return BUILDING_RESIDENT;
-        else if (prob < 0.82f)return BUILDING_ESTATE;
-        else if (prob < 0.85f)return BUILDING_PROPERTY;
+        if (prob < 0.85f)return BUILDING_RESIDENT;
         else if (prob < 0.88f)return BUILDING_PACKAGE;
         else if (prob < 0.94f)return BUILDING_HOTEL;
         else return BUILDING_RESTAURANT;
     case AREA_RESIDENTM:
-        if (prob < 0.5f)return BUILDING_RESIDENT;
-        else if (prob < 0.75f)return BUILDING_VILLA;
-        else if (prob < 0.78f)return BUILDING_ESTATE;
-        else if (prob < 0.82f)return BUILDING_PROPERTY;
-        else if (prob < 0.86f)return BUILDING_PACKAGE;
-        else if (prob < 0.92f)return BUILDING_HOTEL;
+        if (prob < 0.55f)return BUILDING_RESIDENT;
+        else if (prob < 0.80f)return BUILDING_VILLA;
+        else if (prob < 0.82f)return BUILDING_PACKAGE;
+        else if (prob < 0.90f)return BUILDING_HOTEL;
         else return BUILDING_RESTAURANT;
     case AREA_RESIDENTL:
         if (prob < 0.2f)return BUILDING_RESIDENT;
         else if (prob < 0.85f)return BUILDING_VILLA;
-        else if (prob < 0.86f)return BUILDING_ESTATE;
-        else if (prob < 0.88f)return BUILDING_PROPERTY;
-        else if (prob < 0.90f)return BUILDING_PACKAGE;
+        else if (prob < 0.87f)return BUILDING_PACKAGE;
         else if (prob < 0.95f)return BUILDING_HOTEL;
         else return BUILDING_RESTAURANT;
     case AREA_COMMERCEH:
-        if (prob < 0.5f)return BUILDING_MALL;
-        else if (prob < 0.63f)return BUILDING_MARKET;
-        else if (prob < 0.70f)return BUILDING_INGREDIENT;
-        else if (prob < 0.80f)return BUILDING_BRAND;
-        else if (prob < 0.84f)return BUILDING_CARRENT;
-        else if (prob < 0.87f)return BUILDING_THEATER;
-        else if (prob < 0.90f)return BUILDING_MUSEUM;
-        else if (prob < 0.94f)return BUILDING_CINEMA;
-        else if (prob < 0.96f)return BUILDING_MUSIC;
-        else if (prob < 0.98f)return BUILDING_PUB;
+        if (prob < 0.36f)return BUILDING_MALL;
+        else if (prob < 0.72f)return BUILDING_SHOP;
+        else if (prob < 0.74f)return BUILDING_CARRENT;
+        else if (prob < 0.77f)return BUILDING_THEATER;
+        else if (prob < 0.80f)return BUILDING_MUSEUM;
+        else if (prob < 0.82f)return BUILDING_CINEMA;
+        else if (prob < 0.90f)return BUILDING_HOTEL;
+        else if (prob < 0.98f)return BUILDING_RESTAURANT;
         else if (prob < 0.99f)return BUILDING_MASAGE;
         else return BUILDING_AMUSEMENT;
     case AREA_COMMERCEL:
-        if (prob < 0.2f)return BUILDING_MALL;
-        else if (prob < 0.30f)return BUILDING_MARKET;
-        else if (prob < 0.38f)return BUILDING_INGREDIENT;
-        else if (prob < 0.48f)return BUILDING_BRAND;
-        else if (prob < 0.50f)return BUILDING_CARRENT;
-        else if (prob < 0.53f)return BUILDING_THEATER;
-        else if (prob < 0.55f)return BUILDING_MUSEUM;
-        else if (prob < 0.65f)return BUILDING_CINEMA;
-        else if (prob < 0.70f)return BUILDING_MUSIC;
-        else if (prob < 0.78f)return BUILDING_PUB;
-        else if (prob < 0.81f)return BUILDING_MASAGE;
-        else if (prob < 0.84f)return BUILDING_ZOO;
-        else if (prob < 0.87f)return BUILDING_BOTANIC;
-        else if (prob < 0.90f)return BUILDING_AQUARIUM;
+        if (prob < 0.15f)return BUILDING_MALL;
+        else if (prob < 0.40f)return BUILDING_SHOP;
+        else if (prob < 0.42f)return BUILDING_CARRENT;
+        else if (prob < 0.44f)return BUILDING_THEATER;
+        else if (prob < 0.46f)return BUILDING_MUSEUM;
+        else if (prob < 0.48f)return BUILDING_CINEMA;
+        else if (prob < 0.60f)return BUILDING_HOTEL;
+        else if (prob < 0.84f)return BUILDING_RESTAURANT;
+        else if (prob < 0.87f)return BUILDING_MASAGE;
+        else if (prob < 0.90f)return BUILDING_ZOO;
+        else if (prob < 0.93f)return BUILDING_BOTANIC;
+        else if (prob < 0.96f)return BUILDING_AQUARIUM;
         else return BUILDING_AMUSEMENT;
     case AREA_OFFICEH:
         if (prob < 0.8f)return BUILDING_OFFICE;
@@ -583,7 +573,6 @@ BUILDING_TYPE RandomBuilding(AREA_TYPE area, float prob) {
     case AREA_INDUSTRY:
         if (prob < 0.3f)return BUILDING_FACTORY;
         else if (prob < 0.43f)return BUILDING_WAREHOUSE;
-        else if (prob < 0.45f)return BUILDING_REPAIR;
         else if (prob < 0.55f)return BUILDING_MINING;
         else if (prob < 0.65f)return BUILDING_OILING;
         else if (prob < 0.70f)return BUILDING_QUARRY;
@@ -605,435 +594,6 @@ BUILDING_TYPE RandomBuilding(AREA_TYPE area, float prob) {
     return BUILDING_NONE;
 }
 
-void RoadfixBuilding::InitBuilding() {
-    status = CONSTRUCTION_USING;
-    layers = 1 + GetRandom(2);
-    basement = 1 + GetRandom(2);
-}
-
-void RoadfixBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> RoadfixBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void ParkingBuilding::InitBuilding() {
-    status = CONSTRUCTION_USING;
-    layers = 1;
-    basement = 0;
-}
-
-void ParkingBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> ParkingBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void BankBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 3 + GetRandom(3);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = GetRandom(2);
-}
-
-void BankBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> BankBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void LibraryBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 3 + GetRandom(3);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = GetRandom(2);
-}
-
-void LibraryBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> LibraryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void ClinicBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 3 + GetRandom(2);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = GetRandom(2);
-}
-
-void ClinicBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> ClinicBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void HospitalBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 6 + GetRandom(10);
-    }
-    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 4 + GetRandom(2);
-    }
-    else {
-        layers = 2 + GetRandom(2);
-    }
-    basement = 1 + GetRandom(3);
-}
-
-void HospitalBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> HospitalBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void InpatientBuilding::InitBuilding() {
-    if (GetRandom(20) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 8 + GetRandom(3) * 2;
-    }
-    else {
-        layers = 5 + GetRandom(4);
-    }
-    basement = 1;
-}
-
-void InpatientBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> InpatientBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void SanatoriumBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 4 + GetRandom(2);
-    }
-    else {
-        layers = 2 + GetRandom(2);
-    }
-    basement = 0;
-}
-
-void SanatoriumBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> SanatoriumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void PoliceBuilding::InitBuilding() {
-    if (GetRandom(20) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 3 + GetRandom(2);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = 1 + GetRandom(3);
-}
-
-void PoliceBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> PoliceBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void FireBuilding::InitBuilding() {
-    status = CONSTRUCTION_USING;
-    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 4 + GetRandom(2);
-    }
-    else {
-        layers = 2 + GetRandom(2);
-    }
-    basement = 1 + GetRandom(2);
-}
-
-void FireBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> FireBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void SchoolBuilding::InitBuilding() {
-    if (GetRandom(8) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 6 + GetRandom(10);
-    }
-    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 4 + GetRandom(2);
-    }
-    else {
-        layers = 2 + GetRandom(2);
-    }
-    basement = 0;
-}
-
-void SchoolBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> SchoolBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void CrematoriumBuilding::InitBuilding() {
-    if (GetRandom(8) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1 + GetRandom(2);
-    basement = 1;
-}
-
-void CrematoriumBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> CrematoriumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void CemetryBuilding::InitBuilding() {
-    status = CONSTRUCTION_USING;
-    layers = 1;
-    basement = 0;
-}
-
-void CemetryBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> CemetryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void TVStationBuilding::InitBuilding() {
-    if (GetRandom(20) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 16 + GetRandom(6) * 10;
-    }
-    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 6 + GetRandom(10);
-    }
-    else {
-        layers = 4 + GetRandom(2);
-    }
-    basement = 1 + GetRandom(2);
-}
-
-void TVStationBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> TVStationBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void GasolineBuilding::InitBuilding() {
-    if (GetRandom(5) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1;
-    basement = 0;
-}
-
-void GasolineBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> GasolineBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void ToiletBuilding::InitBuilding() {
-    if (GetRandom(5) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1;
-    basement = 0;
-}
-
-void ToiletBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> ToiletBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void SubstationBuilding::InitBuilding() {
-    status = CONSTRUCTION_USING;
-    layers = 1;
-    basement = 0;
-}
-
-void SubstationBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> SubstationBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void PostBuilding::InitBuilding() {
-    if (GetRandom(20) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 2 + GetRandom(2);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = 0;
-}
-
-void PostBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> PostBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void MetroBuilding::InitBuilding() {
-
-}
-
-void MetroBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> MetroBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void TrainBuilding::InitBuilding() {
-
-}
-
-void TrainBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> TrainBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void PlaneBuilding::InitBuilding() {
-
-}
-
-void PlaneBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> PlaneBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void ShipBuilding::InitBuilding() {
-
-}
-
-void ShipBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> ShipBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
 void ResidentBuilding::InitBuilding() {
     if (GetRandom(20) == 0) {
         status = CONSTRUCTION_ABANDON;
@@ -1042,7 +602,7 @@ void ResidentBuilding::InitBuilding() {
         status = CONSTRUCTION_BREAK;
     }
     else if (GetRandom(8) == 0) {
-        status = CONSTRUCTION_WORKING;
+        status = CONSTRUCTION_BUILDING;
     }
     else {
         status = CONSTRUCTION_USING;
@@ -1131,7 +691,7 @@ void ResidentBuilding::DistributeInside() {
     }
 
     complements = vector<vector<Room>>(basement + layers + 1);
-    for (auto &complement : complements) {
+    for (auto& complement : complements) {
         complement.push_back(HomeRoom());
         complement.back().SetAcreage(standard);
     }
@@ -1153,7 +713,7 @@ void VillaBuilding::InitBuilding() {
         status = CONSTRUCTION_ABANDON;
     }
     else if (GetRandom(8) == 0) {
-        status = CONSTRUCTION_WORKING;
+        status = CONSTRUCTION_BUILDING;
     }
     else {
         status = CONSTRUCTION_USING;
@@ -1211,63 +771,6 @@ vector<pair<Job*, int>> VillaBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void EstateBuilding::InitBuilding() {
-    if (GetRandom(5) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1 + GetRandom(2);
-    basement = 0;
-}
-
-void EstateBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> EstateBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void PropertyBuilding::InitBuilding() {
-    if (GetRandom(5) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1 + GetRandom(4);
-    basement = 0;
-}
-
-void PropertyBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> PropertyBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void PackageBuilding::InitBuilding() {
-    if (GetRandom(8) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1 + GetRandom(2);
-    basement = 0;
-}
-
-void PackageBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> PackageBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
 void HotelBuilding::InitBuilding() {
     if (GetRandom(20) == 0) {
         status = CONSTRUCTION_ABANDON;
@@ -1276,7 +779,7 @@ void HotelBuilding::InitBuilding() {
         status = CONSTRUCTION_BREAK;
     }
     else if (GetRandom(8) == 0) {
-        status = CONSTRUCTION_WORKING;
+        status = CONSTRUCTION_BUILDING;
     }
     else {
         status = CONSTRUCTION_USING;
@@ -1301,39 +804,12 @@ vector<pair<Job*, int>> HotelBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void RestaurantBuilding::InitBuilding() {
-    if (GetRandom(5) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 6 + GetRandom(5);
-    }
-    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 3 + GetRandom(4);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = GetRandom(2);
-}
-
-void RestaurantBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> RestaurantBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
 void MallBuilding::InitBuilding() {
     if (GetRandom(10) == 0) {
         status = CONSTRUCTION_ABANDON;
     }
     else if (GetRandom(8) == 0) {
-        status = CONSTRUCTION_WORKING;
+        status = CONSTRUCTION_BUILDING;
     }
     else {
         status = CONSTRUCTION_USING;
@@ -1349,52 +825,63 @@ void MallBuilding::InitBuilding() {
 
 void MallBuilding::DistributeInside() {
     static vector<pair<ROOM_TYPE, float>> probs = {
-        {ROOM_BRAND, 0.2f},
-        {ROOM_CLOTHES, 0.4f},
-        {ROOM_RESTAURANT, 0.55f},
-        {ROOM_FASTFOOD, 0.63f},
-        {ROOM_BUFFET, 0.68f},
-        {ROOM_COFFEE, 0.70f},
-        {ROOM_DRINK, 0.76f},
-        {ROOM_CINEMA, 0.77f},
-        {ROOM_MARKET, 0.78f},
-        {ROOM_CARRENT, 0.79f},
-        {ROOM_MUSIC, 0.81f},
-        {ROOM_COSMETIC, 0.83f},
-        {ROOM_HAIRCUT, 0.85f},
-        {ROOM_SMOKEWINETEA, 0.86f},
-        {ROOM_CHESSCARD, 0.87f},
-        {ROOM_PET, 0.89f},
-        {ROOM_ELECTRONIC, 0.94f},
-        {ROOM_STUDIO, 0.95f},
-        {ROOM_BOOK, 0.97f},
-        {ROOM_BILLIARD, 0.98f},
-        {ROOM_NET, 0.99f},
-        {ROOM_KTV, 1.0f},
+        {ROOM_MARKET, 0.04f},
+        {ROOM_CLOTHES, 0.24f},
+        {ROOM_ANTIQUE, 0.25f},
+        {ROOM_JEWERY, 0.30f},
+        {ROOM_SMOKEWINETEA, 0.31f},
+        {ROOM_ELECTRONIC, 0.34f},
+        {ROOM_STUDIO, 0.35f},
+        {ROOM_HAIRCUT, 0.40f},
+        {ROOM_COSMETIC, 0.42f},
+        {ROOM_PET, 0.44f},
+        {ROOM_MUSIC, 0.45f},
+        {ROOM_BOOK, 0.46f},
+        {ROOM_CHESSCARD, 0.48f},
+        {ROOM_NET, 0.50f},
+        {ROOM_KTV, 0.55f},
+        {ROOM_ARCADE, 0.60f},
+        {ROOM_BILLIARD, 0.62f},
+        {ROOM_TOY, 0.66f},
+        {ROOM_RESTAURANT, 0.76f},
+        {ROOM_FASTFOOD, 0.82f},
+        {ROOM_BUFFET, 0.86f},
+        {ROOM_DRINK, 0.92f},
+        {ROOM_BAR, 0.94f},
+        {ROOM_CARRENT, 0.95f},
+        {ROOM_MOVIE, 0.98f},
+        {ROOM_MASAGE, 1.0f},
     };
     static unordered_map<ROOM_TYPE, ORGANIZATION_TYPE> mapping = {
-        {ROOM_BRAND, ORGANIZATION_BRAND},
-        {ROOM_CLOTHES, ORGANIZATION_CLOTHES},
+        {ROOM_MARKET, ORGANIZATION_SHOP},
+        {ROOM_INGREDIENT, ORGANIZATION_SHOP},
+        {ROOM_GROCERY, ORGANIZATION_SHOP},
+        {ROOM_CLOTHES, ORGANIZATION_SHOP},
+        {ROOM_ANTIQUE, ORGANIZATION_SHOP},
+        {ROOM_JEWERY, ORGANIZATION_SHOP},
+        {ROOM_SMOKEWINETEA, ORGANIZATION_SHOP},
+        {ROOM_ELECTRONIC, ORGANIZATION_SHOP},
+        {ROOM_STUDIO, ORGANIZATION_SHOP},
+        {ROOM_HAIRCUT, ORGANIZATION_SHOP},
+        {ROOM_COSMETIC, ORGANIZATION_SHOP},
+        {ROOM_PET, ORGANIZATION_SHOP},
+        {ROOM_COPY, ORGANIZATION_SHOP},
+        {ROOM_MUSIC, ORGANIZATION_SHOP},
+        {ROOM_BOOK, ORGANIZATION_SHOP},
+        {ROOM_CHESSCARD, ORGANIZATION_SHOP},
+        {ROOM_NET, ORGANIZATION_SHOP},
+        {ROOM_KTV, ORGANIZATION_SHOP},
+        {ROOM_ARCADE, ORGANIZATION_SHOP},
+        {ROOM_BILLIARD, ORGANIZATION_SHOP},
+        {ROOM_TOY, ORGANIZATION_SHOP},
         {ROOM_RESTAURANT, ORGANIZATION_RESTAURANT},
-        {ROOM_FASTFOOD, ORGANIZATION_FASTFOOD},
-        {ROOM_BUFFET, ORGANIZATION_BUFFET},
-        {ROOM_COFFEE, ORGANIZATION_COFFEE},
-        {ROOM_DRINK, ORGANIZATION_DRINK},
-        {ROOM_CINEMA, ORGANIZATION_CINEMA},
-        {ROOM_MARKET, ORGANIZATION_MARKET},
+        {ROOM_FASTFOOD, ORGANIZATION_RESTAURANT},
+        {ROOM_BUFFET, ORGANIZATION_RESTAURANT},
+        {ROOM_DRINK, ORGANIZATION_RESTAURANT},
+        {ROOM_BAR, ORGANIZATION_RESTAURANT},
         {ROOM_CARRENT, ORGANIZATION_CARRENT},
-        {ROOM_MUSIC, ORGANIZATION_MUSIC},
-        {ROOM_COSMETIC, ORGANIZATION_COSMETIC},
-        {ROOM_HAIRCUT, ORGANIZATION_HAIRCUT},
-        {ROOM_SMOKEWINETEA, ORGANIZATION_SMOKEWINETEA},
-        {ROOM_CHESSCARD, ORGANIZATION_CHESSCARD},
-        {ROOM_PET, ORGANIZATION_PET},
-        {ROOM_ELECTRONIC, ORGANIZATION_ELECTRONIC},
-        {ROOM_STUDIO, ORGANIZATION_STUDIO},
-        {ROOM_BOOK, ORGANIZATION_BOOK},
-        {ROOM_BILLIARD, ORGANIZATION_BILLIARD},
-        {ROOM_NET, ORGANIZATION_NET},
-        {ROOM_KTV, ORGANIZATION_KTV},
+        {ROOM_MOVIE, ORGANIZATION_CINEMA},
+        {ROOM_MASAGE, ORGANIZATION_MASAGE},
     };
 
     auto mall = CreateOrganization<MallOrganization>();
@@ -1436,9 +923,9 @@ void MallBuilding::DistributeInside() {
     }
     else if (GetAcreage() < 20000) {
         standard = 160;
-        if(GetSizeX() / GetSizeY() > 1.8f || GetSizeY() / GetSizeX() > 1.8f)
+        if (GetSizeX() / GetSizeY() > 1.8f || GetSizeY() / GetSizeX() > 1.8f)
             temps = { "circle_double1", "circle_double2" };
-        else if(GetSizeX() / GetSizeY() > 1.5f || GetSizeY() / GetSizeX() > 1.5f)
+        else if (GetSizeX() / GetSizeY() > 1.5f || GetSizeY() / GetSizeX() > 1.5f)
             temps = { "circle_single" };
         else
             temps = { "circle_square" };
@@ -1487,82 +974,30 @@ vector<pair<Job*, int>> MallBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void MarketBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 2 + GetRandom(2);
-    }
-    else {
-        layers = 1;
-    }
-    basement = GetRandom(2);
+void ShopBuilding::InitBuilding() {
+    // 需要补充实现
 }
 
-void MarketBuilding::DistributeInside() {
+void ShopBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> MarketBuilding::GetJobs() {
+vector<pair<Job*, int>> ShopBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void MusicBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
+void RestaurantBuilding::InitBuilding() {
+    if (GetRandom(5) == 0) {
         status = CONSTRUCTION_ABANDON;
     }
     else {
         status = CONSTRUCTION_USING;
     }
-    layers = 1 + GetRandom(2);
-    basement = 0;
-}
-
-void MusicBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> MusicBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void IngredientBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
+    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
+        layers = 6 + GetRandom(5);
     }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 2 + GetRandom(2);
-    }
-    else {
-        layers = 1;
-    }
-    basement = 0;
-}
-
-void IngredientBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> IngredientBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void BrandBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 3 + GetRandom(2);
+    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 3 + GetRandom(4);
     }
     else {
         layers = 1 + GetRandom(2);
@@ -1570,11 +1005,11 @@ void BrandBuilding::InitBuilding() {
     basement = GetRandom(2);
 }
 
-void BrandBuilding::DistributeInside() {
+void RestaurantBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> BrandBuilding::GetJobs() {
+vector<pair<Job*, int>> RestaurantBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
@@ -1621,87 +1056,6 @@ vector<pair<Job*, int>> TheaterBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void MuseumBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 2 + GetRandom(2);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = GetRandom(2);
-}
-
-void MuseumBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> MuseumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void ZooBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1;
-    basement = 0;
-}
-
-void ZooBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> ZooBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void BotanicBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1;
-    basement = 0;
-}
-
-void BotanicBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> BotanicBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void AquariumBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1;
-    basement = 0;
-}
-
-void AquariumBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> AquariumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
 void CinemaBuilding::InitBuilding() {
     if (GetRandom(10) == 0) {
         status = CONSTRUCTION_ABANDON;
@@ -1726,22 +1080,27 @@ vector<pair<Job*, int>> CinemaBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void PubBuilding::InitBuilding() {
-    if (GetRandom(8) == 0) {
+void MuseumBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
         status = CONSTRUCTION_ABANDON;
     }
     else {
         status = CONSTRUCTION_USING;
     }
-    layers = 1 + GetRandom(2);
-    basement = 0;
+    if (area <= AREA_RESIDENTM && GetAcreage() > 10000) {
+        layers = 2 + GetRandom(2);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = GetRandom(2);
 }
 
-void PubBuilding::DistributeInside() {
+void MuseumBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> PubBuilding::GetJobs() {
+vector<pair<Job*, int>> MuseumBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
@@ -1769,22 +1128,22 @@ vector<pair<Job*, int>> MasageBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void AmusementBuilding::InitBuilding() {
-    if (GetRandom(5) == 0) {
+void PackageBuilding::InitBuilding() {
+    if (GetRandom(8) == 0) {
         status = CONSTRUCTION_ABANDON;
     }
     else {
         status = CONSTRUCTION_USING;
     }
-    layers = 1;
-    basement = 1;
+    layers = 1 + GetRandom(2);
+    basement = 0;
 }
 
-void AmusementBuilding::DistributeInside() {
+void PackageBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> AmusementBuilding::GetJobs() {
+vector<pair<Job*, int>> PackageBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
@@ -1815,78 +1174,6 @@ vector<pair<Job*, int>> OfficeBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void StockBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
-        layers = 3 + GetRandom(2);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = GetRandom(2);
-}
-
-void StockBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> StockBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void CourtBuilding::InitBuilding() {
-    if (GetRandom(20) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
-        layers = 3 + GetRandom(2);
-    }
-    else {
-        layers = 1 + GetRandom(2);
-    }
-    basement = 0;
-}
-
-void CourtBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> CourtBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void GovernmentBuilding::InitBuilding() {
-    if (GetRandom(50) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
-        layers = 6 + GetRandom(4) * 2;
-    }
-    else {
-        layers = 2 + GetRandom(4);
-    }
-    basement = GetRandom(2);
-}
-
-void GovernmentBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> GovernmentBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
 void LabBuilding::InitBuilding() {
     if (GetRandom(10) == 0) {
         status = CONSTRUCTION_ABANDON;
@@ -1911,6 +1198,30 @@ void LabBuilding::DistributeInside() {
 }
 
 vector<pair<Job*, int>> LabBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void GovernmentBuilding::InitBuilding() {
+    if (GetRandom(50) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
+        layers = 6 + GetRandom(4) * 2;
+    }
+    else {
+        layers = 2 + GetRandom(4);
+    }
+    basement = GetRandom(2);
+}
+
+void GovernmentBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> GovernmentBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
@@ -1949,25 +1260,6 @@ void WarehouseBuilding::DistributeInside() {
 }
 
 vector<pair<Job*, int>> WarehouseBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void RepairBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    layers = 1;
-    basement = 0;
-}
-
-void RepairBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> RepairBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
@@ -2184,6 +1476,82 @@ vector<pair<Job*, int>> StatueBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
+void ZooBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1;
+    basement = 0;
+}
+
+void ZooBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> ZooBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void BotanicBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1;
+    basement = 0;
+}
+
+void BotanicBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> BotanicBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void AquariumBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1;
+    basement = 0;
+}
+
+void AquariumBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> AquariumBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void AmusementBuilding::InitBuilding() {
+    if (GetRandom(5) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1;
+    basement = 1;
+}
+
+void AmusementBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> AmusementBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
 void GymBuilding::InitBuilding() {
     if (GetRandom(8) == 0) {
         status = CONSTRUCTION_ABANDON;
@@ -2255,41 +1623,153 @@ vector<pair<Job*, int>> RemainsBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void RocketBuilding::InitBuilding() {
-    if (GetRandom(50) == 0) {
+void SchoolBuilding::InitBuilding() {
+    if (GetRandom(8) == 0) {
         status = CONSTRUCTION_ABANDON;
     }
     else {
         status = CONSTRUCTION_USING;
     }
-    layers = 1;
+    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
+        layers = 6 + GetRandom(10);
+    }
+    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 4 + GetRandom(2);
+    }
+    else {
+        layers = 2 + GetRandom(2);
+    }
     basement = 0;
 }
 
-void RocketBuilding::DistributeInside() {
+void SchoolBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> RocketBuilding::GetJobs() {
+vector<pair<Job*, int>> SchoolBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void PlaygroundBuilding::InitBuilding() {
+void ClinicBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 3 + GetRandom(2);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = GetRandom(2);
+}
+
+void ClinicBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> ClinicBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void HospitalBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
+        layers = 6 + GetRandom(10);
+    }
+    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 4 + GetRandom(2);
+    }
+    else {
+        layers = 2 + GetRandom(2);
+    }
+    basement = 1 + GetRandom(3);
+}
+
+void HospitalBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> HospitalBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void InpatientBuilding::InitBuilding() {
     if (GetRandom(20) == 0) {
         status = CONSTRUCTION_ABANDON;
     }
     else {
         status = CONSTRUCTION_USING;
     }
-    layers = 1;
+    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 8 + GetRandom(3) * 2;
+    }
+    else {
+        layers = 5 + GetRandom(4);
+    }
+    basement = 1;
+}
+
+void InpatientBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> InpatientBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void SanatoriumBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 4 + GetRandom(2);
+    }
+    else {
+        layers = 2 + GetRandom(2);
+    }
     basement = 0;
 }
 
-void PlaygroundBuilding::DistributeInside() {
+void SanatoriumBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> PlaygroundBuilding::GetJobs() {
+vector<pair<Job*, int>> SanatoriumBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void PoliceBuilding::InitBuilding() {
+    if (GetRandom(20) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 3 + GetRandom(2);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = 1 + GetRandom(3);
+}
+
+void PoliceBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> PoliceBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
@@ -2317,8 +1797,188 @@ vector<pair<Job*, int>> PrisonBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void GuardBuilding::InitBuilding() {
+void FireBuilding::InitBuilding() {
+    status = CONSTRUCTION_USING;
+    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 4 + GetRandom(2);
+    }
+    else {
+        layers = 2 + GetRandom(2);
+    }
+    basement = 1 + GetRandom(2);
+}
+
+void FireBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> FireBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void CourtBuilding::InitBuilding() {
     if (GetRandom(20) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
+        layers = 3 + GetRandom(2);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = 0;
+}
+
+void CourtBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> CourtBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void TVStationBuilding::InitBuilding() {
+    if (GetRandom(20) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
+        layers = 16 + GetRandom(6) * 10;
+    }
+    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 6 + GetRandom(10);
+    }
+    else {
+        layers = 4 + GetRandom(2);
+    }
+    basement = 1 + GetRandom(2);
+}
+
+void TVStationBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> TVStationBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void PostBuilding::InitBuilding() {
+    if (GetRandom(20) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 2 + GetRandom(2);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = 0;
+}
+
+void PostBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> PostBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void BankBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 3 + GetRandom(3);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = GetRandom(2);
+}
+
+void BankBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> BankBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void StockBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
+        layers = 3 + GetRandom(2);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = GetRandom(2);
+}
+
+void StockBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> StockBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void LibraryBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
+        layers = 3 + GetRandom(3);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = GetRandom(2);
+}
+
+void LibraryBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> LibraryBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void RoadfixBuilding::InitBuilding() {
+    status = CONSTRUCTION_USING;
+    layers = 1 + GetRandom(2);
+    basement = 1 + GetRandom(2);
+}
+
+void RoadfixBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> RoadfixBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void GasolineBuilding::InitBuilding() {
+    if (GetRandom(5) == 0) {
         status = CONSTRUCTION_ABANDON;
     }
     else {
@@ -2328,81 +1988,44 @@ void GuardBuilding::InitBuilding() {
     basement = 0;
 }
 
-void GuardBuilding::DistributeInside() {
+void GasolineBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> GuardBuilding::GetJobs() {
+vector<pair<Job*, int>> GasolineBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
-void CanteenBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
-        layers = 4 + GetRandom(4);
-    }
-    else {
-        layers = 1 + GetRandom(3);
-    }
-    basement = 0;
-}
-
-void CanteenBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> CanteenBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void DormitryBuilding::InitBuilding() {
-    if (GetRandom(20) == 0) {
-        status = CONSTRUCTION_ABANDON;
-    }
-    else if (GetRandom(8) == 0) {
-        status = CONSTRUCTION_WORKING;
-    }
-    else {
-        status = CONSTRUCTION_USING;
-    }
-    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
-        layers = 7 + GetRandom(10);
-    }
-    else {
-        layers = 3 + GetRandom(5);
-    }
-    basement = GetRandom(2);
-}
-
-void DormitryBuilding::DistributeInside() {
-
-}
-
-vector<pair<Job*, int>> DormitryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
-}
-
-void DataBuilding::InitBuilding() {
-    if (GetRandom(10) == 0) {
+void CrematoriumBuilding::InitBuilding() {
+    if (GetRandom(8) == 0) {
         status = CONSTRUCTION_ABANDON;
     }
     else {
         status = CONSTRUCTION_USING;
     }
     layers = 1 + GetRandom(2);
+    basement = 1;
+}
+
+void CrematoriumBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> CrematoriumBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void CemetryBuilding::InitBuilding() {
+    status = CONSTRUCTION_USING;
+    layers = 1;
     basement = 0;
 }
 
-void DataBuilding::DistributeInside() {
+void CemetryBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> DataBuilding::GetJobs() {
+vector<pair<Job*, int>> CemetryBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
@@ -2520,6 +2143,25 @@ vector<pair<Job*, int>> BatteryBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 
+void DataBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1 + GetRandom(2);
+    basement = 0;
+}
+
+void DataBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> DataBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
 void RecycleBuilding::InitBuilding() {
     if (GetRandom(50) == 0) {
         status = CONSTRUCTION_ABANDON;
@@ -2574,6 +2216,209 @@ void IncinerationBuilding::DistributeInside() {
 }
 
 vector<pair<Job*, int>> IncinerationBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void RocketBuilding::InitBuilding() {
+    if (GetRandom(50) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1;
+    basement = 0;
+}
+
+void RocketBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> RocketBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void SubstationBuilding::InitBuilding() {
+    status = CONSTRUCTION_USING;
+    layers = 1;
+    basement = 0;
+}
+
+void SubstationBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> SubstationBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void ParkingBuilding::InitBuilding() {
+    status = CONSTRUCTION_USING;
+    layers = 1;
+    basement = 0;
+}
+
+void ParkingBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> ParkingBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void GuardBuilding::InitBuilding() {
+    if (GetRandom(20) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1;
+    basement = 0;
+}
+
+void GuardBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> GuardBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void ToiletBuilding::InitBuilding() {
+    if (GetRandom(5) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1;
+    basement = 0;
+}
+
+void ToiletBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> ToiletBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void CanteenBuilding::InitBuilding() {
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
+        layers = 4 + GetRandom(4);
+    }
+    else {
+        layers = 1 + GetRandom(3);
+    }
+    basement = 0;
+}
+
+void CanteenBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> CanteenBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void DormitryBuilding::InitBuilding() {
+    if (GetRandom(20) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else if (GetRandom(8) == 0) {
+        status = CONSTRUCTION_BUILDING;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
+        layers = 7 + GetRandom(10);
+    }
+    else {
+        layers = 3 + GetRandom(5);
+    }
+    basement = GetRandom(2);
+}
+
+void DormitryBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> DormitryBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void PlaygroundBuilding::InitBuilding() {
+    if (GetRandom(20) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    layers = 1;
+    basement = 0;
+}
+
+void PlaygroundBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> PlaygroundBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void MetroBuilding::InitBuilding() {
+
+}
+
+void MetroBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> MetroBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void TrainBuilding::InitBuilding() {
+
+}
+
+void TrainBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> TrainBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void PlaneBuilding::InitBuilding() {
+
+}
+
+void PlaneBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> PlaneBuilding::GetJobs() {
+    return vector<pair<Job*, int>>();
+}
+
+void ShipBuilding::InitBuilding() {
+
+}
+
+void ShipBuilding::DistributeInside() {
+
+}
+
+vector<pair<Job*, int>> ShipBuilding::GetJobs() {
     return vector<pair<Job*, int>>();
 }
 

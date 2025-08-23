@@ -16,132 +16,130 @@ void Room::SetType(ROOM_TYPE type) {
 
 shared_ptr<Room> CreateRoom(ROOM_TYPE type) {
 	switch (type) {
-	case ROOM_DEVICE:
-		return LM_NEW(DeviceRoom);
-	case ROOM_PARKING:
-		return LM_NEW(ParkingRoom);
-	case ROOM_GUARD:
-		return LM_NEW(GuardRoom);
-	case ROOM_CLEAN:
-		return LM_NEW(CleanRoom);
-	case ROOM_HIGHWAY:
-		return LM_NEW(HighwayRoom);
-	case ROOM_GASOLINE:
-		return LM_NEW(GasolineRoom);
 	case ROOM_HOME:
 		return LM_NEW(HomeRoom);
 	case ROOM_VILLA:
 		return LM_NEW(VillaRoom);
-	case ROOM_WAREHOUSE:
-		return LM_NEW(WarehouseRoom);
-	case ROOM_PROPERTY:
-		return LM_NEW(PropertyRoom);
-	case ROOM_OFFICE:
-		return LM_NEW(OfficeRoom);
-	case ROOM_DOMITRY:
-		return LM_NEW(DormitoryRoom);
-	case ROOM_CANTEEN:
-		return LM_NEW(CanteenRoom);
-	case ROOM_ACTIVITY:
-		return LM_NEW(ActivityRoom);
-	case ROOM_STAGE:
-		return LM_NEW(StageRoom);
-	case ROOM_GROCERY:
-		return LM_NEW(GroceryRoom);
-	case ROOM_MUSIC:
-		return LM_NEW(MusicRoom);
-	case ROOM_TOILET:
-		return LM_NEW(ToiletRoom);
 	case ROOM_MARKET:
 		return LM_NEW(MarketRoom);
-	case ROOM_BUNK:
-		return LM_NEW(BunkRoom);
-	case ROOM_RECEPTION:
-		return LM_NEW(ReceptionRoom);
 	case ROOM_INGREDIENT:
 		return LM_NEW(IngredientRoom);
-	case ROOM_SALE:
-		return LM_NEW(SaleRoom);
-	case ROOM_BRAND:
-		return LM_NEW(BrandRoom);
+	case ROOM_GROCERY:
+		return LM_NEW(GroceryRoom);
 	case ROOM_CLOTHES:
 		return LM_NEW(ClothesRoom);
+	case ROOM_ANTIQUE:
+		return LM_NEW(AntiqueRoom);
+	case ROOM_JEWERY:
+		return LM_NEW(JeweryRoom);
+	case ROOM_SMOKEWINETEA:
+		return LM_NEW(SmokewineteaRoom);
+	case ROOM_ELECTRONIC:
+		return LM_NEW(ElectronicRoom);
+	case ROOM_STUDIO:
+		return LM_NEW(StudioRoom);
+	case ROOM_HAIRCUT:
+		return LM_NEW(HaircutRoom);
+	case ROOM_COSMETIC:
+		return LM_NEW(CosmeticRoom);
+	case ROOM_PET:
+		return LM_NEW(PetRoom);
+	case ROOM_COPY:
+		return LM_NEW(CopyRoom);
+	case ROOM_MUSIC:
+		return LM_NEW(MusicRoom);
+	case ROOM_BOOK:
+		return LM_NEW(BookRoom);
+	case ROOM_CHESSCARD:
+		return LM_NEW(ChesscardRoom);
+	case ROOM_NET:
+		return LM_NEW(NetRoom);
+	case ROOM_KTV:
+		return LM_NEW(KtvRoom);
+	case ROOM_ARCADE:
+		return LM_NEW(ArcadeRoom);
+	case ROOM_BILLIARD:
+		return LM_NEW(BilliardRoom);
+	case ROOM_TOY:
+		return LM_NEW(ToyRoom);
+	case ROOM_FURNITURE:
+		return LM_NEW(FurnitureRoom);
+	case ROOM_CARWASH:
+		return LM_NEW(CarwashRoom);
+	case ROOM_4S:
+		return LM_NEW(FourSRoom);
+	case ROOM_REPAIR:
+		return LM_NEW(RepairRoom);
 	case ROOM_RESTAURANT:
 		return LM_NEW(RestaurantRoom);
 	case ROOM_FASTFOOD:
 		return LM_NEW(FastfoodRoom);
 	case ROOM_BUFFET:
 		return LM_NEW(BuffetRoom);
-	case ROOM_COFFEE:
-		return LM_NEW(CoffeeRoom);
 	case ROOM_DRINK:
 		return LM_NEW(DrinkRoom);
-	case ROOM_CINEMA:
-		return LM_NEW(CinemaRoom);
+	case ROOM_BAR:
+		return LM_NEW(BarRoom);
 	case ROOM_CARRENT:
 		return LM_NEW(CarrentRoom);
-	case ROOM_HAIRCUT:
-		return LM_NEW(HaircutRoom);
-	case ROOM_SMOKEWINETEA:
-		return LM_NEW(SmokewineteaRoom);
-	case ROOM_ELECTRONIC:
-		return LM_NEW(ElectronicRoom);
-	case ROOM_BOOK:
-		return LM_NEW(BookRoom);
+	case ROOM_STAGE:
+		return LM_NEW(StageRoom);
 	case ROOM_MOVIE:
 		return LM_NEW(MovieRoom);
-	case ROOM_PUB:
-		return LM_NEW(PubRoom);
+	case ROOM_EXHIBITION:
+		return LM_NEW(ExhibitionRoom);
 	case ROOM_MASAGE:
 		return LM_NEW(MasageRoom);
 	case ROOM_SAUNA:
 		return LM_NEW(SaunaRoom);
 	case ROOM_BATH:
 		return LM_NEW(BathRoom);
-	case ROOM_CHANGING:
-		return LM_NEW(ChangingRoom);
-	case ROOM_PUBLICEAT:
-		return LM_NEW(PublicEatRoom);
-	case ROOM_PRIVATEEAT:
-		return LM_NEW(PrivateEatRoom);
-	case ROOM_KITCHEN:
-		return LM_NEW(KitchenRoom);
-	case ROOM_MEETING:
-		return LM_NEW(MeetingRoom);
-	case ROOM_COMPUTER:
-		return LM_NEW(ComputerRoom);
-	case ROOM_STOCK:
-		return LM_NEW(StockRoom);
-	case ROOM_STUDIO:
-		return LM_NEW(StudioRoom);
-	case ROOM_MAKEUP:
-		return LM_NEW(MakeupRoom);
-	case ROOM_ANIMAL:
-		return LM_NEW(AnimalRoom);
-	case ROOM_PLANT:
-		return LM_NEW(PlantRoom);
-	case ROOM_EXHIBITION:
-		return LM_NEW(ExhibitionRoom);
-	case ROOM_READING:
-		return LM_NEW(ReadingRoom);
-	case ROOM_COURT:
-		return LM_NEW(CourtRoom);
+	case ROOM_OFFICE:
+		return LM_NEW(OfficeRoom);
 	case ROOM_LAB:
 		return LM_NEW(LabRoom);
 	case ROOM_MACHINE:
 		return LM_NEW(MachineRoom);
 	case ROOM_PIPELINE:
 		return LM_NEW(PipelineRoom);
-	case ROOM_CONSTRUCTION:
-		return LM_NEW(ConstructionRoom);
-	case ROOM_CHICKEN:
-		return LM_NEW(ChickenRoom);
-	case ROOM_COW:
-		return LM_NEW(CowRoom);
-	case ROOM_PIG:
-		return LM_NEW(PigRoom);
-	case ROOM_SHEEP:
-		return LM_NEW(SheepRoom);
+	case ROOM_BOILER:
+		return LM_NEW(BoilerRoom);
+	case ROOM_WAREHOUSE:
+		return LM_NEW(WarehouseRoom);
+	case ROOM_MINING:
+		return LM_NEW(MiningRoom);
+	case ROOM_OILING:
+		return LM_NEW(OilingRoom);
+	case ROOM_QUARRY:
+		return LM_NEW(QuarryRoom);
+	case ROOM_FARM:
+		return LM_NEW(FarmRoom);
+	case ROOM_PASTURE:
+		return LM_NEW(PastureRoom);
+	case ROOM_BREEDING:
+		return LM_NEW(BreedingRoom);
+	case ROOM_FISHING:
+		return LM_NEW(FishingRoom);
+	case ROOM_ORCHARD:
+		return LM_NEW(OrchardRoom);
+	case ROOM_FOREST:
+		return LM_NEW(ForestRoom);
+	case ROOM_PARK:
+		return LM_NEW(ParkRoom);
+	case ROOM_PLAZA:
+		return LM_NEW(PlazaRoom);
+	case ROOM_STATUE:
+		return LM_NEW(StatueRoom);
+	case ROOM_ANIMAL:
+		return LM_NEW(AnimalRoom);
+	case ROOM_PLANT:
+		return LM_NEW(PlantRoom);
+	case ROOM_FISH:
+		return LM_NEW(FishRoom);
+	case ROOM_AMUSEMENT:
+		return LM_NEW(AmusementRoom);
+	case ROOM_GYM:
+		return LM_NEW(GymRoom);
 	case ROOM_FOOTBALL:
 		return LM_NEW(FootballRoom);
 	case ROOM_BASKETBALL:
@@ -151,7 +149,7 @@ shared_ptr<Room> CreateRoom(ROOM_TYPE type) {
 	case ROOM_BADMINTON:
 		return LM_NEW(BadmintonRoom);
 	case ROOM_TABLETENNIS:
-		return LM_NEW(TableTennisRoom);
+		return LM_NEW(TabletennisRoom);
 	case ROOM_TENNIS:
 		return LM_NEW(TennisRoom);
 	case ROOM_SKATE:
@@ -164,32 +162,12 @@ shared_ptr<Room> CreateRoom(ROOM_TYPE type) {
 		return LM_NEW(RangeRoom);
 	case ROOM_POOL:
 		return LM_NEW(PoolRoom);
-	case ROOM_HAIR:
-		return LM_NEW(HairRoom);
-	case ROOM_COSMETIC:
-		return LM_NEW(CosmeticRoom);
-	case ROOM_GYM:
-		return LM_NEW(GymRoom);
-	case ROOM_CHESSCARD:
-		return LM_NEW(ChessCardRoom);
-	case ROOM_PET:
-		return LM_NEW(PetRoom);
-	case ROOM_COPY:
-		return LM_NEW(CopyRoom);
-	case ROOM_CARWASH:
-		return LM_NEW(CarWashRoom);
-	case ROOM_BICYCLE:
-		return LM_NEW(BicycleRoom);
-	case ROOM_NET:
-		return LM_NEW(NetRoom);
-	case ROOM_ARCADE:
-		return LM_NEW(ArcadeRoom);
-	case ROOM_KTV:
-		return LM_NEW(KTVRoom);
-	case ROOM_BILLIARD:
-		return LM_NEW(BilliardRoom);
-	case ROOM_FURNITURE:
-		return LM_NEW(FurnitureRoom);
+	case ROOM_RESORT:
+		return LM_NEW(ResortRoom);
+	case ROOM_REMAINS:
+		return LM_NEW(RemainsRoom);
+	case ROOM_CLASS:
+		return LM_NEW(ClassRoom);
 	case ROOM_REVIEW:
 		return LM_NEW(ReviewRoom);
 	case ROOM_EMERGENCY:
@@ -199,17 +177,57 @@ shared_ptr<Room> CreateRoom(ROOM_TYPE type) {
 	case ROOM_OPERATION:
 		return LM_NEW(OperationRoom);
 	case ROOM_ICU:
-		return LM_NEW(ICURoom);
+		return LM_NEW(IcuRoom);
 	case ROOM_DOCTOR:
 		return LM_NEW(DoctorRoom);
 	case ROOM_ASSAY:
 		return LM_NEW(AssayRoom);
-	case ROOM_CLASS:
-		return LM_NEW(ClassRoom);
-	case ROOM_PLAYGROUND:
-		return LM_NEW(PlaygroundRoom);
+	case ROOM_MOTUARY:
+		return LM_NEW(MotuaryRoom);
 	case ROOM_CELL:
 		return LM_NEW(CellRoom);
+	case ROOM_COURT:
+		return LM_NEW(CourtRoom);
+	case ROOM_GOLD:
+		return LM_NEW(GoldRoom);
+	case ROOM_STOCK:
+		return LM_NEW(StockRoom);
+	case ROOM_READING:
+		return LM_NEW(ReadingRoom);
+	case ROOM_GASOLINE:
+		return LM_NEW(GasolineRoom);
+	case ROOM_FUNERAL:
+		return LM_NEW(FuneralRoom);
+	case ROOM_CONDOLENCE:
+		return LM_NEW(CondolenceRoom);
+	case ROOM_COMPUTER:
+		return LM_NEW(ComputerRoom);
+	case ROOM_PARKING:
+		return LM_NEW(ParkingRoom);
+	case ROOM_GUARD:
+		return LM_NEW(GuardRoom);
+	case ROOM_CLEAN:
+		return LM_NEW(CleanRoom);
+	case ROOM_TOILET:
+		return LM_NEW(ToiletRoom);
+	case ROOM_CANTEEN:
+		return LM_NEW(CanteenRoom);
+	case ROOM_DOMITRY:
+		return LM_NEW(DomitryRoom);
+	case ROOM_PLAYGROUND:
+		return LM_NEW(PlaygroundRoom);
+	case ROOM_RECEPTION:
+		return LM_NEW(ReceptionRoom);
+	case ROOM_MEETING:
+		return LM_NEW(MeetingRoom);
+	case ROOM_ACTIVITY:
+		return LM_NEW(ActivityRoom);
+	case ROOM_BUNK:
+		return LM_NEW(BunkRoom);
+	case ROOM_CHANGING:
+		return LM_NEW(ChangingRoom);
+	case ROOM_DEVICE:
+		return LM_NEW(DeviceRoom);
 	case ROOM_METRO:
 		return LM_NEW(MetroRoom);
 	case ROOM_TRAIN:
@@ -224,16 +242,6 @@ shared_ptr<Room> CreateRoom(ROOM_TYPE type) {
 		return LM_NEW(TicketRoom);
 	case ROOM_CUSTOM:
 		return LM_NEW(CustomRoom);
-	case ROOM_MOTUARY:
-		return LM_NEW(MotuaryRoom);
-	case ROOM_FUNERAL:
-		return LM_NEW(FuneralRoom);
-	case ROOM_CONDOLENCE:
-		return LM_NEW(CondolenceRoom);
-	case ROOM_BOILER:
-		return LM_NEW(BoilerRoom);
-	case ROOM_GOLD:
-		return LM_NEW(GoldRoom);
 	default:
 		break;
 	}
