@@ -3,14 +3,14 @@
 #include "plot.h"
 #include "area.h"
 #include "zone.h"
-#include "organization.h"
+#include "component.h"
 #include "room.h"
 #include "job.h"
 
 #include <vector>
 #include <unordered_map>
 
-class Organization;
+class Component;
 
 enum BUILDING_TYPE {
 	BUILDING_NONE, //无
@@ -276,7 +276,7 @@ public:
 		plotType = PLOT_BUILDING;
 	}
 	~Building() {
-		organizations.clear();
+		components.clear();
 		rooms.clear();
 	}
 
@@ -295,7 +295,7 @@ public:
 	int GetBasements() { return basement; }
 
 	// 获取/设置组织/房间/楼层
-	std::vector<std::shared_ptr<Organization>>& GetOrganizations() { return organizations; }
+	std::vector<std::shared_ptr<Component>>& GetComponents() { return components; }
 	std::vector<std::shared_ptr<Room>>& GetRooms() { return rooms; }
 	Floor* GetFloor(int floor) {
 		if (basement + floor < floors.size())
@@ -325,10 +325,10 @@ public:
 protected:
 	// 在建筑中添加组织
 	template<class T>
-	std::shared_ptr<T> CreateOrganization() {
-		std::shared_ptr<T> organization = LM_NEW(T);
-		organizations.push_back(organization);
-		return organization;
+	std::shared_ptr<T> CreateComponent() {
+		std::shared_ptr<T> component = LM_NEW(T);
+		components.push_back(component);
+		return component;
 	}
 
 	// 在建筑中添加房间
@@ -349,7 +349,7 @@ protected:
 	ZONE_TYPE zone;
 	std::pair<int, int> dist = std::make_pair(0, -1);
 
-	std::vector<std::shared_ptr<Organization>> organizations;
+	std::vector<std::shared_ptr<Component>> components;
 	std::vector<std::shared_ptr<Room>> rooms;
 
 	int layers = 1;

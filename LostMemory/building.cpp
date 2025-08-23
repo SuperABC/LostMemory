@@ -623,7 +623,7 @@ void ResidentBuilding::DistributeInside() {
     //Parking
     //Home
 
-    auto resident = CreateOrganization<CommunityOrganization>();
+    auto resident = CreateComponent<CommunityComponent>();
 
     float aboveScalar = 0.8f;
     float underScalar = 0.8f;
@@ -731,7 +731,7 @@ void VillaBuilding::DistributeInside() {
     //Warehouse
     //Home
 
-    auto villa = CreateOrganization<CommunityOrganization>();
+    auto villa = CreateComponent<CommunityComponent>();
 
     float aboveScalar, underScalar;
     if (GetAcreage() < 1000) {
@@ -852,39 +852,39 @@ void MallBuilding::DistributeInside() {
         {ROOM_MOVIE, 0.98f},
         {ROOM_MASAGE, 1.0f},
     };
-    static unordered_map<ROOM_TYPE, ORGANIZATION_TYPE> mapping = {
-        {ROOM_MARKET, ORGANIZATION_SHOP},
-        {ROOM_INGREDIENT, ORGANIZATION_SHOP},
-        {ROOM_GROCERY, ORGANIZATION_SHOP},
-        {ROOM_CLOTHES, ORGANIZATION_SHOP},
-        {ROOM_ANTIQUE, ORGANIZATION_SHOP},
-        {ROOM_JEWERY, ORGANIZATION_SHOP},
-        {ROOM_SMOKEWINETEA, ORGANIZATION_SHOP},
-        {ROOM_ELECTRONIC, ORGANIZATION_SHOP},
-        {ROOM_STUDIO, ORGANIZATION_SHOP},
-        {ROOM_HAIRCUT, ORGANIZATION_SHOP},
-        {ROOM_COSMETIC, ORGANIZATION_SHOP},
-        {ROOM_PET, ORGANIZATION_SHOP},
-        {ROOM_COPY, ORGANIZATION_SHOP},
-        {ROOM_MUSIC, ORGANIZATION_SHOP},
-        {ROOM_BOOK, ORGANIZATION_SHOP},
-        {ROOM_CHESSCARD, ORGANIZATION_SHOP},
-        {ROOM_NET, ORGANIZATION_SHOP},
-        {ROOM_KTV, ORGANIZATION_SHOP},
-        {ROOM_ARCADE, ORGANIZATION_SHOP},
-        {ROOM_BILLIARD, ORGANIZATION_SHOP},
-        {ROOM_TOY, ORGANIZATION_SHOP},
-        {ROOM_RESTAURANT, ORGANIZATION_RESTAURANT},
-        {ROOM_FASTFOOD, ORGANIZATION_RESTAURANT},
-        {ROOM_BUFFET, ORGANIZATION_RESTAURANT},
-        {ROOM_DRINK, ORGANIZATION_RESTAURANT},
-        {ROOM_BAR, ORGANIZATION_RESTAURANT},
-        {ROOM_CARRENT, ORGANIZATION_CARRENT},
-        {ROOM_MOVIE, ORGANIZATION_CINEMA},
-        {ROOM_MASAGE, ORGANIZATION_MASAGE},
+    static unordered_map<ROOM_TYPE, COMPONENT_TYPE> mapping = {
+        {ROOM_MARKET, COMPONENT_SHOP},
+        {ROOM_INGREDIENT, COMPONENT_SHOP},
+        {ROOM_GROCERY, COMPONENT_SHOP},
+        {ROOM_CLOTHES, COMPONENT_SHOP},
+        {ROOM_ANTIQUE, COMPONENT_SHOP},
+        {ROOM_JEWERY, COMPONENT_SHOP},
+        {ROOM_SMOKEWINETEA, COMPONENT_SHOP},
+        {ROOM_ELECTRONIC, COMPONENT_SHOP},
+        {ROOM_STUDIO, COMPONENT_SHOP},
+        {ROOM_HAIRCUT, COMPONENT_SHOP},
+        {ROOM_COSMETIC, COMPONENT_SHOP},
+        {ROOM_PET, COMPONENT_SHOP},
+        {ROOM_COPY, COMPONENT_SHOP},
+        {ROOM_MUSIC, COMPONENT_SHOP},
+        {ROOM_BOOK, COMPONENT_SHOP},
+        {ROOM_CHESSCARD, COMPONENT_SHOP},
+        {ROOM_NET, COMPONENT_SHOP},
+        {ROOM_KTV, COMPONENT_SHOP},
+        {ROOM_ARCADE, COMPONENT_SHOP},
+        {ROOM_BILLIARD, COMPONENT_SHOP},
+        {ROOM_TOY, COMPONENT_SHOP},
+        {ROOM_RESTAURANT, COMPONENT_RESTAURANT},
+        {ROOM_FASTFOOD, COMPONENT_RESTAURANT},
+        {ROOM_BUFFET, COMPONENT_RESTAURANT},
+        {ROOM_DRINK, COMPONENT_RESTAURANT},
+        {ROOM_BAR, COMPONENT_RESTAURANT},
+        {ROOM_CARRENT, COMPONENT_CARRENT},
+        {ROOM_MOVIE, COMPONENT_CINEMA},
+        {ROOM_MASAGE, COMPONENT_MASAGE},
     };
 
-    auto mall = CreateOrganization<MallOrganization>();
+    auto mall = CreateComponent<MallComponent>();
 
     float aboveScalar, underScalar;
     underScalar = 0.8f;
@@ -961,10 +961,10 @@ void MallBuilding::DistributeInside() {
     TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
     if (rooms.size() > mall->GetRooms().size()) {
         for (int i = mall->GetRooms().size(); i < rooms.size(); i++) {
-            auto organization = ::CreateOrganization(mapping[rooms[i]->GetType()]);
-            if (organization) {
-                organization->AddRoom(rooms[i]);
-                organizations.push_back(organization);
+            auto component = ::CreateComponent(mapping[rooms[i]->GetType()]);
+            if (component) {
+                component->AddRoom(rooms[i]);
+                components.push_back(component);
             }
         }
     }

@@ -57,7 +57,7 @@
     <ClCompile Include="area.cpp">
       <Filter>源文件\world</Filter>
     </ClCompile>
-    <ClCompile Include="organization.cpp">
+    <ClCompile Include="component.cpp">
       <Filter>源文件\world</Filter>
     </ClCompile>
     <ClCompile Include="zone.cpp">
@@ -122,7 +122,7 @@
     <ClInclude Include="zone.h">
       <Filter>头文件\world</Filter>
     </ClInclude>
-    <ClInclude Include="organization.h">
+    <ClInclude Include="component.h">
       <Filter>头文件\world</Filter>
     </ClInclude>
     <ClInclude Include="room.h">

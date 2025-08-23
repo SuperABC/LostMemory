@@ -157,7 +157,7 @@
     <ClCompile Include="job.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map.cpp" />
-    <ClCompile Include="organization.cpp" />
+    <ClCompile Include="component.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="person.cpp" />
     <ClCompile Include="area.cpp" />
@@ -180,7 +180,7 @@
     <ClInclude Include="item.h" />
     <ClInclude Include="job.h" />
     <ClInclude Include="map.h" />
-    <ClInclude Include="organization.h" />
+    <ClInclude Include="component.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="person.h" />
     <ClInclude Include="area.h" />

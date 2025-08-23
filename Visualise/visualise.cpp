@@ -95,11 +95,11 @@ void updateBuilding(int floor, int scroll) {
 		"地下层高" + to_string(currentBuilding->GetBasements()) + "层" + "\n";
 
 	text += "\n";
-	for (auto organization : currentBuilding->GetOrganizations()) {
-		text += organizationText[organization->GetType()] + ": " + "共" + to_string(organization->GetRooms().size()) + "房间\n";
+	for (auto component : currentBuilding->GetComponents()) {
+		text += componentText[component->GetType()] + ": " + "共" + to_string(component->GetRooms().size()) + "房间\n";
 
 		unordered_map<int, int> roomMap;
-		for (auto room : organization->GetRooms()) {
+		for (auto room : component->GetRooms()) {
 			roomMap[room->GetType()]++;
 		}
 		for (auto room : roomMap) {

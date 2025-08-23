@@ -281,7 +281,7 @@ private:
 	int acreage;
 
 	int buildingId;
-	int organizationId;
+	int componentId;
 };
 
 class HomeRoom : public Room {

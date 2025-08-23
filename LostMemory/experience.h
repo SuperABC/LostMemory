@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "job.h"
-#include "organization.h"
+#include "component.h"
 
 class Person;
 
@@ -60,13 +60,13 @@ public:
     // 获取/设置工作经历属性
     void SetJobType(JOB_TYPE t) { type = t; }
     JOB_TYPE GetJobType() const { return type; }
-    void SetOrganization(std::shared_ptr<Organization> org) { organization = org; }
-    std::shared_ptr<Organization> GetOrganization() const { return organization; }
+    void SetComponent(std::shared_ptr<Component> comp) { component = comp; }
+    std::shared_ptr<Component> GetComponent() const { return component; }
     void AddColleague(std::shared_ptr<Person> p) { colleagues.push_back(p); }
     const std::vector<std::shared_ptr<Person>>& GetColleagues() const { return colleagues; }
 
 private:
     JOB_TYPE type;
-    std::shared_ptr<Organization> organization;
+    std::shared_ptr<Component> component;
     std::vector<std::shared_ptr<Person>> colleagues;
 };
