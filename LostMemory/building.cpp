@@ -212,9 +212,8 @@ void Building::TemplateLayout(vector<string> temps, FACE_DIRECTION face, float a
     string temp;
     for (auto &floor : floors) {
         if (floor.GetLevel() == 0)continue;
-        if (floor.GetLevel() < 0)temp = temps[0];
-        else if (floor.GetLevel() >= temps.size())temp = temps.back();
-        else temp = temps[floor.GetLevel()];
+        else if (floor.GetLevel() > temps.size())temp = temps.back();
+        else temp = temps[floor.GetLevel() - 1];
         for (auto facility : templateFacility[temp + "_" + faceAbbr[face]]) {
             if (floor.GetLevel() < 0 && facility.first == Facility::FACILITY_CORRIDOR)continue;
             float l = facility.second[0] * above.GetSizeX() + facility.second[1] * 0.1f;
@@ -262,6 +261,8 @@ void Building::ReadTemplates(std::string path) {
         if (entry.is_regular_file()) {
             string filename = entry.path().filename().string();
             string basename = filename.substr(0, filename.length() - 4);
+            string extension = filename.substr(filename.length() - 3, filename.length());
+            if (extension != "txt")continue;
 
             ifstream fin(entry.path());
             if (!fin.is_open()) {
@@ -1420,26 +1421,34 @@ void MallBuilding::DistributeInside() {
     }
 
     int standard = 100;
-    string temp = "";
+    vector<string> temps;
     int face = GetRandom(4);
 
     if (GetAcreage() < 10000) {
         standard = 120;
-        temp = "circle_single";
+        if (GetSizeX() / GetSizeY() > 1.8f || GetSizeY() / GetSizeX() > 1.8f)
+            temps = { "circle_single" };
+        else
+            temps = { "circle_square" };
         face = (GetSizeX() > GetSizeY()) ?
             (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
             (GetRandom(2) ? FACE_WEST : FACE_EAST);
     }
     else if (GetAcreage() < 20000) {
         standard = 160;
-        temp = "circle_single";
+        if(GetSizeX() / GetSizeY() > 1.8f || GetSizeY() / GetSizeX() > 1.8f)
+            temps = { "circle_double1", "circle_double2" };
+        else if(GetSizeX() / GetSizeY() > 1.5f || GetSizeY() / GetSizeX() > 1.5f)
+            temps = { "circle_single" };
+        else
+            temps = { "circle_square" };
         face = (GetSizeX() > GetSizeY()) ?
             (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
             (GetRandom(2) ? FACE_WEST : FACE_EAST);
     }
     else {
         standard = 200;
-        temp = "circle_single";
+        temps = { "circle_double1", "circle_double2" };
         face = (GetSizeX() > GetSizeY()) ?
             (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
             (GetRandom(2) ? FACE_WEST : FACE_EAST);
@@ -1462,7 +1471,7 @@ void MallBuilding::DistributeInside() {
         }
     }
 
-    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
     if (rooms.size() > mall->GetRooms().size()) {
         for (int i = mall->GetRooms().size(); i < rooms.size(); i++) {
             auto organization = ::CreateOrganization(mapping[rooms[i]->GetType()]);
