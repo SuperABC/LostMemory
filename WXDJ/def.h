@@ -1,4 +1,7 @@
 #pragma once
+#pragma warning(disable:4244)
+#pragma warning(disable:4267)
+#pragma warning(disable:4150)
 
 #include <iostream>
 #include <string>
@@ -16,7 +19,8 @@ enum Attribute {
     ATTRIBUTE_WOOD, // 木
     ATTRIBUTE_WATER, // 水
     ATTRIBUTE_FIRE, // 火
-    ATTRIBUTE_EARTH // 土
+    ATTRIBUTE_EARTH, // 土
+    ATTRIBUTE_ALL // 五行
 };
 
 // 阶位枚举
@@ -54,7 +58,12 @@ const std::map<std::pair<Attribute, Attribute>, bool> ATTRIBUTE_COUNTERS = {
     {{ATTRIBUTE_WOOD, ATTRIBUTE_WATER}, true}, //木克水
     {{ATTRIBUTE_EARTH, ATTRIBUTE_METAL}, true}, //土克金
     {{ATTRIBUTE_METAL, ATTRIBUTE_WOOD}, true}, //金克木
-    {{ATTRIBUTE_WOOD, ATTRIBUTE_EARTH}, true} //木克土
+    {{ATTRIBUTE_WOOD, ATTRIBUTE_EARTH}, true}, //木克土
+    {{ATTRIBUTE_ALL, ATTRIBUTE_METAL}, true}, //五行克金
+    {{ATTRIBUTE_ALL, ATTRIBUTE_WOOD}, true}, //五行克木
+    {{ATTRIBUTE_ALL, ATTRIBUTE_WATER}, true}, //五行克水
+    {{ATTRIBUTE_ALL, ATTRIBUTE_FIRE}, true}, //五行克火
+    {{ATTRIBUTE_ALL, ATTRIBUTE_EARTH}, true}, //五行克土
 };
 
 // 双属性组合主属性映射
@@ -68,7 +77,12 @@ const std::map<std::pair<Attribute, Attribute>, Attribute> DUAL_ATTRIBUTE_PRIMAR
     {{ATTRIBUTE_METAL, ATTRIBUTE_WOOD}, ATTRIBUTE_METAL},
     {{ATTRIBUTE_WOOD, ATTRIBUTE_EARTH}, ATTRIBUTE_WOOD},
     {{ATTRIBUTE_EARTH, ATTRIBUTE_WATER}, ATTRIBUTE_EARTH},
-    {{ATTRIBUTE_WATER, ATTRIBUTE_FIRE}, ATTRIBUTE_WATER}
+    {{ATTRIBUTE_WATER, ATTRIBUTE_FIRE}, ATTRIBUTE_WATER},
+    {{ATTRIBUTE_ALL, ATTRIBUTE_METAL}, ATTRIBUTE_METAL},
+    {{ATTRIBUTE_ALL, ATTRIBUTE_WOOD}, ATTRIBUTE_WOOD},
+    {{ATTRIBUTE_ALL, ATTRIBUTE_WATER}, ATTRIBUTE_WATER},
+    {{ATTRIBUTE_ALL, ATTRIBUTE_FIRE}, ATTRIBUTE_FIRE},
+    {{ATTRIBUTE_ALL, ATTRIBUTE_EARTH}, ATTRIBUTE_EARTH}
 };
 
 // 阶位要求的最小ATK值

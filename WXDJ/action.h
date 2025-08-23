@@ -42,7 +42,7 @@ private:
     Realm realm;
 
 public:
-    MoveAction(const std::string& name, Attribute element, int point, int power, Realm realm)
+    MoveAction(const std::string& name, Attribute attribute, int point, int power, Realm realm)
         : name(name), realm(realm), Action(ACTION_MOVE, attribute, point, power) {}
 
     std::string GetName() const { return name; }

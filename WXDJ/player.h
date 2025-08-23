@@ -22,9 +22,9 @@ private:
     int recover;
 
 public:
-    Player(const std::string& name, int hp, int atk, int mp, int agi)
+    Player(const std::string& name, int hp, int atk, int mp, int agi, int recover = 10)
         : name(name), maxHP(hp), currentHP(hp), maxATK(atk), currentATK(atk),
-        maxMP(mp), currentMP(mp), AGI(agi), currentRealm(YELLOW_INIT), recover(10) {}
+        maxMP(mp), currentMP(mp), AGI(agi), currentRealm(YELLOW_INIT), recover(recover) {}
 
     std::string GetName() const { return name; }
     int GetCurrentHP() const { return currentHP; }
