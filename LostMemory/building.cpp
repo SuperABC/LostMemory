@@ -797,7 +797,40 @@ void HotelBuilding::InitBuilding() {
 }
 
 void HotelBuilding::DistributeInside() {
+    // Parking
+    // Reception
+    // Bunk
 
+    auto hotel = CreateComponent<HotelComponent>();
+
+    float aboveScalar = 0.8f;
+    float underScalar = 0.8f;
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            hotel->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    int standard = 80;
+    string temp = "ushape_single";
+    int face = (GetSizeX() > GetSizeY()) ?
+        (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+        (GetRandom(2) ? FACE_WEST : FACE_EAST);
+
+    hotel->AddRoom(CreateRoom<ReceptionRoom>(1, 100));
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(BunkRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > hotel->GetRooms().size()) {
+        for (int i = hotel->GetRooms().size(); i < rooms.size(); i++) {
+            hotel->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> HotelBuilding::GetJobs() {
