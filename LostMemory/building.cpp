@@ -811,13 +811,24 @@ void HotelBuilding::DistributeInside() {
             hotel->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
     }
 
-    int standard = 80;
-    string temp = "ushape_single";
-    int face = (GetSizeX() > GetSizeY()) ?
-        (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
-        (GetRandom(2) ? FACE_WEST : FACE_EAST);
-
+    hotel->AddRoom(CreateRoom<ToiletRoom>(1, 60));
     hotel->AddRoom(CreateRoom<ReceptionRoom>(1, 100));
+
+    int standard = 80;
+    string temp = "";
+    int face = 0;
+    if (GetAcreage() < 5000) {
+        temp = "straight_linear";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_WEST : FACE_EAST) :
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH);
+    }
+    else {
+        temp = "ushape_single";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+    }
 
     complements = vector<vector<Room>>(basement + layers + 1);
     for (auto& complement : complements) {
@@ -1008,7 +1019,19 @@ vector<pair<Job*, int>> MallBuilding::GetJobs() {
 }
 
 void ShopBuilding::InitBuilding() {
-    // 需要补充实现
+    if (GetRandom(10) == 0) {
+        status = CONSTRUCTION_ABANDON;
+    }
+    else {
+        status = CONSTRUCTION_USING;
+    }
+    if (area <= AREA_RESIDENTM && GetAcreage() > 10000) {
+        layers = 3 + GetRandom(2);
+    }
+    else {
+        layers = 1 + GetRandom(2);
+    }
+    basement = GetRandom(2);
 }
 
 void ShopBuilding::DistributeInside() {
@@ -1061,7 +1084,6 @@ void ShopBuilding::DistributeInside() {
     auto shop = CreateComponent<ShopComponent>();
 
     float aboveScalar, underScalar;
-    ROOM_TYPE roomType;
     if (GetAcreage() < 2000) {
         aboveScalar = underScalar = 0.8f;
         probs = probs_small;
@@ -1084,16 +1106,16 @@ void ShopBuilding::DistributeInside() {
     string temp = "single_room";
     int face = GetRandom(4);
 
+    float p = GetRandom(1000) / 1000.0f;
+    ROOM_TYPE roomType = ROOM_NONE;
+    for (int i = 0; i < probs.size(); i++) {
+        if (p < probs[i].second) {
+            roomType = probs[i].first;
+            break;
+        }
+    }
     complements = vector<vector<Room>>(basement + layers + 1);
     for (auto& complement : complements) {
-        float p = GetRandom(1000) / 1000.0f;
-        ROOM_TYPE roomType = ROOM_NONE;
-        for (int i = 0; i < probs.size(); i++) {
-            if (p < probs[i].second) {
-                roomType = probs[i].first;
-                break;
-            }
-        }
         shared_ptr<Room> room = ::CreateRoom(roomType);
         complement.push_back(Room(*room));
         complement.back().SetAcreage(standard);
@@ -1118,11 +1140,8 @@ void RestaurantBuilding::InitBuilding() {
     else {
         status = CONSTRUCTION_USING;
     }
-    if (area < AREA_RESIDENTM && GetAcreage() > 10000) {
-        layers = 6 + GetRandom(5);
-    }
-    else if (area <= AREA_RESIDENTM && GetAcreage() > 4000) {
-        layers = 3 + GetRandom(4);
+    if (area <= AREA_RESIDENTM && GetAcreage() > 5000) {
+        layers = 2 + GetRandom(3);
     }
     else {
         layers = 1 + GetRandom(2);
@@ -1131,7 +1150,69 @@ void RestaurantBuilding::InitBuilding() {
 }
 
 void RestaurantBuilding::DistributeInside() {
+    static vector<pair<ROOM_TYPE, float>> probs_small = {
+        {ROOM_RESTAURANT, 0.2f},
+        {ROOM_FASTFOOD, 0.5f},
+        {ROOM_BUFFET, 0.7f},
+        {ROOM_BAR, 1.0f},
+    };
+    static vector<pair<ROOM_TYPE, float>> probs_mid = {
+        {ROOM_RESTAURANT, 0.4f},
+        {ROOM_FASTFOOD, 0.7f},
+        {ROOM_BUFFET, 1.0f},
+    };
+    static vector<pair<ROOM_TYPE, float>> probs_large = {
+        {ROOM_RESTAURANT, 0.8f},
+        {ROOM_BUFFET, 1.0f},
+    };
+    static vector<pair<ROOM_TYPE, float>>& probs = probs_small;
 
+    auto restaurant = CreateComponent<RestaurantComponent>();
+
+    float aboveScalar, underScalar;
+    if (GetAcreage() < 2000) {
+        aboveScalar = underScalar = 0.8f;
+        probs = probs_small;
+    }
+    else if (GetAcreage() < 5000) {
+        aboveScalar = underScalar = 0.7f;
+        probs = probs_mid;
+    }
+    else {
+        aboveScalar = underScalar = 0.6f;
+        probs = probs_large;
+    }
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            restaurant->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    int standard = 1e4;
+    string temp = "single_room";
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        float p = GetRandom(1000) / 1000.0f;
+        ROOM_TYPE roomType = ROOM_NONE;
+        for (int i = 0; i < probs.size(); i++) {
+            if (p < probs[i].second) {
+                roomType = probs[i].first;
+                break;
+            }
+        }
+        shared_ptr<Room> room = ::CreateRoom(roomType);
+        complement.push_back(Room(*room));
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > restaurant->GetRooms().size()) {
+        for (int i = restaurant->GetRooms().size(); i < rooms.size(); i++) {
+            restaurant->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> RestaurantBuilding::GetJobs() {
@@ -1147,15 +1228,52 @@ void CarRentBuilding::InitBuilding() {
     }
     if (area <= AREA_RESIDENTM && GetAcreage() > 10000) {
         layers = 2 + GetRandom(2);
+        basement = 0;
     }
     else {
         layers = 1 + GetRandom(2);
+        basement = 1 + GetRandom(3);
     }
-    basement = 1 + GetRandom(3);
 }
 
 void CarRentBuilding::DistributeInside() {
+    // Parking
+    // Reception
+    // Office
 
+    auto carrent = CreateComponent<CarrentComponent>();
+
+    float aboveScalar, underScalar;
+    if (GetAcreage() < 10000) {
+        aboveScalar = underScalar = 0.8f;
+    }
+    else {
+        aboveScalar = underScalar = 0.4f;
+    }
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            carrent->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    carrent->AddRoom(CreateRoom<ReceptionRoom>(1, 1e4));
+
+    int standard = 120;
+    vector<string> temps = { "single_room", "straight_linear" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(OfficeRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > carrent->GetRooms().size()) {
+        for (int i = carrent->GetRooms().size(); i < rooms.size(); i++) {
+            carrent->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> CarRentBuilding::GetJobs() {

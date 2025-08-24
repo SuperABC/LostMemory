@@ -319,9 +319,9 @@ private:
 
 };
 
-class CarRentComponent : public Component {
+class CarrentComponent : public Component {
 public:
-	CarRentComponent() : Component(COMPONENT_CARRENT) {}
+	CarrentComponent() : Component(COMPONENT_CARRENT) {}
 
 private:
 

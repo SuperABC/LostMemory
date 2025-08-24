@@ -27,7 +27,7 @@ shared_ptr<Component> CreateComponent(COMPONENT_TYPE type) {
     case COMPONENT_RESTAURANT:
         return LM_NEW(RestaurantComponent);
     case COMPONENT_CARRENT:
-        return LM_NEW(CarRentComponent);
+        return LM_NEW(CarrentComponent);
     case COMPONENT_THEATER:
         return LM_NEW(TheaterComponent);
     case COMPONENT_CINEMA:

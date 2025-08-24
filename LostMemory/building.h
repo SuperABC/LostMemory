@@ -433,7 +433,7 @@ private:
 class RestaurantBuilding : public Building {
 public:
 	RestaurantBuilding() : Building(BUILDING_RESTAURANT) {
-		acreageRange = std::make_pair(1000, 20000);
+		acreageRange = std::make_pair(800, 10000);
 	}
 
 	virtual void InitBuilding();
@@ -446,7 +446,7 @@ private:
 class CarRentBuilding : public Building {
 public:
 	CarRentBuilding() : Building(BUILDING_CARRENT) {
-		acreageRange = std::make_pair(5000, 40000);
+		acreageRange = std::make_pair(2000, 20000);
 	}
 
 	virtual void InitBuilding();
