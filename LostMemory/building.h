@@ -420,7 +420,7 @@ private:
 class ShopBuilding : public Building {
 public:
 	ShopBuilding() : Building(BUILDING_SHOP) {
-		acreageRange = std::make_pair(2000, 40000);
+		acreageRange = std::make_pair(1000, 20000);
 	}
 
 	virtual void InitBuilding();

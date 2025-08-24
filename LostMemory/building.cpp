@@ -537,18 +537,18 @@ BUILDING_TYPE RandomBuilding(AREA_TYPE area, float prob) {
         else if (prob < 0.95f)return BUILDING_HOTEL;
         else return BUILDING_RESTAURANT;
     case AREA_COMMERCEH:
-        if (prob < 0.36f)return BUILDING_MALL;
-        else if (prob < 0.72f)return BUILDING_SHOP;
-        else if (prob < 0.74f)return BUILDING_CARRENT;
-        else if (prob < 0.77f)return BUILDING_THEATER;
-        else if (prob < 0.80f)return BUILDING_MUSEUM;
-        else if (prob < 0.82f)return BUILDING_CINEMA;
-        else if (prob < 0.90f)return BUILDING_HOTEL;
+        if (prob < 0.2f)return BUILDING_MALL;
+        else if (prob < 0.56f)return BUILDING_SHOP;
+        else if (prob < 0.60f)return BUILDING_CARRENT;
+        else if (prob < 0.64f)return BUILDING_THEATER;
+        else if (prob < 0.68f)return BUILDING_MUSEUM;
+        else if (prob < 0.72f)return BUILDING_CINEMA;
+        else if (prob < 0.82f)return BUILDING_HOTEL;
         else if (prob < 0.98f)return BUILDING_RESTAURANT;
         else if (prob < 0.99f)return BUILDING_MASAGE;
         else return BUILDING_AMUSEMENT;
     case AREA_COMMERCEL:
-        if (prob < 0.15f)return BUILDING_MALL;
+        if (prob < 0.08f)return BUILDING_MALL;
         else if (prob < 0.40f)return BUILDING_SHOP;
         else if (prob < 0.42f)return BUILDING_CARRENT;
         else if (prob < 0.44f)return BUILDING_THEATER;
@@ -1012,7 +1012,99 @@ void ShopBuilding::InitBuilding() {
 }
 
 void ShopBuilding::DistributeInside() {
+    static vector<pair<ROOM_TYPE, float>> probs_small = {
+        {ROOM_GROCERY, 0.15f},
+        {ROOM_INGREDIENT, 0.25f},
+        {ROOM_CLOTHES, 0.45f},
+        {ROOM_ANTIQUE, 0.48f},
+        {ROOM_JEWERY, 0.50f},
+        {ROOM_SMOKEWINETEA, 0.52f},
+        {ROOM_ELECTRONIC, 0.56f},
+        {ROOM_STUDIO, 0.60f},
+        {ROOM_PET, 0.64f},
+        {ROOM_MUSIC, 0.68f},
+        {ROOM_BOOK, 0.70f},
+        {ROOM_CHESSCARD, 0.74f},
+        {ROOM_NET, 0.78f},
+        {ROOM_KTV, 0.80f},
+        {ROOM_ARCADE, 0.84f},
+        {ROOM_BILLIARD, 0.88f},
+        {ROOM_TOY, 0.92f},
+        {ROOM_CARWASH, 0.95f},
+        {ROOM_4S, 0.97f},
+        {ROOM_REPAIR, 1.0f},
+    };
+    static vector<pair<ROOM_TYPE, float>> probs_mid = {
+        {ROOM_MARKET, 0.10f},
+        {ROOM_INGREDIENT, 0.15f},
+        {ROOM_CLOTHES, 0.40f},
+        {ROOM_ELECTRONIC, 0.45f},
+        {ROOM_BOOK, 0.50f},
+        {ROOM_ARCADE, 0.54f},
+        {ROOM_BILLIARD, 0.58f},
+        {ROOM_TOY, 0.64f},
+        {ROOM_FURNITURE, 0.70f},
+        {ROOM_4S, 0.92f},
+        {ROOM_REPAIR, 1.0f},
+    };
+    static vector<pair<ROOM_TYPE, float>> probs_large = {
+        {ROOM_MARKET, 0.05f},
+        {ROOM_CLOTHES, 0.20f},
+        {ROOM_ELECTRONIC, 0.25f},
+        {ROOM_BOOK, 0.28f},
+        {ROOM_FURNITURE, 0.58f},
+        {ROOM_4S, 0.88f},
+        {ROOM_REPAIR, 1.0f},
+    };
+    static vector<pair<ROOM_TYPE, float>>& probs = probs_small;
 
+    auto shop = CreateComponent<ShopComponent>();
+
+    float aboveScalar, underScalar;
+    ROOM_TYPE roomType;
+    if (GetAcreage() < 2000) {
+        aboveScalar = underScalar = 0.8f;
+        probs = probs_small;
+    }
+    else if (GetAcreage() < 10000) {
+        aboveScalar = underScalar = 0.6f;
+        probs = probs_mid;
+    }
+    else {
+        aboveScalar = underScalar = 0.5f;
+        probs = probs_large;
+    }
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            shop->AddRoom(CreateRoom<WarehouseRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    int standard = 1e4;
+    string temp = "single_room";
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        float p = GetRandom(1000) / 1000.0f;
+        ROOM_TYPE roomType = ROOM_NONE;
+        for (int i = 0; i < probs.size(); i++) {
+            if (p < probs[i].second) {
+                roomType = probs[i].first;
+                break;
+            }
+        }
+        shared_ptr<Room> room = ::CreateRoom(roomType);
+        complement.push_back(Room(*room));
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > shop->GetRooms().size()) {
+        for (int i = shop->GetRooms().size(); i < rooms.size(); i++) {
+            shop->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> ShopBuilding::GetJobs() {
