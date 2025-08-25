@@ -308,7 +308,10 @@ public:
 	Rect GetUnder();
 
 	// 内部布局
-	void TemplateLayout(std::vector<std::string> temps, FACE_DIRECTION face, float aboveScalar, float underScalar);
+	void TemplateLayout(std::vector<std::string> temps, FACE_DIRECTION face,
+		float aboveScalar, float underScalar);
+	void TemplateLayout(std::vector<std::string> temps, FACE_DIRECTION face,
+		float aboveScalarX, float aboveScalarY, float underScalarX, float underScalarY);
 
 	// 指定建筑属性
 	virtual void InitBuilding() = 0;
@@ -487,7 +490,7 @@ private:
 class MuseumBuilding : public Building {
 public:
 	MuseumBuilding() : Building(BUILDING_MUSEUM) {
-		acreageRange = std::make_pair(5000, 40000);
+		acreageRange = std::make_pair(5000, 20000);
 		distanceRange = std::make_pair(0, 256);
 	}
 

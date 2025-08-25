@@ -150,12 +150,18 @@ Rect Building::GetUnder() {
     return under;
 }
 
-void Building::TemplateLayout(vector<string> temps, FACE_DIRECTION face, float aboveScalar, float underScalar) {
+void Building::TemplateLayout(vector<string> temps, FACE_DIRECTION face,
+    float aboveScalar, float underScalar) {
     float aboveScalarX = aboveScalar;
     float aboveScalarY = aboveScalar;
     float underScalarX = underScalar;
     float underScalarY = underScalar;
 
+    TemplateLayout(temps, face, aboveScalarX, aboveScalarY, underScalarX, underScalarY);
+}
+
+void Building::TemplateLayout(vector<string> temps, FACE_DIRECTION face,
+    float aboveScalarX, float aboveScalarY, float underScalarX, float underScalarY) {
     // 设定局部位置
     float minLength = 1.6f;
     float minGap = 0.4f;
@@ -1292,7 +1298,40 @@ void TheaterBuilding::InitBuilding() {
 }
 
 void TheaterBuilding::DistributeInside() {
+    // Parking
+    // Stage
 
+    auto theater = CreateComponent<TheaterComponent>();
+
+    float aboveScalar, underScalar;
+    if (GetAcreage() < 5000) {
+        aboveScalar = underScalar = 0.8f;
+    }
+    else {
+        aboveScalar = underScalar = 0.6f;
+    }
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            theater->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    int standard = 1e4;
+    vector<string> temps = { "single_room"  };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(StageRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > theater->GetRooms().size()) {
+        for (int i = theater->GetRooms().size(); i < rooms.size(); i++) {
+            theater->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> TheaterBuilding::GetJobs() {
@@ -1316,7 +1355,61 @@ void CinemaBuilding::InitBuilding() {
 }
 
 void CinemaBuilding::DistributeInside() {
+    // Parking
+    // Reception
+    // Toilet
+    // Movie
 
+    auto cinema = CreateComponent<CinemaComponent>();
+
+    float aboveScalar, underScalar;
+    if (GetAcreage() < 10000) {
+        aboveScalar = underScalar = 0.8f;
+    }
+    else {
+        aboveScalar = underScalar = 0.6f;
+    }
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            cinema->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        cinema->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, 1e4));
+        cinema->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+    }
+
+
+    int standard = 400;
+    vector<string> temps = { "pile_double" };
+    int face = (GetSizeX() > GetSizeY()) ?
+        (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+        (GetRandom(2) ? FACE_WEST : FACE_EAST);
+
+    float aboveScalarX = aboveScalar;
+    float aboveScalarY = aboveScalar;
+    float underScalarX = underScalar;
+    float underScalarY = underScalar;
+    if (face == FACE_NORTH || face == FACE_SOUTH) {
+        aboveScalarY = min(aboveScalarY, 4.0f / GetSizeY());
+    }
+    else {
+        aboveScalarX = min(aboveScalarY, 4.0f / GetSizeX());
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(MovieRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalarX, aboveScalarY, underScalarX, underScalarY);
+    if (rooms.size() > cinema->GetRooms().size()) {
+        for (int i = cinema->GetRooms().size(); i < rooms.size(); i++) {
+            cinema->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> CinemaBuilding::GetJobs() {
@@ -1336,11 +1429,70 @@ void MuseumBuilding::InitBuilding() {
     else {
         layers = 1 + GetRandom(2);
     }
-    basement = GetRandom(2);
 }
 
 void MuseumBuilding::DistributeInside() {
+    // Reception
+    // Toilet
+    // Exhibition
 
+    auto museum = CreateComponent<MuseumComponent>();
+
+    float aboveScalar, underScalar;
+    if (GetAcreage() < 10000) {
+        aboveScalar = underScalar = 0.8f;
+    }
+    else {
+        aboveScalar = underScalar = 0.6f;
+    }
+
+    int standard = 400;
+    string temp = "";
+    int face = GetRandom(4);
+
+    if (GetAcreage() < 10000) {
+        standard = 400;
+        temp = "straight_linear";
+        face = (GetSizeX() < GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+    }
+    else {
+        standard = 600;
+        if (GetSizeX() / GetSizeY() > 1.8f || GetSizeY() / GetSizeX() > 1.8f) {
+            temp = "straight_linear";
+            face = (GetSizeX() < GetSizeY()) ?
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                (GetRandom(2) ? FACE_WEST : FACE_EAST);
+        }
+        else {
+            temp = "ushape_single";
+            face = (GetSizeX() > GetSizeY()) ?
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                (GetRandom(2) ? FACE_WEST : FACE_EAST);
+
+            for (int layer = 0; layer < layers; layer++) {
+                museum->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, 60));
+            }
+        }
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        museum->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(ExhibitionRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > museum->GetRooms().size()) {
+        for (int i = museum->GetRooms().size(); i < rooms.size(); i++) {
+            museum->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> MuseumBuilding::GetJobs() {
