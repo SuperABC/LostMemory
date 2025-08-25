@@ -1377,7 +1377,7 @@ void CinemaBuilding::DistributeInside() {
 
     for (int layer = 0; layer < layers; layer++) {
         cinema->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, 1e4));
-        cinema->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+        cinema->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 1e4));
     }
 
 
@@ -1472,13 +1472,13 @@ void MuseumBuilding::DistributeInside() {
                 (GetRandom(2) ? FACE_WEST : FACE_EAST);
 
             for (int layer = 0; layer < layers; layer++) {
-                museum->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, 60));
+                museum->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, standard));
             }
         }
     }
 
     for (int layer = 0; layer < layers; layer++) {
-        museum->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+        museum->AddRoom(CreateRoom<ToiletRoom>(layer + 1, standard));
     }
 
     complements = vector<vector<Room>>(basement + layers + 1);
@@ -1516,7 +1516,76 @@ void MasageBuilding::InitBuilding() {
 }
 
 void MasageBuilding::DistributeInside() {
+    // Parking
+    // Reception
+    // Toilet
+    // Masage
+    // Sauna
+    // Bath
 
+    auto masage = CreateComponent<MasageComponent>();
+
+    float aboveScalar = 0.6f, underScalar = 0.6f;
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            masage->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    int standard = 80;
+    string temp = "";
+    int face = GetRandom(4);
+
+    if (GetAcreage() < 2000) {
+        temp = "pile_double";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+
+        masage->AddRoom(CreateRoom<ReceptionRoom>(1, standard));
+        masage->AddRoom(CreateRoom<ToiletRoom>(1, standard));
+        masage->AddRoom(CreateRoom<BathRoom>(1, GetAcreage() * 0.36 * 0.4));
+        masage->AddRoom(CreateRoom<BathRoom>(1, GetAcreage() * 0.36 * 0.4));
+    }
+    else if (GetAcreage() < 8000) {
+        temp = "straight_linear";
+        face = (GetSizeX() < GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+
+        masage->AddRoom(CreateRoom<ReceptionRoom>(1, 1e4));
+        masage->AddRoom(CreateRoom<ToiletRoom>(1, GetAcreage() * 0.36 * 0.4 * 0.1));
+        masage->AddRoom(CreateRoom<BathRoom>(1, GetAcreage() * 0.36 * 0.4 * 0.3));
+        masage->AddRoom(CreateRoom<SaunaRoom>(1, GetAcreage() * 0.36 * 0.4 * 0.15));
+        masage->AddRoom(CreateRoom<BathRoom>(1, GetAcreage() * 0.36 * 0.4 * 0.3));
+        masage->AddRoom(CreateRoom<SaunaRoom>(1, GetAcreage() * 0.36 * 0.4 * 0.15));
+    }
+    else {
+        temp = "ushape_single";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+
+        masage->AddRoom(CreateRoom<ReceptionRoom>(1, 1e4));
+        masage->AddRoom(CreateRoom<ToiletRoom>(1, 1e4));
+        masage->AddRoom(CreateRoom<BathRoom>(1, 1e4));
+        masage->AddRoom(CreateRoom<SaunaRoom>(1, 1e4));
+        masage->AddRoom(CreateRoom<BathRoom>(1, 1e4));
+        masage->AddRoom(CreateRoom<SaunaRoom>(1, 1e4));
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(MasageRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > masage->GetRooms().size()) {
+        for (int i = masage->GetRooms().size(); i < rooms.size(); i++) {
+            masage->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> MasageBuilding::GetJobs() {
