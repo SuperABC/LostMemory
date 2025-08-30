@@ -2140,7 +2140,28 @@ void MiningBuilding::InitBuilding() {
 }
 
 void MiningBuilding::DistributeInside() {
+    // Mining
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(MiningRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> MiningBuilding::GetJobs() {
@@ -2159,7 +2180,28 @@ void OilingBuilding::InitBuilding() {
 }
 
 void OilingBuilding::DistributeInside() {
+    // Oiling
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(OilingRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> OilingBuilding::GetJobs() {
@@ -2178,7 +2220,28 @@ void QuarryBuilding::InitBuilding() {
 }
 
 void QuarryBuilding::DistributeInside() {
+    // Quarry
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(QuarryRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> QuarryBuilding::GetJobs() {
@@ -2197,7 +2260,28 @@ void FarmBuilding::InitBuilding() {
 }
 
 void FarmBuilding::DistributeInside() {
+    // Farm
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(FarmRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> FarmBuilding::GetJobs() {
@@ -2216,7 +2300,28 @@ void PastureBuilding::InitBuilding() {
 }
 
 void PastureBuilding::DistributeInside() {
+    // Pasture
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(PastureRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> PastureBuilding::GetJobs() {
@@ -2235,7 +2340,28 @@ void BreedingBuilding::InitBuilding() {
 }
 
 void BreedingBuilding::DistributeInside() {
+    // Breeding
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(BreedingRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> BreedingBuilding::GetJobs() {
@@ -2254,7 +2380,28 @@ void FishingBuilding::InitBuilding() {
 }
 
 void FishingBuilding::DistributeInside() {
+    // Fishing
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(FishingRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> FishingBuilding::GetJobs() {
@@ -2273,7 +2420,28 @@ void OrchardBuilding::InitBuilding() {
 }
 
 void OrchardBuilding::DistributeInside() {
+    // Orchard
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(OrchardRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> OrchardBuilding::GetJobs() {
@@ -2292,7 +2460,28 @@ void ForestBuilding::InitBuilding() {
 }
 
 void ForestBuilding::DistributeInside() {
+    // Forest
 
+    auto resource = CreateComponent<ResourceComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(ForestRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > resource->GetRooms().size()) {
+        for (int i = resource->GetRooms().size(); i < rooms.size(); i++) {
+            resource->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> ForestBuilding::GetJobs() {
@@ -2301,12 +2490,33 @@ vector<pair<Job*, int>> ForestBuilding::GetJobs() {
 
 void ParkBuilding::InitBuilding() {
     status = CONSTRUCTION_USING;
-    layers = 1;
-    basement = 0;
+    layers = 1 + GetRandom(4);
+    basement = GetRandom(3);
 }
 
 void ParkBuilding::DistributeInside() {
+    // Park
 
+    auto park = CreateComponent<ParkComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(ForestRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > park->GetRooms().size()) {
+        for (int i = park->GetRooms().size(); i < rooms.size(); i++) {
+            park->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> ParkBuilding::GetJobs() {
@@ -2320,7 +2530,28 @@ void PlazaBuilding::InitBuilding() {
 }
 
 void PlazaBuilding::DistributeInside() {
+    // Plaza
 
+    auto plaza = CreateComponent<PlazaComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(ForestRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > plaza->GetRooms().size()) {
+        for (int i = plaza->GetRooms().size(); i < rooms.size(); i++) {
+            plaza->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> PlazaBuilding::GetJobs() {
@@ -2334,7 +2565,28 @@ void StatueBuilding::InitBuilding() {
 }
 
 void StatueBuilding::DistributeInside() {
+    // Statue
 
+    auto statue = CreateComponent<StatueComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(ForestRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > statue->GetRooms().size()) {
+        for (int i = statue->GetRooms().size(); i < rooms.size(); i++) {
+            statue->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> StatueBuilding::GetJobs() {
@@ -3124,7 +3376,33 @@ void ParkingBuilding::InitBuilding() {
 }
 
 void ParkingBuilding::DistributeInside() {
+    // Parking
 
+    auto parking = CreateComponent<ParkingComponent>();
+
+    float aboveScalar = 1.0f, underScalar = 1.0f;
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            parking->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    int standard = 1e6;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(ParkingRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > parking->GetRooms().size()) {
+        for (int i = parking->GetRooms().size(); i < rooms.size(); i++) {
+            parking->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> ParkingBuilding::GetJobs() {
