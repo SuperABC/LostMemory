@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "util.h"
 
@@ -17,12 +17,12 @@ private:
 public:
     ChineseNameGenerator();
 
-    // ³õÊ¼»¯ĞÕÊÏÁĞ±í
+    // åˆå§‹åŒ–å§“æ°åˆ—è¡¨
     void InitializeSurnames();
 
-    // ³õÊ¼»¯Ãû×ÖÁĞ±í
+    // åˆå§‹åŒ–åå­—åˆ—è¡¨
     void InitializeNames();
 
-    // Éú³ÉËæ»úĞÕÃû
+    // ç”Ÿæˆéšæœºå§“å
     std::string GenerateName(bool male = true, bool female = true, bool neutral = true);
 };

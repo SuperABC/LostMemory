@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #pragma warning(disable:4244)
 #pragma warning(disable:4267)
 #pragma warning(disable:4150)
@@ -12,61 +12,61 @@
 #include <algorithm>
 
 
-// ��������ö��
+// 五行属性枚举
 enum Attribute {
-    ATTRIBUTE_NONE, // ������
-    ATTRIBUTE_METAL, // ��
-    ATTRIBUTE_WOOD, // ľ
-    ATTRIBUTE_WATER, // ˮ
-    ATTRIBUTE_FIRE, // ��
-    ATTRIBUTE_EARTH, // ��
-    ATTRIBUTE_ALL // ����
+    ATTRIBUTE_NONE, // 无属性
+    ATTRIBUTE_METAL, // 金
+    ATTRIBUTE_WOOD, // 木
+    ATTRIBUTE_WATER, // 水
+    ATTRIBUTE_FIRE, // 火
+    ATTRIBUTE_EARTH, // 土
+    ATTRIBUTE_ALL // 五行
 };
 
-// ��λö��
+// 阶位枚举
 enum Realm {
-    YELLOW_INIT, //�ƽ׳���
-    YELLOW_INIT_PEAK, //�ƽ׳����۷�
-    YELLOW_MID, //�ƽ�����
-    YELLOW_MID_PEAK, //�ƽ������۷�
-    YELLOW_LATE, //�ƽ׺���
-    YELLOW_LATE_PEAK, //�ƽ׺����۷�
-    MYSTIC_INIT, //���׳���
-    MYSTIC_INIT_PEAK, //���׳����۷�
-    MYSTIC_MID, //��������
-    MYSTIC_MID_PEAK, //���������۷�
-    MYSTIC_LATE, //���׺���
-    MYSTIC_LATE_PEAK, //���׺����۷�
-    EARTH_INIT, //�ؽ׳���
-    EARTH_INIT_PEAK, //�ؽ׳����۷�
-    EARTH_MID, //�ؽ�����
-    EARTH_MID_PEAK, //�ؽ������۷�
-    EARTH_LATE, //�ؽӺ���
-    EARTH_LATE_PEAK, //�ؽ׺����۷�
-    HEAVEN_INIT, //��׳���
-    HEAVEN_INIT_PEAK, //��׳����۷�
-    HEAVEN_MID, //�������
-    HEAVEN_MID_PEAK, //��������۷�
-    HEAVEN_LATE, //��׺���
-    HEAVEN_LATE_PEAK //��׺����۷�
+    YELLOW_INIT, //黄阶初期
+    YELLOW_INIT_PEAK, //黄阶初期巅峰
+    YELLOW_MID, //黄阶中期
+    YELLOW_MID_PEAK, //黄阶中期巅峰
+    YELLOW_LATE, //黄阶后期
+    YELLOW_LATE_PEAK, //黄阶后期巅峰
+    MYSTIC_INIT, //玄阶初期
+    MYSTIC_INIT_PEAK, //玄阶初期巅峰
+    MYSTIC_MID, //玄阶中期
+    MYSTIC_MID_PEAK, //玄阶中期巅峰
+    MYSTIC_LATE, //玄阶后期
+    MYSTIC_LATE_PEAK, //玄阶后期巅峰
+    EARTH_INIT, //地阶初期
+    EARTH_INIT_PEAK, //地阶初期巅峰
+    EARTH_MID, //地阶中期
+    EARTH_MID_PEAK, //地阶中期巅峰
+    EARTH_LATE, //地接后期
+    EARTH_LATE_PEAK, //地阶后期巅峰
+    HEAVEN_INIT, //天阶初期
+    HEAVEN_INIT_PEAK, //天阶初期巅峰
+    HEAVEN_MID, //天阶中期
+    HEAVEN_MID_PEAK, //天阶中期巅峰
+    HEAVEN_LATE, //天阶后期
+    HEAVEN_LATE_PEAK //天阶后期巅峰
 };
 
-// ���Կ��ƹ�ϵ
+// 属性克制关系
 const std::map<std::pair<Attribute, Attribute>, bool> ATTRIBUTE_COUNTERS = {
-    {{ATTRIBUTE_WATER, ATTRIBUTE_FIRE}, true}, //ˮ�˻�
-    {{ATTRIBUTE_FIRE, ATTRIBUTE_WOOD}, true}, //���ľ
-    {{ATTRIBUTE_WOOD, ATTRIBUTE_WATER}, true}, //ľ��ˮ
-    {{ATTRIBUTE_EARTH, ATTRIBUTE_METAL}, true}, //���˽�
-    {{ATTRIBUTE_METAL, ATTRIBUTE_WOOD}, true}, //���ľ
-    {{ATTRIBUTE_WOOD, ATTRIBUTE_EARTH}, true}, //ľ����
-    {{ATTRIBUTE_ALL, ATTRIBUTE_METAL}, true}, //���п˽�
-    {{ATTRIBUTE_ALL, ATTRIBUTE_WOOD}, true}, //���п�ľ
-    {{ATTRIBUTE_ALL, ATTRIBUTE_WATER}, true}, //���п�ˮ
-    {{ATTRIBUTE_ALL, ATTRIBUTE_FIRE}, true}, //���п˻�
-    {{ATTRIBUTE_ALL, ATTRIBUTE_EARTH}, true}, //���п���
+    {{ATTRIBUTE_WATER, ATTRIBUTE_FIRE}, true}, //水克火
+    {{ATTRIBUTE_FIRE, ATTRIBUTE_WOOD}, true}, //火克木
+    {{ATTRIBUTE_WOOD, ATTRIBUTE_WATER}, true}, //木克水
+    {{ATTRIBUTE_EARTH, ATTRIBUTE_METAL}, true}, //土克金
+    {{ATTRIBUTE_METAL, ATTRIBUTE_WOOD}, true}, //金克木
+    {{ATTRIBUTE_WOOD, ATTRIBUTE_EARTH}, true}, //木克土
+    {{ATTRIBUTE_ALL, ATTRIBUTE_METAL}, true}, //五行克金
+    {{ATTRIBUTE_ALL, ATTRIBUTE_WOOD}, true}, //五行克木
+    {{ATTRIBUTE_ALL, ATTRIBUTE_WATER}, true}, //五行克水
+    {{ATTRIBUTE_ALL, ATTRIBUTE_FIRE}, true}, //五行克火
+    {{ATTRIBUTE_ALL, ATTRIBUTE_EARTH}, true}, //五行克土
 };
 
-// ˫�������������ӳ��
+// 双属性组合主属性映射
 const std::map<std::pair<Attribute, Attribute>, Attribute> DUAL_ATTRIBUTE_PRIMARY = {
     {{ATTRIBUTE_WOOD, ATTRIBUTE_FIRE}, ATTRIBUTE_FIRE},
     {{ATTRIBUTE_FIRE, ATTRIBUTE_EARTH}, ATTRIBUTE_EARTH},
@@ -85,9 +85,9 @@ const std::map<std::pair<Attribute, Attribute>, Attribute> DUAL_ATTRIBUTE_PRIMAR
     {{ATTRIBUTE_ALL, ATTRIBUTE_EARTH}, ATTRIBUTE_EARTH}
 };
 
-// ��λҪ�����СATKֵ
+// 阶位要求的最小ATK值
 const std::map<Realm, int> REALM_ATK_REQUIREMENTS = {
-    // �ƽ�
+    // 黄阶
     {Realm::YELLOW_INIT, 20},
     {Realm::YELLOW_INIT_PEAK, 30},
     {Realm::YELLOW_MID, 40},
@@ -95,7 +95,7 @@ const std::map<Realm, int> REALM_ATK_REQUIREMENTS = {
     {Realm::YELLOW_LATE, 60},
     {Realm::YELLOW_LATE_PEAK, 80},
 
-    // ����
+    // 玄阶
     {Realm::MYSTIC_INIT, 100},
     {Realm::MYSTIC_INIT_PEAK, 120},
     {Realm::MYSTIC_MID, 140},
@@ -103,7 +103,7 @@ const std::map<Realm, int> REALM_ATK_REQUIREMENTS = {
     {Realm::MYSTIC_LATE, 180},
     {Realm::MYSTIC_LATE_PEAK, 200},
 
-    // �ؽ�
+    // 地阶
     {Realm::EARTH_INIT, 250},
     {Realm::EARTH_INIT_PEAK, 300},
     {Realm::EARTH_MID, 350},
@@ -111,7 +111,7 @@ const std::map<Realm, int> REALM_ATK_REQUIREMENTS = {
     {Realm::EARTH_LATE, 450},
     {Realm::EARTH_LATE_PEAK, 500},
 
-    // ���
+    // 天阶
     {Realm::HEAVEN_INIT, 600},
     {Realm::HEAVEN_INIT_PEAK, 700},
     {Realm::HEAVEN_MID, 800},
