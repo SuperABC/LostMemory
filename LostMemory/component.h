@@ -32,6 +32,7 @@ enum COMPONENT_TYPE {
 	COMPONENT_MOVING, // 搬家公司
 	COMPONENT_OPERATOR, // 运营商
 	COMPONENT_GAME, // 游戏公司
+	COMPONENT_INTERNET, // 互联网公司
 	COMPONENT_LEASE, // 外包公司
 	COMPONENT_FINANCE, // 金融公司
 	COMPONENT_LENDING, // 信贷公司
@@ -54,6 +55,10 @@ enum COMPONENT_TYPE {
 	COMPONENT_GREEN, // 绿化公司
 	COMPONENT_INTERMEDIARY, // 房屋中介
 	COMPONENT_LAB, // 实验楼
+	COMPONENT_SCIENCEDEPT, // 科学院
+	COMPONENT_ENGINEERDEPT, // 工程院
+	COMPONENT_SOCIALDEPT, // 社科院
+	COMPONENT_COMMITTEE, // 学术委员会
 	COMPONENT_GOVERNMENT, // 政府
 	COMPONENT_EDUCATIONDEPT, // 教育部
 	COMPONENT_INFODEPT, // 工信部
@@ -63,14 +68,11 @@ enum COMPONENT_TYPE {
 	COMPONENT_WEATHERDEPT, // 气象局
 	COMPONENT_TAXDEPT, // 税务局
 	COMPONENT_CIVILDEPT, // 民政局
-	COMPONENT_SCIENCEDEPT, // 科学院
-	COMPONENT_ENGINEERDEPT, // 工程院
-	COMPONENT_SOCIALDEPT, // 社科院
 	COMPONENT_DOGE, // 反贪局
-	COMPONENT_COMMITTEE, // 学术委员会
 
 	// 工业
 	COMPONENT_FACTORY, // 工厂
+	COMPONENT_WAREHOUSE, // 仓库
 	COMPONENT_RESOURCE, // 资源区
 
 	// 绿化
@@ -156,6 +158,7 @@ static std::string componentText[COMPONENT_END] = {
 	"搬家公司", // COMPONENT_MOVING
 	"运营商", // COMPONENT_OPERATOR
 	"游戏公司", // COMPONENT_GAME
+	"互联网公司", // COMPONENT_INTERNET
 	"外包公司", // COMPONENT_LEASE
 	"金融公司", // COMPONENT_FINANCE
 	"信贷公司", // COMPONENT_LENDING
@@ -194,6 +197,7 @@ static std::string componentText[COMPONENT_END] = {
 	"学术委员会", // COMPONENT_COMMITTEE
 
 	"工厂", // COMPONENT_FACTORY
+	"仓库", // COMPONENT_WAREHOUSE
 	"资源区", // COMPONENT_RESOURCE
 
 	"公园", // COMPONENT_PARK
@@ -407,6 +411,14 @@ private:
 
 };
 
+class InternetComponent : public Component {
+public:
+	InternetComponent() : Component(COMPONENT_INTERNET) {}
+
+private:
+
+};
+
 class LeaseComponent : public Component {
 public:
 	LeaseComponent() : Component(COMPONENT_LEASE) {}
@@ -583,6 +595,38 @@ private:
 
 };
 
+class ScienceDeptComponent : public Component {
+public:
+	ScienceDeptComponent() : Component(COMPONENT_SCIENCEDEPT) {}
+
+private:
+
+};
+
+class EngineerDeptComponent : public Component {
+public:
+	EngineerDeptComponent() : Component(COMPONENT_ENGINEERDEPT) {}
+
+private:
+
+};
+
+class SocialDeptComponent : public Component {
+public:
+	SocialDeptComponent() : Component(COMPONENT_SOCIALDEPT) {}
+
+private:
+
+};
+
+class CommitteeComponent : public Component {
+public:
+	CommitteeComponent() : Component(COMPONENT_COMMITTEE) {}
+
+private:
+
+};
+
 class GovernmentComponent : public Component {
 public:
 	GovernmentComponent() : Component(COMPONENT_GOVERNMENT) {}
@@ -655,6 +699,14 @@ private:
 
 };
 
+class DogeComponent : public Component {
+public:
+	DogeComponent() : Component(COMPONENT_DOGE) {}
+
+private:
+
+};
+
 class ScienceDeptComponent : public Component {
 public:
 	ScienceDeptComponent() : Component(COMPONENT_SCIENCEDEPT) {}
@@ -698,6 +750,14 @@ private:
 class FactoryComponent : public Component {
 public:
 	FactoryComponent() : Component(COMPONENT_FACTORY) {}
+
+private:
+
+};
+
+class WarehouseComponent : public Component {
+public:
+	WarehouseComponent() : Component(COMPONENT_WAREHOUSE) {}
 
 private:
 

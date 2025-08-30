@@ -48,6 +48,8 @@ shared_ptr<Component> CreateComponent(COMPONENT_TYPE type) {
         return LM_NEW(OperatorComponent);
     case COMPONENT_GAME:
         return LM_NEW(GameComponent);
+    case COMPONENT_INTERNET:
+        return LM_NEW(InternetComponent);
     case COMPONENT_LEASE:
         return LM_NEW(LeaseComponent);
     case COMPONENT_FINANCE:
@@ -92,6 +94,14 @@ shared_ptr<Component> CreateComponent(COMPONENT_TYPE type) {
         return LM_NEW(IntermediaryComponent);
     case COMPONENT_LAB:
         return LM_NEW(LabComponent);
+    case COMPONENT_SCIENCEDEPT:
+        return LM_NEW(ScienceDeptComponent);
+    case COMPONENT_ENGINEERDEPT:
+        return LM_NEW(EngineerDeptComponent);
+    case COMPONENT_SOCIALDEPT:
+        return LM_NEW(SocialDeptComponent);
+    case COMPONENT_COMMITTEE:
+        return LM_NEW(CommitteeComponent);
     case COMPONENT_GOVERNMENT:
         return LM_NEW(GovernmentComponent);
     case COMPONENT_EDUCATIONDEPT:
@@ -110,18 +120,12 @@ shared_ptr<Component> CreateComponent(COMPONENT_TYPE type) {
         return LM_NEW(TaxDeptComponent);
     case COMPONENT_CIVILDEPT:
         return LM_NEW(CivilDeptComponent);
-    case COMPONENT_SCIENCEDEPT:
-        return LM_NEW(ScienceDeptComponent);
-    case COMPONENT_ENGINEERDEPT:
-        return LM_NEW(EngineerDeptComponent);
-    case COMPONENT_SOCIALDEPT:
-        return LM_NEW(SocialDeptComponent);
     case COMPONENT_DOGE:
         return LM_NEW(DogeComponent);
-    case COMPONENT_COMMITTEE:
-        return LM_NEW(CommitteeComponent);
     case COMPONENT_FACTORY:
         return LM_NEW(FactoryComponent);
+    case COMPONENT_WAREHOUSE:
+        return LM_NEW(WarehouseComponent);
     case COMPONENT_RESOURCE:
         return LM_NEW(ResourceComponent);
     case COMPONENT_PARK:

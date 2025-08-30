@@ -270,6 +270,7 @@ private:
 
 enum AREA_TYPE;
 enum ZONE_TYPE;
+enum COMPONENT_TYPE;
 class Building : public Plot {
 public:
 	Building(BUILDING_TYPE type) : type(type) {
@@ -333,6 +334,7 @@ protected:
 		components.push_back(component);
 		return component;
 	}
+	std::shared_ptr<Component> CreateComponent(COMPONENT_TYPE type);
 
 	// 在建筑中添加房间
 	template<class T>
@@ -531,7 +533,7 @@ private:
 class OfficeBuilding : public Building {
 public:
 	OfficeBuilding() : Building(BUILDING_OFFICE) {
-		acreageRange = std::make_pair(2000, 40000);
+		acreageRange = std::make_pair(2000, 20000);
 	}
 
 	virtual void InitBuilding();

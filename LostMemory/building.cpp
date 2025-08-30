@@ -355,6 +355,12 @@ void Building::ReadTemplates(std::string path) {
     }
 }
 
+std::shared_ptr<Component> Building::CreateComponent(COMPONENT_TYPE type) {
+    std::shared_ptr<Component> component = ::CreateComponent(type);
+    components.push_back(component);
+    return component;
+}
+
 shared_ptr<Building> CreateBuilding(BUILDING_TYPE type) {
     switch (type) {
     case BUILDING_RESIDENT:
@@ -1478,7 +1484,7 @@ void MuseumBuilding::DistributeInside() {
     }
 
     for (int layer = 0; layer < layers; layer++) {
-        museum->AddRoom(CreateRoom<ToiletRoom>(layer + 1, standard));
+        museum->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
     }
 
     complements = vector<vector<Room>>(basement + layers + 1);
@@ -1604,7 +1610,28 @@ void PackageBuilding::InitBuilding() {
 }
 
 void PackageBuilding::DistributeInside() {
+    //Package
 
+    auto package = CreateComponent<PackageComponent>();
+
+    float aboveScalar = 0.6f, underScalar = 0.6f;
+
+    int standard = 1e4;
+    string temp = "single_room";
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(WarehouseRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > package->GetRooms().size()) {
+        for (int i = package->GetRooms().size(); i < rooms.size(); i++) {
+            package->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> PackageBuilding::GetJobs() {
@@ -1631,7 +1658,153 @@ void OfficeBuilding::InitBuilding() {
 }
 
 void OfficeBuilding::DistributeInside() {
+    static vector<pair<COMPONENT_TYPE, float>> probs_individual = {
+        {COMPONENT_FURNISH, 0.05f},
+        {COMPONENT_MOVING, 0.07f},
+        {COMPONENT_OPERATOR, 0.08f},
+        {COMPONENT_GAME, 0.15f},
+        {COMPONENT_INTERNET, 0.25f},
+        {COMPONENT_LEASE, 0.27f},
+        {COMPONENT_FINANCE, 0.30f},
+        {COMPONENT_LENDING, 0.32f},
+        {COMPONENT_SALE, 0.42f},
+        {COMPONENT_MEDICAL, 0.46f},
+        {COMPONENT_RELATION, 0.48f},
+        {COMPONENT_ESHOP, 0.54f},
+        {COMPONENT_STAR, 0.55f},
+        {COMPONENT_ENGINEER, 0.58f},
+        {COMPONENT_CONSTRUCT, 0.62f},
+        {COMPONENT_ART, 0.65f},
+        {COMPONENT_PUBLISHER, 0.67f},
+        {COMPONENT_TRAVEL, 0.69f},
+        {COMPONENT_MEDIA, 0.77f},
+        {COMPONENT_LAWYER, 0.82f},
+        {COMPONENT_CREW, 0.83f},
+        {COMPONENT_INSURANCE, 0.87f},
+        {COMPONENT_SECURITY, 0.90f},
+        {COMPONENT_CLEANING, 0.94f},
+        {COMPONENT_GREEN, 0.96f},
+        {COMPONENT_INTERMEDIARY, 1.0f},
+    };
+    static vector<pair<COMPONENT_TYPE, float>> probs_clustered = {
+        {COMPONENT_GAME, 0.30f},
+        {COMPONENT_MEDICAL, 0.36f},
+        {COMPONENT_ESHOP, 0.46f},
+        {COMPONENT_FINANCE, 0.52f},
+        {COMPONENT_ENGINEER, 0.62f},
+        {COMPONENT_CONSTRUCT, 0.70f},
+        {COMPONENT_ART, 0.75f},
+        {COMPONENT_PUBLISHER, 0.80f},
+        {COMPONENT_OPERATOR, 0.84f},
+        {COMPONENT_SALE, 0.96f},
+        {COMPONENT_SECURITY, 1.0f}
+    };
+    static unordered_map<COMPONENT_TYPE, int> spaces = {
+        {COMPONENT_FURNISH, 20},
+        {COMPONENT_MOVING, 50},
+        {COMPONENT_OPERATOR, 40},
+        {COMPONENT_GAME, 100},
+        {COMPONENT_INTERNET, 120},
+        {COMPONENT_LEASE, 20},
+        {COMPONENT_FINANCE, 100},
+        {COMPONENT_LENDING, 50},
+        {COMPONENT_SALE, 80},
+        {COMPONENT_MEDICAL, 120},
+        {COMPONENT_RELATION, 20},
+        {COMPONENT_ESHOP, 20},
+        {COMPONENT_STAR, 10},
+        {COMPONENT_ENGINEER, 80},
+        {COMPONENT_CONSTRUCT, 40},
+        {COMPONENT_ART, 20},
+        {COMPONENT_PUBLISHER, 100},
+        {COMPONENT_TRAVEL, 40},
+        {COMPONENT_MEDIA, 10},
+        {COMPONENT_LAWYER, 50},
+        {COMPONENT_CREW, 80},
+        {COMPONENT_INSURANCE, 120},
+        {COMPONENT_SECURITY, 80},
+        {COMPONENT_CLEANING, 20},
+        {COMPONENT_GREEN, 40},
+        {COMPONENT_INTERMEDIARY, 10},
+    };
 
+    auto office = CreateComponent<OfficeComponent>();
+
+    float aboveScalar = 0.8f, underScalar = 0.8f;
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            office->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        office->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 80));
+    }
+
+    int standard = 320;
+    vector<string> temps;
+    int face = GetRandom(4);
+
+    if (GetAcreage() < 8000) {
+        standard = 320;
+        if (GetSizeX() / GetSizeY() > 1.5f || GetSizeY() / GetSizeX() > 1.5f) {
+            temps = { "straight_linear" };
+            face = (GetSizeX() < GetSizeY()) ?
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                (GetRandom(2) ? FACE_WEST : FACE_EAST);
+        }
+        else {
+            temps = { "fence_double" };
+            face = (GetSizeX() > GetSizeY()) ?
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                (GetRandom(2) ? FACE_WEST : FACE_EAST);
+        }
+    }
+    else {
+        standard = 480;
+        if (GetRandom(2)) {
+            temps = { "rotate_along" };
+        }
+        else {
+            temps = { "rotate_inverse" };
+        }
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        for (int i = 0; i < 20; i++) {
+            complement.push_back(OfficeRoom());
+            complement.back().SetAcreage(standard * exp(GetRandom(1000) / 1000.0f - 0.5f));
+        }
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    Component* component = nullptr;
+    int num = 0;
+    if (rooms.size() > office->GetRooms().size()) {
+        for (int i = office->GetRooms().size(); i < rooms.size(); i++) {
+            if (component == nullptr) {
+                float p = GetRandom(1000) / 1000.0f;
+                int sample = 0;
+                while(sample < probs_individual.size()) {
+                    if (p < probs_individual[sample].second) {
+                        break;
+                    }
+                    sample++;
+                }
+                component = CreateComponent(probs_individual[sample].first).get();
+                num = spaces[probs_individual[sample].first] * exp(GetRandom(1000) / 1000.0f - 0.5f) / 20;
+            }
+
+            component->AddRoom(rooms[i]);
+            num--;
+
+            if (num <= 0) {
+                component = nullptr;
+                num = 0;
+            }
+        }
+    }
 }
 
 vector<pair<Job*, int>> OfficeBuilding::GetJobs() {
@@ -1654,11 +1827,95 @@ void LabBuilding::InitBuilding() {
     else {
         layers = 1 + GetRandom(3);
     }
-    basement = GetRandom(3);
+    basement = 0;
 }
 
 void LabBuilding::DistributeInside() {
+    static vector<pair<COMPONENT_TYPE, float>> probs = {
+        {COMPONENT_SCIENCEDEPT, 0.3f},
+        {COMPONENT_ENGINEERDEPT, 0.8f},
+        {COMPONENT_SOCIALDEPT, 0.95f},
+        {COMPONENT_COMMITTEE, 1.0f},
+    };
+    static unordered_map<COMPONENT_TYPE, int> spaces = {
+        {COMPONENT_SCIENCEDEPT, 60},
+        {COMPONENT_ENGINEERDEPT, 100},
+        {COMPONENT_SOCIALDEPT, 40},
+        {COMPONENT_COMMITTEE, 20},
+    };
 
+    auto lab = CreateComponent<LabComponent>();
+
+    float aboveScalar = 0.8f, underScalar = 0.8f;
+
+    for (int layer = 0; layer < layers; layer++) {
+        lab->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 80));
+    }
+
+    int standard = 320;
+    vector<string> temps;
+    int face = GetRandom(4);
+
+    if (GetAcreage() < 8000) {
+        standard = 320;
+        if (GetSizeX() / GetSizeY() > 1.5f || GetSizeY() / GetSizeX() > 1.5f) {
+            temps = { "straight_linear" };
+            face = (GetSizeX() < GetSizeY()) ?
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                (GetRandom(2) ? FACE_WEST : FACE_EAST);
+        }
+        else {
+            temps = { "fence_double" };
+            face = (GetSizeX() > GetSizeY()) ?
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                (GetRandom(2) ? FACE_WEST : FACE_EAST);
+        }
+    }
+    else {
+        standard = 480;
+        if (GetRandom(2)) {
+            temps = { "rotate_along" };
+        }
+        else {
+            temps = { "rotate_inverse" };
+        }
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        for (int i = 0; i < 20; i++) {
+            complement.push_back(OfficeRoom());
+            complement.back().SetAcreage(standard * exp(GetRandom(1000) / 1000.0f - 0.5f));
+        }
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    Component* component = nullptr;
+    int num = 0;
+    if (rooms.size() > lab->GetRooms().size()) {
+        for (int i = lab->GetRooms().size(); i < rooms.size(); i++) {
+            if (component == nullptr) {
+                float p = GetRandom(1000) / 1000.0f;
+                int sample = 0;
+                while (sample < probs.size()) {
+                    if (p < probs[sample].second) {
+                        break;
+                    }
+                    sample++;
+                }
+                component = CreateComponent(probs[sample].first).get();
+                num = spaces[probs[sample].first] * exp(GetRandom(1000) / 1000.0f - 0.5f) / 20;
+            }
+
+            component->AddRoom(rooms[i]);
+            num--;
+
+            if (num <= 0) {
+                component = nullptr;
+                num = 0;
+            }
+        }
+    }
 }
 
 vector<pair<Job*, int>> LabBuilding::GetJobs() {
@@ -1682,7 +1939,101 @@ void GovernmentBuilding::InitBuilding() {
 }
 
 void GovernmentBuilding::DistributeInside() {
+    static vector<pair<COMPONENT_TYPE, float>> probs = {
+        {COMPONENT_EDUCATIONDEPT, 0.15f},
+        {COMPONENT_INFODEPT, 0.25f},
+        {COMPONENT_FINANCEDEPT, 0.35f},
+        {COMPONENT_TRADEDEPT, 0.45f},
+        {COMPONENT_PETITIONDEPT, 0.55f},
+        {COMPONENT_WEATHERDEPT, 0.60f},
+        {COMPONENT_TAXDEPT, 0.70f},
+        {COMPONENT_CIVILDEPT, 0.90f},
+        {COMPONENT_DOGE, 1.0f},
+    };
+    static unordered_map<COMPONENT_TYPE, int> spaces = {
+        {COMPONENT_EDUCATIONDEPT, 60},
+        {COMPONENT_INFODEPT, 80},
+        {COMPONENT_FINANCEDEPT, 40},
+        {COMPONENT_TRADEDEPT, 50},
+        {COMPONENT_PETITIONDEPT, 40},
+        {COMPONENT_WEATHERDEPT, 20},
+        {COMPONENT_TAXDEPT, 20},
+        {COMPONENT_CIVILDEPT, 40},
+        {COMPONENT_DOGE, 20},
+    };
 
+    auto government = CreateComponent<LabComponent>();
+
+    float aboveScalar = 0.8f, underScalar = 0.8f;
+
+    for (int layer = 0; layer < layers; layer++) {
+        government->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 80));
+    }
+
+    int standard = 320;
+    vector<string> temps;
+    int face = GetRandom(4);
+
+    if (GetAcreage() < 8000) {
+        standard = 320;
+        if (GetSizeX() / GetSizeY() > 1.5f || GetSizeY() / GetSizeX() > 1.5f) {
+            temps = { "straight_linear" };
+            face = (GetSizeX() < GetSizeY()) ?
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                (GetRandom(2) ? FACE_WEST : FACE_EAST);
+        }
+        else {
+            temps = { "fence_double" };
+            face = (GetSizeX() > GetSizeY()) ?
+                (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+                (GetRandom(2) ? FACE_WEST : FACE_EAST);
+        }
+    }
+    else {
+        standard = 480;
+        if (GetRandom(2)) {
+            temps = { "rotate_along" };
+        }
+        else {
+            temps = { "rotate_inverse" };
+        }
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        for (int i = 0; i < 20; i++) {
+            complement.push_back(OfficeRoom());
+            complement.back().SetAcreage(standard * exp(GetRandom(1000) / 1000.0f - 0.5f));
+        }
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    Component* component = nullptr;
+    int num = 0;
+    if (rooms.size() > government->GetRooms().size()) {
+        for (int i = government->GetRooms().size(); i < rooms.size(); i++) {
+            if (component == nullptr) {
+                float p = GetRandom(1000) / 1000.0f;
+                int sample = 0;
+                while (sample < probs.size()) {
+                    if (p < probs[sample].second) {
+                        break;
+                    }
+                    sample++;
+                }
+                component = CreateComponent(probs[sample].first).get();
+                num = spaces[probs[sample].first] * exp(GetRandom(1000) / 1000.0f - 0.5f) / 20;
+            }
+
+            component->AddRoom(rooms[i]);
+            num--;
+
+            if (num <= 0) {
+                component = nullptr;
+                num = 0;
+            }
+        }
+    }
 }
 
 vector<pair<Job*, int>> GovernmentBuilding::GetJobs() {
@@ -1701,7 +2052,31 @@ void FactoryBuilding::InitBuilding() {
 }
 
 void FactoryBuilding::DistributeInside() {
+    // Factory
 
+    auto factory = CreateComponent<FactoryComponent>();
+
+    float aboveScalar = 0.8f, underScalar = 0.8f;
+
+    int standard = 1e5;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        if(GetRandom(2))
+            complement.push_back(MachineRoom());
+        else
+            complement.push_back(PipelineRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > factory->GetRooms().size()) {
+        for (int i = factory->GetRooms().size(); i < rooms.size(); i++) {
+            factory->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> FactoryBuilding::GetJobs() {
@@ -1720,7 +2095,33 @@ void WarehouseBuilding::InitBuilding() {
 }
 
 void WarehouseBuilding::DistributeInside() {
+    // Factory
 
+    auto warehouse = CreateComponent<WarehouseComponent>();
+
+    float aboveScalar = 0.8f, underScalar = 0.8f;
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            warehouse->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    int standard = 1e5;
+    vector<string> temps = { "single_room" };
+    int face = GetRandom(4);
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(WarehouseRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > warehouse->GetRooms().size()) {
+        for (int i = warehouse->GetRooms().size(); i < rooms.size(); i++) {
+            warehouse->AddRoom(rooms[i]);
+        }
+    }
 }
 
 vector<pair<Job*, int>> WarehouseBuilding::GetJobs() {
