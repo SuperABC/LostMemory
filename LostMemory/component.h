@@ -707,46 +707,6 @@ private:
 
 };
 
-class ScienceDeptComponent : public Component {
-public:
-	ScienceDeptComponent() : Component(COMPONENT_SCIENCEDEPT) {}
-
-private:
-
-};
-
-class EngineerDeptComponent : public Component {
-public:
-	EngineerDeptComponent() : Component(COMPONENT_ENGINEERDEPT) {}
-
-private:
-
-};
-
-class SocialDeptComponent : public Component {
-public:
-	SocialDeptComponent() : Component(COMPONENT_SOCIALDEPT) {}
-
-private:
-
-};
-
-class DogeComponent : public Component {
-public:
-	DogeComponent() : Component(COMPONENT_DOGE) {}
-
-private:
-
-};
-
-class CommitteeComponent : public Component {
-public:
-	CommitteeComponent() : Component(COMPONENT_COMMITTEE) {}
-
-private:
-
-};
-
 class FactoryComponent : public Component {
 public:
 	FactoryComponent() : Component(COMPONENT_FACTORY) {}

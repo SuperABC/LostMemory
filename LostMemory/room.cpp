@@ -134,8 +134,8 @@ shared_ptr<Room> CreateRoom(ROOM_TYPE type) {
 		return LM_NEW(AnimalRoom);
 	case ROOM_PLANT:
 		return LM_NEW(PlantRoom);
-	case ROOM_FISH:
-		return LM_NEW(FishRoom);
+	case ROOM_AQUARIUM:
+		return LM_NEW(AquariumRoom);
 	case ROOM_AMUSEMENT:
 		return LM_NEW(AmusementRoom);
 	case ROOM_GYM:

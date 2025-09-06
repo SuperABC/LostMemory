@@ -76,7 +76,7 @@ enum ROOM_TYPE {
 	ROOM_STATUE, //雕像
 	ROOM_ANIMAL, //动物场地
 	ROOM_PLANT, //植物温室
-	ROOM_FISH, //水族箱
+	ROOM_AQUARIUM, //水族馆
 	ROOM_AMUSEMENT, //游乐场
 	ROOM_GYM, //健身房
 	ROOM_FOOTBALL, //足球场
@@ -756,9 +756,9 @@ private:
 
 };
 
-class FishRoom : public Room {
+class AquariumRoom : public Room {
 public:
-	FishRoom() : Room(ROOM_FISH) {}
+	AquariumRoom() : Room(ROOM_AQUARIUM) {}
 
 private:
 
