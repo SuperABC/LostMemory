@@ -718,8 +718,8 @@ void ResidentBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> ResidentBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ResidentBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void VillaBuilding::InitBuilding() {
@@ -781,8 +781,8 @@ void VillaBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> VillaBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> VillaBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void HotelBuilding::InitBuilding() {
@@ -858,8 +858,12 @@ void HotelBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> HotelBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> HotelBuilding::GetJobs() {
+    vector<pair<shared_ptr<Job>, int>> jobs;
+
+    jobs.emplace_back(LM_NEW(HallManagerJob), 1);
+
+    return jobs;
 }
 
 void MallBuilding::InitBuilding() {
@@ -1028,8 +1032,8 @@ void MallBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> MallBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> MallBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ShopBuilding::InitBuilding() {
@@ -1143,8 +1147,8 @@ void ShopBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> ShopBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ShopBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void RestaurantBuilding::InitBuilding() {
@@ -1229,8 +1233,8 @@ void RestaurantBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> RestaurantBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> RestaurantBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void CarRentBuilding::InitBuilding() {
@@ -1290,8 +1294,8 @@ void CarRentBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> CarRentBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> CarRentBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void TheaterBuilding::InitBuilding() {
@@ -1342,8 +1346,8 @@ void TheaterBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> TheaterBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> TheaterBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void CinemaBuilding::InitBuilding() {
@@ -1420,8 +1424,8 @@ void CinemaBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> CinemaBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> CinemaBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void MuseumBuilding::InitBuilding() {
@@ -1503,8 +1507,8 @@ void MuseumBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> MuseumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> MuseumBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void MasageBuilding::InitBuilding() {
@@ -1596,8 +1600,8 @@ void MasageBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> MasageBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> MasageBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PackageBuilding::InitBuilding() {
@@ -1636,8 +1640,8 @@ void PackageBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> PackageBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PackageBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void OfficeBuilding::InitBuilding() {
@@ -1809,8 +1813,8 @@ void OfficeBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> OfficeBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> OfficeBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void LabBuilding::InitBuilding() {
@@ -1920,8 +1924,8 @@ void LabBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> LabBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> LabBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void GovernmentBuilding::InitBuilding() {
@@ -2043,8 +2047,8 @@ void GovernmentBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> GovernmentBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> GovernmentBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void FactoryBuilding::InitBuilding() {
@@ -2086,8 +2090,8 @@ void FactoryBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> FactoryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> FactoryBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void WarehouseBuilding::InitBuilding() {
@@ -2131,8 +2135,8 @@ void WarehouseBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> WarehouseBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> WarehouseBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void MiningBuilding::InitBuilding() {
@@ -2171,8 +2175,8 @@ void MiningBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> MiningBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> MiningBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void OilingBuilding::InitBuilding() {
@@ -2211,8 +2215,8 @@ void OilingBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> OilingBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> OilingBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void QuarryBuilding::InitBuilding() {
@@ -2251,8 +2255,8 @@ void QuarryBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> QuarryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> QuarryBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void FarmBuilding::InitBuilding() {
@@ -2291,8 +2295,8 @@ void FarmBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> FarmBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> FarmBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PastureBuilding::InitBuilding() {
@@ -2331,8 +2335,8 @@ void PastureBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> PastureBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PastureBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void BreedingBuilding::InitBuilding() {
@@ -2371,8 +2375,8 @@ void BreedingBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> BreedingBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> BreedingBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void FishingBuilding::InitBuilding() {
@@ -2411,8 +2415,8 @@ void FishingBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> FishingBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> FishingBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void OrchardBuilding::InitBuilding() {
@@ -2451,8 +2455,8 @@ void OrchardBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> OrchardBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> OrchardBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ForestBuilding::InitBuilding() {
@@ -2491,8 +2495,8 @@ void ForestBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> ForestBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ForestBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ParkBuilding::InitBuilding() {
@@ -2531,8 +2535,8 @@ void ParkBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> ParkBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ParkBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PlazaBuilding::InitBuilding() {
@@ -2566,8 +2570,8 @@ void PlazaBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> PlazaBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PlazaBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void StatueBuilding::InitBuilding() {
@@ -2601,8 +2605,8 @@ void StatueBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> StatueBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> StatueBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ZooBuilding::InitBuilding() {
@@ -2641,8 +2645,8 @@ void ZooBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> ZooBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ZooBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void BotanicBuilding::InitBuilding() {
@@ -2681,8 +2685,8 @@ void BotanicBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> BotanicBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> BotanicBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void AquariumBuilding::InitBuilding() {
@@ -2721,8 +2725,8 @@ void AquariumBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> AquariumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> AquariumBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void AmusementBuilding::InitBuilding() {
@@ -2760,8 +2764,8 @@ void AmusementBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> AmusementBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> AmusementBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void GymBuilding::InitBuilding() {
@@ -2800,8 +2804,8 @@ void GymBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> GymBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> GymBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void StadiumBuilding::InitBuilding() {
@@ -2922,8 +2926,8 @@ void StadiumBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> StadiumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> StadiumBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ResortBuilding::InitBuilding() {
@@ -2961,8 +2965,8 @@ void ResortBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> ResortBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ResortBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void RemainsBuilding::InitBuilding() {
@@ -2995,8 +2999,8 @@ void RemainsBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> RemainsBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> RemainsBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void SchoolBuilding::InitBuilding() {
@@ -3060,11 +3064,11 @@ void SchoolBuilding::DistributeInside() {
 
     for (int layer = 0; layer < layers; layer++) {
         school->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
-        school->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 100));
-        school->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 100));
+        school->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 120));
+        school->AddRoom(CreateRoom<OfficeRoom>(layer + 1, 120));
     }
 
-    int standard = 100;
+    int standard = 160;
     string temp = "";
     int face = GetRandom(4);
     if (GetAcreage() < 10000) {
@@ -3094,8 +3098,8 @@ void SchoolBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> SchoolBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> SchoolBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ClinicBuilding::InitBuilding() {
@@ -3115,11 +3119,64 @@ void ClinicBuilding::InitBuilding() {
 }
 
 void ClinicBuilding::DistributeInside() {
+    // Parking
+    // Reception
+    // Toilet
+    // Doctor
 
+    auto clinic = CreateComponent<ClinicComponent>();
+
+    float aboveScalar, underScalar;
+    if (GetAcreage() < 5000) {
+        aboveScalar = underScalar = 0.8f;
+    }
+    else {
+        aboveScalar = underScalar = 0.6f;
+    }
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            clinic->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        clinic->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 1e4));
+        clinic->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, 1e4));
+    }
+
+    int standard = 80;
+    vector<string> temps = { "pile_double" };
+    int face = (GetSizeX() > GetSizeY()) ?
+        (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+        (GetRandom(2) ? FACE_WEST : FACE_EAST);
+
+    float aboveScalarX = aboveScalar;
+    float aboveScalarY = aboveScalar;
+    float underScalarX = underScalar;
+    float underScalarY = underScalar;
+    if (face == FACE_NORTH || face == FACE_SOUTH) {
+        aboveScalarY = min(aboveScalarY, 4.0f / GetSizeY());
+    }
+    else {
+        aboveScalarX = min(aboveScalarY, 4.0f / GetSizeX());
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(DoctorRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout(temps, (FACE_DIRECTION)face, aboveScalarX, aboveScalarY, underScalarX, underScalarY);
+    if (rooms.size() > clinic->GetRooms().size()) {
+        for (int i = clinic->GetRooms().size(); i < rooms.size(); i++) {
+            clinic->AddRoom(rooms[i]);
+        }
+    }
 }
 
-vector<pair<Job*, int>> ClinicBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ClinicBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void HospitalBuilding::InitBuilding() {
@@ -3142,11 +3199,86 @@ void HospitalBuilding::InitBuilding() {
 }
 
 void HospitalBuilding::DistributeInside() {
+    // Parking
+    // Motuary
+    // Reception
+    // Toilet
+    // Emergency
+    // Outpatient
+    // Operation
+    // ICU
+    // Doctor
+    // Assay
 
+    auto hospital = CreateComponent<HospitalComponent>();
+
+    float aboveScalar = 0.8f;
+    float underScalar = 0.8f;
+
+    if (basement > 1) {
+        for (int i = 1; i < basement; i++)
+            hospital->AddRoom(CreateRoom<MotuaryRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+    if (basement > 0) {
+        for (int i = 0; i < 1; i++)
+            hospital->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        hospital->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, 120));
+        hospital->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+    }
+
+    hospital->AddRoom(CreateRoom<EmergencyRoom>(1, 80));
+    hospital->AddRoom(CreateRoom<OutpatientRoom>(1, 80));
+    hospital->AddRoom(CreateRoom<AssayRoom>(1, 120));
+    hospital->AddRoom(CreateRoom<EmergencyRoom>(1, 80));
+    hospital->AddRoom(CreateRoom<OutpatientRoom>(1, 80));
+    hospital->AddRoom(CreateRoom<EmergencyRoom>(1, 80));
+    hospital->AddRoom(CreateRoom<OutpatientRoom>(1, 80));
+    hospital->AddRoom(CreateRoom<EmergencyRoom>(1, 80));
+    hospital->AddRoom(CreateRoom<OutpatientRoom>(1, 80));
+    hospital->AddRoom(CreateRoom<OperationRoom>(2, 80));
+    hospital->AddRoom(CreateRoom<IcuRoom>(2, 80));
+    hospital->AddRoom(CreateRoom<OperationRoom>(2, 80));
+    hospital->AddRoom(CreateRoom<IcuRoom>(2, 80));
+    hospital->AddRoom(CreateRoom<OperationRoom>(2, 80));
+    hospital->AddRoom(CreateRoom<IcuRoom>(2, 80));
+    hospital->AddRoom(CreateRoom<OperationRoom>(2, 80));
+    hospital->AddRoom(CreateRoom<IcuRoom>(2, 80));
+    
+    int standard = 80;
+    string temp = "";
+    int face = GetRandom(4);
+    if (GetAcreage() < 5000) {
+        temp = "straight_linear";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_WEST : FACE_EAST) :
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH);
+    }
+    else {
+        temp = "ushape_single";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(DoctorRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > hospital->GetRooms().size()) {
+        for (int i = hospital->GetRooms().size(); i < rooms.size(); i++) {
+            hospital->AddRoom(rooms[i]);
+        }
+    }
 }
 
-vector<pair<Job*, int>> HospitalBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> HospitalBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void InpatientBuilding::InitBuilding() {
@@ -3166,11 +3298,57 @@ void InpatientBuilding::InitBuilding() {
 }
 
 void InpatientBuilding::DistributeInside() {
+    // Parking
+    // Reception
+    // Bunk
 
+    auto inpatient = CreateComponent<InpatientComponent>();
+
+    float aboveScalar = 0.8f;
+    float underScalar = 0.8f;
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            inpatient->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        inpatient->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, 120));
+        inpatient->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+    }
+
+    int standard = 80;
+    string temp = "";
+    int face = GetRandom(4);
+    if (GetAcreage() < 5000) {
+        temp = "straight_linear";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_WEST : FACE_EAST) :
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH);
+    }
+    else {
+        temp = "ushape_single";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(BunkRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > inpatient->GetRooms().size()) {
+        for (int i = inpatient->GetRooms().size(); i < rooms.size(); i++) {
+            inpatient->AddRoom(rooms[i]);
+        }
+    }
 }
 
-vector<pair<Job*, int>> InpatientBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> InpatientBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void SanatoriumBuilding::InitBuilding() {
@@ -3190,11 +3368,57 @@ void SanatoriumBuilding::InitBuilding() {
 }
 
 void SanatoriumBuilding::DistributeInside() {
+    // Parking
+    // Reception
+    // Bunk
 
+    auto sanatorium = CreateComponent<SanatoriumComponent>();
+
+    float aboveScalar = 0.8f;
+    float underScalar = 0.8f;
+
+    if (basement > 0) {
+        for (int i = 0; i < basement; i++)
+            sanatorium->AddRoom(CreateRoom<ParkingRoom>(-i - 1, GetAcreage() * underScalar * underScalar));
+    }
+
+    for (int layer = 0; layer < layers; layer++) {
+        sanatorium->AddRoom(CreateRoom<ReceptionRoom>(layer + 1, 120));
+        sanatorium->AddRoom(CreateRoom<ToiletRoom>(layer + 1, 60));
+    }
+
+    int standard = 80;
+    string temp = "";
+    int face = GetRandom(4);
+    if (GetAcreage() < 5000) {
+        temp = "straight_linear";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_WEST : FACE_EAST) :
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH);
+    }
+    else {
+        temp = "ushape_single";
+        face = (GetSizeX() > GetSizeY()) ?
+            (GetRandom(2) ? FACE_NORTH : FACE_SOUTH) :
+            (GetRandom(2) ? FACE_WEST : FACE_EAST);
+    }
+
+    complements = vector<vector<Room>>(basement + layers + 1);
+    for (auto& complement : complements) {
+        complement.push_back(BunkRoom());
+        complement.back().SetAcreage(standard);
+    }
+
+    TemplateLayout({ temp }, (FACE_DIRECTION)face, aboveScalar, underScalar);
+    if (rooms.size() > sanatorium->GetRooms().size()) {
+        for (int i = sanatorium->GetRooms().size(); i < rooms.size(); i++) {
+            sanatorium->AddRoom(rooms[i]);
+        }
+    }
 }
 
-vector<pair<Job*, int>> SanatoriumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> SanatoriumBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PoliceBuilding::InitBuilding() {
@@ -3217,8 +3441,8 @@ void PoliceBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> PoliceBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PoliceBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PrisonBuilding::InitBuilding() {
@@ -3241,8 +3465,8 @@ void PrisonBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> PrisonBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PrisonBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void FireBuilding::InitBuilding() {
@@ -3260,8 +3484,8 @@ void FireBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> FireBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> FireBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void CourtBuilding::InitBuilding() {
@@ -3284,8 +3508,8 @@ void CourtBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> CourtBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> CourtBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void TVStationBuilding::InitBuilding() {
@@ -3311,8 +3535,8 @@ void TVStationBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> TVStationBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> TVStationBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PostBuilding::InitBuilding() {
@@ -3335,8 +3559,8 @@ void PostBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> PostBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PostBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void BankBuilding::InitBuilding() {
@@ -3359,8 +3583,8 @@ void BankBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> BankBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> BankBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void StockBuilding::InitBuilding() {
@@ -3383,8 +3607,8 @@ void StockBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> StockBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> StockBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void LibraryBuilding::InitBuilding() {
@@ -3407,8 +3631,8 @@ void LibraryBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> LibraryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> LibraryBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void RoadfixBuilding::InitBuilding() {
@@ -3421,8 +3645,8 @@ void RoadfixBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> RoadfixBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> RoadfixBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void GasolineBuilding::InitBuilding() {
@@ -3440,8 +3664,8 @@ void GasolineBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> GasolineBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> GasolineBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void CrematoriumBuilding::InitBuilding() {
@@ -3459,8 +3683,8 @@ void CrematoriumBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> CrematoriumBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> CrematoriumBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void CemetryBuilding::InitBuilding() {
@@ -3473,8 +3697,8 @@ void CemetryBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> CemetryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> CemetryBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void WaterBuilding::InitBuilding() {
@@ -3492,8 +3716,8 @@ void WaterBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> WaterBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> WaterBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void SewageBuilding::InitBuilding() {
@@ -3511,8 +3735,8 @@ void SewageBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> SewageBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> SewageBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PowerBuilding::InitBuilding() {
@@ -3530,8 +3754,8 @@ void PowerBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> PowerBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PowerBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void WindmillBuilding::InitBuilding() {
@@ -3549,8 +3773,8 @@ void WindmillBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> WindmillBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> WindmillBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void NuclearBuilding::InitBuilding() {
@@ -3568,8 +3792,8 @@ void NuclearBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> NuclearBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> NuclearBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void BatteryBuilding::InitBuilding() {
@@ -3587,8 +3811,8 @@ void BatteryBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> BatteryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> BatteryBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void DataBuilding::InitBuilding() {
@@ -3606,8 +3830,8 @@ void DataBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> DataBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> DataBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void RecycleBuilding::InitBuilding() {
@@ -3625,8 +3849,8 @@ void RecycleBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> RecycleBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> RecycleBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void TrashBuilding::InitBuilding() {
@@ -3644,8 +3868,8 @@ void TrashBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> TrashBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> TrashBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void IncinerationBuilding::InitBuilding() {
@@ -3663,8 +3887,8 @@ void IncinerationBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> IncinerationBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> IncinerationBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void RocketBuilding::InitBuilding() {
@@ -3682,8 +3906,8 @@ void RocketBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> RocketBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> RocketBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void SubstationBuilding::InitBuilding() {
@@ -3696,8 +3920,8 @@ void SubstationBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> SubstationBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> SubstationBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ParkingBuilding::InitBuilding() {
@@ -3736,8 +3960,8 @@ void ParkingBuilding::DistributeInside() {
     }
 }
 
-vector<pair<Job*, int>> ParkingBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ParkingBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void GuardBuilding::InitBuilding() {
@@ -3755,8 +3979,8 @@ void GuardBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> GuardBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> GuardBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ToiletBuilding::InitBuilding() {
@@ -3774,8 +3998,8 @@ void ToiletBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> ToiletBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ToiletBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void CanteenBuilding::InitBuilding() {
@@ -3798,8 +4022,8 @@ void CanteenBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> CanteenBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> CanteenBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void DormitryBuilding::InitBuilding() {
@@ -3825,8 +4049,8 @@ void DormitryBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> DormitryBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> DormitryBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PlaygroundBuilding::InitBuilding() {
@@ -3844,8 +4068,8 @@ void PlaygroundBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> PlaygroundBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PlaygroundBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void MetroBuilding::InitBuilding() {
@@ -3856,8 +4080,8 @@ void MetroBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> MetroBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> MetroBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void TrainBuilding::InitBuilding() {
@@ -3868,8 +4092,8 @@ void TrainBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> TrainBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> TrainBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void PlaneBuilding::InitBuilding() {
@@ -3880,8 +4104,8 @@ void PlaneBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> PlaneBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> PlaneBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 
 void ShipBuilding::InitBuilding() {
@@ -3892,7 +4116,7 @@ void ShipBuilding::DistributeInside() {
 
 }
 
-vector<pair<Job*, int>> ShipBuilding::GetJobs() {
-    return vector<pair<Job*, int>>();
+vector<pair<shared_ptr<Job>, int>> ShipBuilding::GetJobs() {
+    return vector<pair<shared_ptr<Job>, int>>();
 }
 

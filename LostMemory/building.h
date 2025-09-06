@@ -321,7 +321,7 @@ public:
 	virtual void DistributeInside() = 0;
 	
 	// 布局房间位置
-	virtual std::vector<std::pair<Job *, int>> GetJobs() = 0;
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs() = 0;
 
 	// 读入布局模板
 	static void ReadTemplates(std::string path);
@@ -377,7 +377,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -391,7 +391,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -404,7 +404,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -417,7 +417,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -430,7 +430,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -443,7 +443,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -456,7 +456,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -470,7 +470,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -484,7 +484,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -498,7 +498,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -511,7 +511,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -525,7 +525,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -538,7 +538,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -551,7 +551,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -565,7 +565,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -579,7 +579,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -592,7 +592,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -606,7 +606,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -620,7 +620,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -634,7 +634,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -648,7 +648,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -662,7 +662,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -676,7 +676,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -687,7 +687,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -701,7 +701,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -715,7 +715,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -728,7 +728,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -741,7 +741,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -755,7 +755,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -769,7 +769,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -783,7 +783,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -797,7 +797,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -811,7 +811,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -825,7 +825,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -839,7 +839,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -853,7 +853,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -867,7 +867,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -880,7 +880,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -893,7 +893,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -906,7 +906,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -919,7 +919,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -933,7 +933,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -946,7 +946,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -959,7 +959,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -973,7 +973,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -987,7 +987,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1001,7 +1001,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1015,7 +1015,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1028,7 +1028,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1041,7 +1041,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1055,7 +1055,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1069,7 +1069,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1083,7 +1083,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1097,7 +1097,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1111,7 +1111,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1124,7 +1124,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1137,7 +1137,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1150,7 +1150,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1163,7 +1163,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1176,7 +1176,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1189,7 +1189,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1202,7 +1202,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1215,7 +1215,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1228,7 +1228,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1241,7 +1241,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1254,7 +1254,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1268,7 +1268,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1282,7 +1282,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1295,7 +1295,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1309,7 +1309,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1322,7 +1322,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1335,7 +1335,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1348,7 +1348,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1359,7 +1359,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1370,7 +1370,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1381,7 +1381,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
@@ -1392,7 +1392,7 @@ public:
 
 	virtual void InitBuilding();
 	virtual void DistributeInside();
-	virtual std::vector<std::pair<Job*, int>> GetJobs();
+	virtual std::vector<std::pair<std::shared_ptr<Job>, int>> GetJobs();
 private:
 
 };
