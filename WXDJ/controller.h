@@ -16,7 +16,8 @@ private:
     }
 
     double DodgeChance(int attackerAGI, int defenderAGI) {
-        return static_cast<double>(defenderAGI) / (attackerAGI + defenderAGI);
+        return static_cast<double>(
+            defenderAGI * defenderAGI) / (attackerAGI * attackerAGI + defenderAGI * defenderAGI);
     }
 
 public:

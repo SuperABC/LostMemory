@@ -16,7 +16,7 @@ private:
     int AGI;
     Realm currentRealm;
 
-    std::vector<Action *> actions;
+    std::vector<SingleAction *> actions;
     std::vector<std::string> skills;
 
     int recover;
@@ -32,10 +32,49 @@ public:
     int GetCurrentMP() const { return currentMP; }
     int GetAGI() const { return AGI; }
     int GetCurrentRealm() const { return currentRealm; }
-    const std::vector<Action *>& GetActions() const { return actions; }
 
-    void AddAction(Action* action) {
+    void AddAction(SingleAction* action) {
         actions.push_back(action);
+    }
+    const std::vector<SingleAction*>& GetActions() const { return actions; }
+    Action* GetAction(int idx) {
+        if (idx < 0 || idx >= actions.size())return new SkipAction();
+
+        return actions[idx];
+    }
+    Action* GetAction(std::string name) {
+        for (auto action : actions) {
+            if (action->GetName() == name) {
+                return action;
+            }
+        }
+        return new SkipAction();
+    }
+    Action* GetAction(int idx1, int idx2) {
+        if (idx1 < 0 || idx1 >= actions.size())return new SkipAction();
+        if (idx2 < 0 || idx2 >= actions.size())return new SkipAction();
+
+        return new DualAction(actions[idx1], actions[idx2]);
+    }
+    Action* GetAction(std::string name1, std::string name2) {
+        SingleAction *action1 = nullptr, *action2 = nullptr;
+        for (auto action : actions) {
+            if (action->GetName() == name1) {
+                action1 = action;
+                break;
+            }
+        }
+        for (auto action : actions) {
+            if (action->GetName() == name2) {
+                action2 = action;
+                break;
+            }
+        }
+        if (action1 && action2) {
+            return new DualAction(action1, action2);
+        }
+
+        return new SkipAction();
     }
 
     void AddSkill(const std::string& skill) {
@@ -63,8 +102,11 @@ public:
             currentHP = std::max(0, currentHP - damage);
         }
         else {
-            if (damage >= currentATK * 0.3) {
+            if (damage >= currentATK * 0.6) {
                 currentHP = std::max(0, currentHP - damage);
+            }
+            else if (damage >= currentATK * 0.3) {
+                currentHP = std::max(0, (int)(currentHP - damage * 0.5f));
             }
             currentATK -= damage;
         }

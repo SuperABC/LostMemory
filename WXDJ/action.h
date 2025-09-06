@@ -36,13 +36,13 @@ public:
     SkipAction() : Action(ACTION_SKIP, ATTRIBUTE_NONE, 0, 0) {}
 };
 
-class MoveAction : public Action {
+class SingleAction : public Action {
 private:
     std::string name;
     Realm realm;
 
 public:
-    MoveAction(const std::string& name, Attribute attribute, int point, int power, Realm realm)
+    SingleAction(const std::string& name, Attribute attribute, int point, int power, Realm realm)
         : name(name), realm(realm), Action(ACTION_MOVE, attribute, point, power) {}
 
     std::string GetName() const { return name; }
@@ -51,13 +51,16 @@ public:
 
 class DualAction : public Action {
 private:
-    MoveAction action1, action2;
+    SingleAction *action1, *action2;
 
 public:
-    DualAction(MoveAction& action1, MoveAction& action2)
+    DualAction(SingleAction* action1, SingleAction* action2)
         : action1(action1), action2(action2),
-        Action(ACTION_DUAL, DUAL_ATTRIBUTE_PRIMARY.at({ action1.GetAttribute(), action1.GetAttribute() }),
-            0.75 * (action1.GetPoint() + action1.GetPoint()),
-            1.2 * (action1.GetPower() + action1.GetPower())
+        Action(ACTION_DUAL, DUAL_ATTRIBUTE_PRIMARY.at({ action1->GetAttribute(), action1->GetAttribute() }),
+            0.75 * (action1->GetPoint() + action1->GetPoint()),
+            1.2 * (action1->GetPower() + action1->GetPower())
         ) {}
+
+    SingleAction* GetAction1() { return action1; }
+    SingleAction* GetAction2() { return action2; }
 };
