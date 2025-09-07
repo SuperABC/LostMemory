@@ -11,7 +11,7 @@ private:
 
     std::mt19937 rng;
 
-    bool CheckCounter(Attribute a1, Attribute a2) {
+    bool CheckCounter(ATTRIBUTE_TYPE a1, ATTRIBUTE_TYPE a2) {
         return ATTRIBUTE_COUNTERS.find({ a1, a2 }) != ATTRIBUTE_COUNTERS.end();
     }
 
@@ -53,7 +53,7 @@ public:
 
         else if (action1->GetType() == ACTION_SKIP) {
             int point = action2->GetPoint();
-            Attribute attribute = action2->GetAttribute();
+            ATTRIBUTE_TYPE attribute = action2->GetAttribute();
 
             std::uniform_real_distribution<double> dist(0.0, 1.0);
             double dodgeChance = DodgeChance(player2->GetAGI(), player1->GetAGI());
@@ -65,7 +65,7 @@ public:
 
         else if (action2->GetType() == ACTION_SKIP) {
             int point = action1->GetPoint();
-            Attribute attribute = action1->GetAttribute();
+            ATTRIBUTE_TYPE attribute = action1->GetAttribute();
 
             std::uniform_real_distribution<double> dist(0.0, 1.0);
             double dodgeChance = DodgeChance(player1->GetAGI(), player2->GetAGI());
@@ -78,8 +78,8 @@ public:
         else {
             int point1 = action1->GetPoint();
             int point2 = action2->GetPoint();
-            Attribute attribute1 = action1->GetAttribute();
-            Attribute attribute2 = action2->GetAttribute();
+            ATTRIBUTE_TYPE attribute1 = action1->GetAttribute();
+            ATTRIBUTE_TYPE attribute2 = action2->GetAttribute();
 
             if (CheckCounter(attribute1, attribute2)) {
                 point2 /= 2;
@@ -102,6 +102,7 @@ public:
     }
 
     void EndTurn() {
-
+        player1->UpdateRealm();
+        player2->UpdateRealm();
     }
 };

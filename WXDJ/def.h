@@ -13,7 +13,7 @@
 
 
 // 五行属性枚举
-enum Attribute {
+enum ATTRIBUTE_TYPE {
     ATTRIBUTE_NONE, // 无属性
     ATTRIBUTE_METAL, // 金
     ATTRIBUTE_WOOD, // 木
@@ -52,7 +52,7 @@ enum Realm {
 };
 
 // 属性克制关系
-const std::map<std::pair<Attribute, Attribute>, bool> ATTRIBUTE_COUNTERS = {
+const std::map<std::pair<ATTRIBUTE_TYPE, ATTRIBUTE_TYPE>, bool> ATTRIBUTE_COUNTERS = {
     {{ATTRIBUTE_WATER, ATTRIBUTE_FIRE}, true}, //水克火
     {{ATTRIBUTE_FIRE, ATTRIBUTE_WOOD}, true}, //火克木
     {{ATTRIBUTE_WOOD, ATTRIBUTE_WATER}, true}, //木克水
@@ -67,7 +67,7 @@ const std::map<std::pair<Attribute, Attribute>, bool> ATTRIBUTE_COUNTERS = {
 };
 
 // 双属性组合主属性映射
-const std::map<std::pair<Attribute, Attribute>, Attribute> DUAL_ATTRIBUTE_PRIMARY = {
+const std::map<std::pair<ATTRIBUTE_TYPE, ATTRIBUTE_TYPE>, ATTRIBUTE_TYPE> DUAL_ATTRIBUTE_PRIMARY = {
     {{ATTRIBUTE_WOOD, ATTRIBUTE_FIRE}, ATTRIBUTE_FIRE},
     {{ATTRIBUTE_FIRE, ATTRIBUTE_WOOD}, ATTRIBUTE_FIRE},
     {{ATTRIBUTE_FIRE, ATTRIBUTE_EARTH}, ATTRIBUTE_EARTH},
@@ -155,4 +155,20 @@ const std::map<Realm, int> REALM_ATK_REQUIREMENTS = {
     {Realm::HEAVEN_MID_PEAK, 900},
     {Realm::HEAVEN_LATE, 1000},
     {Realm::HEAVEN_LATE_PEAK, 1200}
+};
+
+enum ACTION_TYPE {
+    ACTION_SKIP, // 跳过回合
+    ACTION_SINGLE, // 单发招式
+    ACTION_DUAL // 双发招式
+};
+
+enum EFFECT_TYPE {
+    EFFECT_DOT, // 持续伤害
+    EFFECT_RECOVER, // 回复武力值
+    EFFECT_LOCK, // 禁锢
+    EFFECT_IMMUNE, // 免疫
+    EFFECT_REBOUND, // 反弹
+    EFFECT_ABSORB, // 吸收真气
+    EFFECT_REBATE // 恢复真气
 };

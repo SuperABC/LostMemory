@@ -296,6 +296,7 @@ std::vector<SingleAction*> actions = {
     new SingleAction("五行八卦掌第二十式", ATTRIBUTE_EARTH, 560, 240, Realm::HEAVEN_LATE_PEAK),
 
 };
+
 int GetRandom(int range) {
     if (range <= 0)return 0;
 
@@ -352,7 +353,7 @@ int main() {
         }
         else {
             cout << player1.GetName() << "出招：";
-            if (action1->GetType() == ACTION_MOVE) {
+            if (action1->GetType() == ACTION_SINGLE) {
                 cout << ((SingleAction*)action1)->GetName();
             }
             else {
@@ -367,7 +368,7 @@ int main() {
         }
         else {
             cout << player2.GetName() << "出招：";
-            if (action2->GetType() == ACTION_MOVE) {
+            if (action2->GetType() == ACTION_SINGLE) {
                 cout << ((SingleAction*)action2)->GetName();
             }
             else {
@@ -395,8 +396,8 @@ int main() {
         game.EndTurn();
         cout << "回合结束" << endl;
 
-        if (action1 && action1->GetType() != ACTION_MOVE)delete action1;
-        if (action2 && action2->GetType() != ACTION_MOVE)delete action2;
+        if (action1 && action1->GetType() != ACTION_SINGLE)delete action1;
+        if (action2 && action2->GetType() != ACTION_SINGLE)delete action2;
     }
 
     if (!player1.IsAlive() && !player2.IsAlive()) {
