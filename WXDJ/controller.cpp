@@ -1,9 +1,12 @@
 #include "controller.h"
 
+#include <stdexcept>
 
-Controller::Controller(Player* p1, Player* p2)
-    : player1(p1), player2(p2) {
-    rng.seed(std::random_device()());
+
+using namespace std;
+
+Controller::Controller(vector<Player*> players) : players(players) {
+    rng.seed(random_device()());
 }
 
 bool Controller::CheckCounter(ATTRIBUTE_TYPE a1, ATTRIBUTE_TYPE a2) {
@@ -16,75 +19,110 @@ double Controller::DodgeChance(int attackerAGI, int defenderAGI) {
 }
 
 void Controller::StartTurn() {
-    player1->RecoverMP();
-    player2->RecoverMP();
-}
-
-void Controller::ActionTurn(Action* action1, Action* action2) {
-    if (action1->GetType() == ACTION_SKIP && action2->GetType() == ACTION_SKIP) return;
-    else if (action1->GetType() == ACTION_SKIP) {
-        player2->ConsumePower(action2->GetPower());
-    }
-    else if (action2->GetType() == ACTION_SKIP) {
-        player1->ConsumePower(action1->GetPower());
-    }
-    else {
-        player1->ConsumePower(action1->GetPower());
-        player2->ConsumePower(action2->GetPower());
+    for (auto player : players) {
+        player->RecoverMP();
     }
 }
 
-std::pair<int, int> Controller::CheckTurn(Action* action1, Action* action2) {
-    if (action1->GetType() == ACTION_SKIP && action2->GetType() == ACTION_SKIP) return { 0, 0 };
-    else if (action1->GetType() == ACTION_SKIP) {
-        int point = action2->GetPoint();
-        ATTRIBUTE_TYPE attribute = action2->GetAttribute();
+void Controller::ActionTurn(vector<pair<Action*, int>> actions) {
+    if (actions.size() != players.size())
+        throw runtime_error("Players and actions mismatch.");
 
-        std::uniform_real_distribution<double> dist(0.0, 1.0);
-        double dodgeChance = DodgeChance(player2->GetAGI(), player1->GetAGI());
-        if (dist(rng) < dodgeChance) return { 0, 0 };
-
-        player1->TakeDamage(point);
-        return { point, 0 };
-    }
-    else if (action2->GetType() == ACTION_SKIP) {
-        int point = action1->GetPoint();
-        ATTRIBUTE_TYPE attribute = action1->GetAttribute();
-
-        std::uniform_real_distribution<double> dist(0.0, 1.0);
-        double dodgeChance = DodgeChance(player1->GetAGI(), player2->GetAGI());
-        if (dist(rng) < dodgeChance) return { 0, 0 };
-
-        player2->TakeDamage(point);
-        return { 0, point };
-    }
-    else {
-        int point1 = action1->GetPoint();
-        int point2 = action2->GetPoint();
-        ATTRIBUTE_TYPE attribute1 = action1->GetAttribute();
-        ATTRIBUTE_TYPE attribute2 = action2->GetAttribute();
-
-        if (CheckCounter(attribute1, attribute2)) {
-            point2 /= 2;
-        }
-        if (CheckCounter(attribute2, attribute1)) {
-            point1 /= 2;
-        }
-
-        if (point1 > point2) {
-            player2->TakeDamage(point1 - point2);
-            return { 0, point1 - point2 };
-        }
-        else if (point2 > point1) {
-            player1->TakeDamage(point2 - point1);
-            return { point2 - point1, 0 };
+    for (int i = 0; i < players.size(); i++) {
+        if (actions[i].first->GetType() != ACTION_SKIP) {
+            players[i]->ConsumePower(actions[i].first->GetPower());
         }
     }
+}
 
-    return { 0, 0 };
+void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
+    if (actions.size() != players.size())
+        throw runtime_error("Players and actions mismatch.");
+
+    for (int i = 0; i < players.size(); i++) {
+        if (actions[i].first->GetType() == ACTION_SKIP)continue;
+
+        int j = actions[i].second;
+
+        if (actions[j].first->GetType() == ACTION_SKIP) {
+            uniform_real_distribution<double> dist(0.0, 1.0);
+            double dodgeChance = DodgeChance(players[i]->GetAGI(), players[j]->GetAGI());
+            if (dist(rng) < dodgeChance) {
+                logs.push_back(Log(i, j));
+                 continue;
+            }
+            else {
+                int point = actions[i].first->GetPoint();
+                players[j]->TakeDamage(point);
+                logs.push_back(Log(i, j, actions[i].first->GetAttribute(), point, 0));
+            }
+        }
+        else {
+            if (actions[j].second == i) {
+                if (j < i)continue;
+
+                int point1 = actions[i].first->GetPoint();
+                int point2 = actions[j].first->GetPoint();
+                ATTRIBUTE_TYPE attribute1 = actions[i].first->GetAttribute();
+                ATTRIBUTE_TYPE attribute2 = actions[j].first->GetAttribute();
+
+                if (CheckCounter(attribute1, attribute2)) {
+                    point2 /= 2;
+                }
+                if (CheckCounter(attribute2, attribute1)) {
+                    point1 /= 2;
+                }
+
+                if (point1 > point2) {
+                    players[j]->TakeDamage(point1 - point2);
+                    logs.push_back(Log(i, j, actions[i].first->GetAttribute(), point1 - point2, 0));
+                    if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
+                        int penerate = point2 * ((PenetrateEffect*)effect)->GetRatio(actions[j].first->GetAttribute());
+                        players[j]->TakeDamage(penerate);
+                        logs.push_back(Log(i, j, actions[i].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                    }
+                    if (auto effect = actions[j].first->GetEffect(EFFECT_PENETRATE)) {
+                        int penerate = point2 * ((PenetrateEffect*)effect)->GetRatio(actions[i].first->GetAttribute());
+                        players[i]->TakeDamage(penerate);
+                        logs.push_back(Log(j, i, actions[j].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                    }
+                }
+                else if (point2 > point1) {
+                    players[i]->TakeDamage(point2 - point1);
+                    logs.push_back(Log(j, i, actions[j].first->GetAttribute(), point2 - point1, 0));
+                    if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
+                        int penerate = point1 * ((PenetrateEffect*)effect)->GetRatio(actions[j].first->GetAttribute());
+                        players[j]->TakeDamage(penerate);
+                        logs.push_back(Log(i, j, actions[i].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                    }
+                    if (auto effect = actions[j].first->GetEffect(EFFECT_PENETRATE)) {
+                        int penerate = point1 * ((PenetrateEffect*)effect)->GetRatio(actions[i].first->GetAttribute());
+                        players[i]->TakeDamage(penerate);
+                        logs.push_back(Log(j, i, actions[j].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                    }
+                }
+            }
+            else {
+                int point = actions[i].first->GetPoint();
+                players[j]->TakeDamage(point);
+                logs.push_back(Log(i, j, actions[i].first->GetAttribute(), point, 0));
+            }
+        }
+    }
 }
 
 void Controller::EndTurn() {
-    player1->UpdateRealm();
-    player2->UpdateRealm();
+    for (auto player : players) {
+        player->UpdateRealm();
+    }
+}
+
+vector<Log> Controller::GetNews() {
+    vector<Log> news;
+    for (int i = mark; i < logs.size(); i++) {
+        news.push_back(logs[i]);
+    }
+    mark = logs.size();
+
+    return news;
 }

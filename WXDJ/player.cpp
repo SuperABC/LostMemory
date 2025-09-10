@@ -1,13 +1,15 @@
 #include "player.h"
 
 
-Player::Player(const std::string& name, int hp, int atk, int mp, int agi, int recover)
+using namespace std;
+
+Player::Player(const string& name, int hp, int atk, int mp, int agi, int recover)
     : name(name), maxHP(hp), currentHP(hp), maxATK(atk), currentATK(atk),
     maxMP(mp), currentMP(mp), AGI(agi), currentRealm(YELLOW_INIT), recover(recover) {
 
 }
 
-std::string Player::GetName() const {
+string Player::GetName() const {
     return name;
 }
 int Player::GetCurrentHP() const {
@@ -30,7 +32,7 @@ void Player::AddAction(SingleAction* action) {
     actions.push_back(action);
 }
 
-const std::vector<SingleAction*>& Player::GetActions() const {
+const vector<SingleAction*>& Player::GetActions() const {
     return actions;
 }
 
@@ -39,7 +41,7 @@ Action* Player::GetAction(int idx) {
     return actions[idx];
 }
 
-Action* Player::GetAction(std::string name) {
+Action* Player::GetAction(string name) {
     for (auto action : actions) {
         if (action->GetName() == name) {
             return action;
@@ -54,7 +56,7 @@ Action* Player::GetAction(int idx1, int idx2) {
     return new DualAction(actions[idx1], actions[idx2]);
 }
 
-Action* Player::GetAction(std::string name1, std::string name2) {
+Action* Player::GetAction(string name1, string name2) {
     SingleAction* action1 = nullptr, * action2 = nullptr;
     for (auto action : actions) {
         if (action->GetName() == name1) {
@@ -74,7 +76,7 @@ Action* Player::GetAction(std::string name1, std::string name2) {
     return new SkipAction();
 }
 
-void Player::AddSkill(const std::string& skill) {
+void Player::AddSkill(const string& skill) {
     skills.push_back(skill);
 }
 
@@ -93,20 +95,20 @@ void Player::ConsumePower(int power) {
     else {
         int deficit = power - currentMP;
         currentMP = 0;
-        currentATK = std::max(0, currentATK - deficit * 2);
+        currentATK = max(0, currentATK - deficit * 2);
     }
 }
 
 void Player::TakeDamage(int damage, bool physical) {
     if (physical) {
-        currentHP = std::max(0, currentHP - damage);
+        currentHP = max(0, currentHP - damage);
     }
     else {
         if (damage >= currentATK * 0.6) {
-            currentHP = std::max(0, currentHP - damage);
+            currentHP = max(0, currentHP - damage);
         }
         else if (damage >= currentATK * 0.3) {
-            currentHP = std::max(0, static_cast<int>(currentHP - damage * 0.5f));
+            currentHP = max(0, static_cast<int>(currentHP - damage * 0.5f));
         }
         currentATK -= damage;
     }
@@ -124,7 +126,7 @@ void Player::UpdateRealm() {
 }
 
 void Player::RecoverHP(int treat) {
-    currentHP = std::min(maxHP, currentHP + treat);
+    currentHP = min(maxHP, currentHP + treat);
 }
 
 void Player::RecoverMP() {

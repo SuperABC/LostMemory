@@ -7,7 +7,17 @@
 
 using namespace std;
 
-std::vector<SingleAction*> actions = {
+std::vector<std::string> attributeText = {
+    "无属性",
+    "金属性",
+    "木属性",
+    "水属性",
+    "火属性",
+    "土属性",
+    "五行属性"
+};
+
+vector<SingleAction*> actions = {
     new SingleAction("基础掌法", ATTRIBUTE_NONE, 15, 12, Realm::YELLOW_INIT),
     new SingleAction("基础拳法", ATTRIBUTE_NONE, 18, 15, Realm::YELLOW_INIT),
     new SingleAction("基础腿法", ATTRIBUTE_NONE, 22, 18, Realm::YELLOW_INIT),
@@ -22,26 +32,66 @@ std::vector<SingleAction*> actions = {
     new SingleAction("自由拳法", ATTRIBUTE_NONE, 48, 30, Realm::MYSTIC_LATE),
     new SingleAction("自由腿法", ATTRIBUTE_NONE, 55, 35, Realm::MYSTIC_LATE),
 
-    new SingleAction("千腿第一式", ATTRIBUTE_NONE, 72, 40, Realm::EARTH_INIT),
-    new SingleAction("千腿第二式", ATTRIBUTE_NONE, 80, 43, Realm::EARTH_INIT_PEAK),
-    new SingleAction("千腿第三式", ATTRIBUTE_NONE, 88, 47, Realm::EARTH_MID),
-    new SingleAction("千腿第四式", ATTRIBUTE_NONE, 92, 50, Realm::EARTH_MID_PEAK),
-    new SingleAction("千腿第五式", ATTRIBUTE_NONE, 104, 55, Realm::EARTH_LATE),
-    new SingleAction("千腿第六式", ATTRIBUTE_NONE, 112, 59, Realm::EARTH_LATE_PEAK),
-    new SingleAction("千腿第七式", ATTRIBUTE_NONE, 122, 64, Realm::HEAVEN_INIT),
-    new SingleAction("千腿第八式", ATTRIBUTE_NONE, 135, 70, Realm::HEAVEN_INIT),
-    new SingleAction("千腿第九式", ATTRIBUTE_NONE, 150, 77, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("千腿第十式", ATTRIBUTE_NONE, 168, 85, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("千腿第十一式", ATTRIBUTE_NONE, 192, 95, Realm::HEAVEN_MID),
-    new SingleAction("千腿第十二式", ATTRIBUTE_NONE, 216, 106, Realm::HEAVEN_MID),
-    new SingleAction("千腿第十三式", ATTRIBUTE_NONE, 244, 118, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("千腿第十四式", ATTRIBUTE_NONE, 280, 132, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("千腿第十五式", ATTRIBUTE_NONE, 310, 145, Realm::HEAVEN_LATE),
-    new SingleAction("千腿第十六式", ATTRIBUTE_NONE, 346, 160, Realm::HEAVEN_LATE),
-    new SingleAction("千腿第十七式", ATTRIBUTE_NONE, 388, 176, Realm::HEAVEN_LATE),
-    new SingleAction("千腿第十八式", ATTRIBUTE_NONE, 436, 194, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("千腿第十九式", ATTRIBUTE_NONE, 488, 214, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("千腿第二十式", ATTRIBUTE_NONE, 560, 240, Realm::HEAVEN_LATE_PEAK),
+    new SingleAction("千腿第一式", ATTRIBUTE_NONE, 72, 40, Realm::EARTH_INIT, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第二式", ATTRIBUTE_NONE, 80, 43, Realm::EARTH_INIT_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第三式", ATTRIBUTE_NONE, 88, 47, Realm::EARTH_MID, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第四式", ATTRIBUTE_NONE, 92, 50, Realm::EARTH_MID_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第五式", ATTRIBUTE_NONE, 104, 55, Realm::EARTH_LATE, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第六式", ATTRIBUTE_NONE, 112, 59, Realm::EARTH_LATE_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第七式", ATTRIBUTE_NONE, 122, 64, Realm::HEAVEN_INIT, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第八式", ATTRIBUTE_NONE, 135, 70, Realm::HEAVEN_INIT, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第九式", ATTRIBUTE_NONE, 150, 77, Realm::HEAVEN_INIT_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十式", ATTRIBUTE_NONE, 168, 85, Realm::HEAVEN_INIT_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十一式", ATTRIBUTE_NONE, 192, 95, Realm::HEAVEN_MID, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十二式", ATTRIBUTE_NONE, 216, 106, Realm::HEAVEN_MID, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十三式", ATTRIBUTE_NONE, 244, 118, Realm::HEAVEN_MID_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十四式", ATTRIBUTE_NONE, 280, 132, Realm::HEAVEN_MID_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十五式", ATTRIBUTE_NONE, 310, 145, Realm::HEAVEN_LATE, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十六式", ATTRIBUTE_NONE, 346, 160, Realm::HEAVEN_LATE, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十七式", ATTRIBUTE_NONE, 388, 176, Realm::HEAVEN_LATE, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十八式", ATTRIBUTE_NONE, 436, 194, Realm::HEAVEN_LATE_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第十九式", ATTRIBUTE_NONE, 488, 214, Realm::HEAVEN_LATE_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("千腿第二十式", ATTRIBUTE_NONE, 560, 240, Realm::HEAVEN_LATE_PEAK, {
+            new PenetrateEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
 
     new SingleAction("开天辟地爪第一式", ATTRIBUTE_NONE, 72, 40, Realm::EARTH_INIT),
     new SingleAction("开天辟地爪第二式", ATTRIBUTE_NONE, 80, 43, Realm::EARTH_INIT_PEAK),
@@ -307,18 +357,45 @@ int GetRandom(int range) {
     return ret;
 }
 
+void PrintNews(vector<Log> news, vector<Player*> players) {
+    for (auto n : news) {
+        switch (n.type) {
+        case LOG_MOVE:
+            cout << players[n.subject]->GetName() << "对" << players[n.object]->GetName() << "造成" <<
+                attributeText[n.attribute] << n.pointAtk << "点招式武力伤害" << endl;
+            break;
+        case LOG_DODGE:
+            cout << players[n.object]->GetName() << "闪避成功" << endl;
+            break;
+        case LOG_EFFECT:
+            switch (n.effect) {
+            case EFFECT_PENETRATE:
+                cout << players[n.subject]->GetName() << "对" << players[n.object]->GetName() << "造成" <<
+                    attributeText[n.attribute] << n.pointAtk << "点穿透武力伤害" << endl;
+                break;
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+}
+
 int main() {
     Player player1("张三", 1000, 1200, 720, 20, 40);
     Player player2("李四", 1000, 1080, 800, 22, 40);
+    vector<Player*> players = { &player1, &player2 };
     for (auto action : actions) {
         player1.AddAction(action);
         player2.AddAction(action);
     }
 
-    Controller game(&player1, &player2);
+    Controller game({ &player1, &player2 });
 
     cout << "《五行斗诀》战斗开始！" << endl;
-    cout << player1.GetName() << " VS " << player2.GetName() <<  std::endl;
+    cout << player1.GetName() << " VS " << player2.GetName() <<  endl;
 
     int turnCount = 0;
     while (player1.IsAlive() && player2.IsAlive()) {
@@ -333,6 +410,7 @@ int main() {
         game.StartTurn();
         cout << player1.GetName() << "真气量回复至" << player1.GetCurrentMP() << endl;
         cout << player2.GetName() << "真气量回复至" << player2.GetCurrentMP() << endl;
+        PrintNews(game.GetNews(), players);
 
         Action *action1, *action2;
         if (GetRandom(4)) {
@@ -347,7 +425,7 @@ int main() {
         else {
             action2 = player2.GetAction(GetRandom(actions.size() + 10), GetRandom(actions.size() + 10));
         }
-        game.ActionTurn(action1, action2);
+        game.ActionTurn({ { action1, 1 }, { action2, 0 } });
         if (action1->GetType() == ACTION_SKIP) {
             cout << player1.GetName() << "跳过回合" << endl;
         }
@@ -378,22 +456,13 @@ int main() {
             }
             cout << "，消耗" << action2->GetPower() << "真气量，点数" << action2->GetPoint() << endl;
         }
+        PrintNews(game.GetNews(), players);
 
-        auto check = game.CheckTurn(action1, action2);
-        if (check.first == 0) {
-            cout << player1.GetName() << "未受伤害" << endl;
-        }
-        else {
-            cout << player1.GetName() << "受到" << check.first << "伤害" << endl;
-        }
-        if (check.second == 0) {
-            cout << player2.GetName() << "未受伤害" << endl;
-        }
-        else {
-            cout << player2.GetName() << "受到" << check.second << "伤害" << endl;
-        }
+        game.CheckTurn({ { action1, 1 }, { action2, 0 } });
+        PrintNews(game.GetNews(), players);
 
         game.EndTurn();
+        PrintNews(game.GetNews(), players);
         cout << "回合结束" << endl;
 
         if (action1 && action1->GetType() != ACTION_SINGLE)delete action1;

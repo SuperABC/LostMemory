@@ -164,12 +164,13 @@ enum ACTION_TYPE {
 };
 
 enum EFFECT_TYPE {
+    EFFECT_NONE, // 无
     EFFECT_PENETRATE, // 穿透
-    EFFECT_DOT, // 持续伤害
-    EFFECT_RECOVER, // 回复武力值
-    EFFECT_REBATE, // 恢复真气
-    EFFECT_LOCK, // 禁锢
     EFFECT_REDUCE, // 减伤
     EFFECT_REBOUND, // 反弹
     EFFECT_ABSORB, // 吸收真气
+    EFFECT_REBATE, // 返还真气
+    EFFECT_LOCK, // 禁锢
+    EFFECT_DOT, // 持续伤害
+    EFFECT_RECOVER, // 回复武力值
 };
