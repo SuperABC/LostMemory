@@ -40,9 +40,12 @@ public:
 
     bool IsAlive() const;
     bool ValidateAction(const Action* action) const;
-    void ConsumePower(int power);
-    void TakeDamage(int damage, bool physical = false);
+
+    void RecoverMP(int amount);
+    void ConsumeMP(int amount);
+    void RecoverATK(int amount);
+    void RecoverHP(int amount);
+    void TakeDamage(int amount, bool physical = false);
+    void DodgeSuccess();
     void UpdateRealm();
-    void RecoverHP(int treat);
-    void RecoverMP();
 };

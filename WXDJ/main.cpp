@@ -360,7 +360,26 @@ int GetRandom(int range) {
 void PrintNews(vector<Log> news, vector<Player*> players) {
     for (auto n : news) {
         switch (n.type) {
+        case LOG_MP:
+            cout << players[n.subject]->GetName() << "真气量回复至" << players[n.subject]->GetCurrentMP() << endl;
+            break;
+        case LOG_ATK:
+            cout << players[n.subject]->GetName() << "武力值回复至" << players[n.subject]->GetCurrentATK() << endl;
+            break;
+        case LOG_HP:
+            cout << players[n.subject]->GetName() << "健康值回复至" << players[n.subject]->GetCurrentHP() << endl;
+            break;
+        case LOG_CONSUME:
+            cout << players[n.subject]->GetName() << "消耗" << n.amount << "点武力值" << endl;
+            break;
+        case LOG_SKIP:
+            cout << players[n.subject]->GetName() << "跳过回合" << endl;
+            break;
         case LOG_MOVE:
+            cout << players[n.subject]->GetName() << "消耗" << n.amount << "点真气对" << players[n.object]->GetName() << "出招：" <<
+                n.name << ", 点数" << n.pointAtk << endl;
+            break;
+        case LOG_DAMAGE:
             cout << players[n.subject]->GetName() << "对" << players[n.object]->GetName() << "造成" <<
                 attributeText[n.attribute] << n.pointAtk << "点招式武力伤害" << endl;
             break;
@@ -408,8 +427,6 @@ int main() {
             << ", MP=" << player2.GetCurrentMP() << endl;
 
         game.StartTurn();
-        cout << player1.GetName() << "真气量回复至" << player1.GetCurrentMP() << endl;
-        cout << player2.GetName() << "真气量回复至" << player2.GetCurrentMP() << endl;
         PrintNews(game.GetNews(), players);
 
         Action *action1, *action2;
@@ -426,36 +443,7 @@ int main() {
             action2 = player2.GetAction(GetRandom(actions.size() + 10), GetRandom(actions.size() + 10));
         }
         game.ActionTurn({ { action1, 1 }, { action2, 0 } });
-        if (action1->GetType() == ACTION_SKIP) {
-            cout << player1.GetName() << "跳过回合" << endl;
-        }
-        else {
-            cout << player1.GetName() << "出招：";
-            if (action1->GetType() == ACTION_SINGLE) {
-                cout << ((SingleAction*)action1)->GetName();
-            }
-            else {
-                cout << "(" <<
-                    ((DualAction*)action1)->GetAction1()->GetName() << ", " <<
-                    ((DualAction*)action1)->GetAction2()->GetName() << ")";
-            }
-            cout << "，消耗" << action1->GetPower() << "真气量，点数" << action1->GetPoint() << endl;
-        }
-        if (action2->GetType() == ACTION_SKIP) {
-            cout << player2.GetName() << "跳过回合" << endl;
-        }
-        else {
-            cout << player2.GetName() << "出招：";
-            if (action2->GetType() == ACTION_SINGLE) {
-                cout << ((SingleAction*)action2)->GetName();
-            }
-            else {
-                cout << "(" <<
-                    ((DualAction*)action2)->GetAction1()->GetName() << ", " <<
-                    ((DualAction*)action2)->GetAction2()->GetName() << ")";
-            }
-            cout << "，消耗" << action2->GetPower() << "真气量，点数" << action2->GetPoint() << endl;
-        }
+        PrintNews(game.GetNews(), players);
         PrintNews(game.GetNews(), players);
 
         game.CheckTurn({ { action1, 1 }, { action2, 0 } });
@@ -463,6 +451,7 @@ int main() {
 
         game.EndTurn();
         PrintNews(game.GetNews(), players);
+
         cout << "回合结束" << endl;
 
         if (action1 && action1->GetType() != ACTION_SINGLE)delete action1;

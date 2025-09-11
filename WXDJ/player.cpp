@@ -88,30 +88,57 @@ bool Player::ValidateAction(const Action* action) const {
     return action->Validate(currentMP);
 }
 
-void Player::ConsumePower(int power) {
-    if (currentMP >= power) {
-        currentMP -= power;
+void Player::RecoverMP(int amount) {
+    if (amount < 0) {
+        currentMP += recover;
     }
     else {
-        int deficit = power - currentMP;
+        currentMP += amount;
+    }
+    if (currentMP > maxMP * 2) {
+        currentHP = 0;
+    }
+    else if (currentMP > maxMP) {
+        currentMP = maxMP;
+    }
+}
+
+void Player::ConsumeMP(int amount) {
+    if (currentMP >= amount) {
+        currentMP -= amount;
+    }
+    else {
+        int deficit = amount - currentMP;
         currentMP = 0;
         currentATK = max(0, currentATK - deficit * 2);
     }
 }
 
-void Player::TakeDamage(int damage, bool physical) {
+void Player::RecoverATK(int amount) {
+    currentATK = min(maxATK, currentATK + amount);
+}
+
+void Player::RecoverHP(int amount) {
+    currentHP = min(maxHP, currentHP + amount);
+}
+
+void Player::TakeDamage(int amount, bool physical) {
     if (physical) {
-        currentHP = max(0, currentHP - damage);
+        currentHP = max(0, currentHP - amount);
     }
     else {
-        if (damage >= currentATK * 0.6) {
-            currentHP = max(0, currentHP - damage);
+        if (amount >= currentATK * 0.6) {
+            currentHP = max(0, currentHP - amount);
         }
-        else if (damage >= currentATK * 0.3) {
-            currentHP = max(0, static_cast<int>(currentHP - damage * 0.5f));
+        else if (amount >= currentATK * 0.3) {
+            currentHP = max(0, static_cast<int>(currentHP - amount * 0.5f));
         }
-        currentATK -= damage;
+        currentATK -= amount;
     }
+}
+
+void Player::DodgeSuccess() {
+
 }
 
 void Player::UpdateRealm() {
@@ -122,19 +149,5 @@ void Player::UpdateRealm() {
         else {
             break;
         }
-    }
-}
-
-void Player::RecoverHP(int treat) {
-    currentHP = min(maxHP, currentHP + treat);
-}
-
-void Player::RecoverMP() {
-    currentMP += recover;
-    if (currentMP > maxMP * 2) {
-        currentHP = 0;
-    }
-    else if (currentMP > maxMP) {
-        currentMP = maxMP;
     }
 }

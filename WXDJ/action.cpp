@@ -22,10 +22,6 @@ PenetrateEffect::PenetrateEffect(float none, float metal, float wood, float wate
     if (all > 0)ratios.emplace_back(make_pair(ATTRIBUTE_ALL, all));
 }
 
-ReduceEffect::ReduceEffect() : Effect(EFFECT_REDUCE) {
-
-}
-
 ReboundEffect::ReboundEffect() : Effect(EFFECT_REBOUND) {
 
 }
@@ -43,6 +39,10 @@ LockEffect::LockEffect() : Effect(EFFECT_LOCK) {
 }
 
 DotEffect::DotEffect() : Effect(EFFECT_DOT) {
+
+}
+
+ReduceEffect::ReduceEffect() : Effect(EFFECT_REDUCE) {
 
 }
 

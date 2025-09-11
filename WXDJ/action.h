@@ -29,14 +29,6 @@ public:
     }
 };
 
-class ReduceEffect : public Effect {
-private:
-    std::vector<std::pair<ATTRIBUTE_TYPE, float>> ratios;
-
-public:
-    ReduceEffect();
-};
-
 class ReboundEffect : public Effect {
 private:
     std::vector<std::pair<ATTRIBUTE_TYPE, float>> ratios;
@@ -89,6 +81,14 @@ public:
     DotEffect();
 };
 
+class ReduceEffect : public Effect {
+private:
+    std::vector<std::pair<ATTRIBUTE_TYPE, float>> ratios;
+
+public:
+    ReduceEffect();
+};
+
 class RecoverEffect : public Effect {
 private:
     int instantRecover;
@@ -119,11 +119,15 @@ public:
     virtual bool Validate(int power) const;
 
     Effect* GetEffect(EFFECT_TYPE type);
+
+    virtual std::string GetText() = 0;
 };
 
 class SkipAction : public Action {
 public:
     SkipAction();
+
+    virtual std::string GetText() { return "нч"; }
 };
 
 class SingleAction : public Action {
@@ -133,12 +137,15 @@ private:
     std::vector<Effect*> effects;
 
     friend class DualAction;
+
 public:
     SingleAction(const std::string& name, ATTRIBUTE_TYPE attribute, int point, int power, Realm realm,
         std::vector<Effect*>effects = {});
     std::string GetName() const;
     Realm GetRealm() const;
     std::vector<Effect*>& GetEffects();
+
+    virtual std::string GetText() { return name; }
 };
 
 class DualAction : public Action {
@@ -149,4 +156,6 @@ public:
     DualAction(SingleAction* action1, SingleAction* action2);
     SingleAction* GetAction1();
     SingleAction* GetAction2();
+
+    virtual std::string GetText() { return std::string("(") + action1->GetName() + ", " + action2->GetName() + ")"; }
 };

@@ -5,10 +5,6 @@
 
 using namespace std;
 
-Controller::Controller(vector<Player*> players) : players(players) {
-    rng.seed(random_device()());
-}
-
 bool Controller::CheckCounter(ATTRIBUTE_TYPE a1, ATTRIBUTE_TYPE a2) {
     return ATTRIBUTE_COUNTERS.find({ a1, a2 }) != ATTRIBUTE_COUNTERS.end();
 }
@@ -18,9 +14,13 @@ double Controller::DodgeChance(int attackerAGI, int defenderAGI) {
         defenderAGI * defenderAGI) / (attackerAGI * attackerAGI + defenderAGI * defenderAGI);
 }
 
+Controller::Controller(vector<Player*> players) : players(players) {
+    rng.seed(random_device()());
+}
+
 void Controller::StartTurn() {
-    for (auto player : players) {
-        player->RecoverMP();
+    for (int i = 0; i < players.size(); i++) {
+        RecoverMP(i, -1);
     }
 }
 
@@ -30,7 +30,10 @@ void Controller::ActionTurn(vector<pair<Action*, int>> actions) {
 
     for (int i = 0; i < players.size(); i++) {
         if (actions[i].first->GetType() != ACTION_SKIP) {
-            players[i]->ConsumePower(actions[i].first->GetPower());
+            MakeMove(i, actions[i].second, actions[i].first->GetPower(), actions[i].first->GetText(), actions[i].first->GetPoint());
+        }
+        else {
+            SkipMove(i);
         }
     }
 }
@@ -48,13 +51,11 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
             uniform_real_distribution<double> dist(0.0, 1.0);
             double dodgeChance = DodgeChance(players[i]->GetAGI(), players[j]->GetAGI());
             if (dist(rng) < dodgeChance) {
-                logs.push_back(Log(i, j));
-                 continue;
+                DodgeSuccess(i, j);
+                continue;
             }
             else {
-                int point = actions[i].first->GetPoint();
-                players[j]->TakeDamage(point);
-                logs.push_back(Log(i, j, actions[i].first->GetAttribute(), point, 0));
+                TakeDamage(i, j, actions[i].first->GetAttribute(), actions[i].first->GetPoint(), false);
             }
         }
         else {
@@ -74,8 +75,7 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 }
 
                 if (point1 > point2) {
-                    players[j]->TakeDamage(point1 - point2);
-                    logs.push_back(Log(i, j, actions[i].first->GetAttribute(), point1 - point2, 0));
+                    TakeDamage(i, j, actions[i].first->GetAttribute(), point1 - point2, false);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
                         int penerate = point2 * ((PenetrateEffect*)effect)->GetRatio(actions[j].first->GetAttribute());
                         players[j]->TakeDamage(penerate);
@@ -88,8 +88,7 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                     }
                 }
                 else if (point2 > point1) {
-                    players[i]->TakeDamage(point2 - point1);
-                    logs.push_back(Log(j, i, actions[j].first->GetAttribute(), point2 - point1, 0));
+                    TakeDamage(j, i, actions[j].first->GetAttribute(), point2 - point1, false);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
                         int penerate = point1 * ((PenetrateEffect*)effect)->GetRatio(actions[j].first->GetAttribute());
                         players[j]->TakeDamage(penerate);
@@ -103,9 +102,7 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 }
             }
             else {
-                int point = actions[i].first->GetPoint();
-                players[j]->TakeDamage(point);
-                logs.push_back(Log(i, j, actions[i].first->GetAttribute(), point, 0));
+                TakeDamage(i, j, actions[i].first->GetAttribute(), actions[i].first->GetPoint(), false);
             }
         }
     }
@@ -125,4 +122,43 @@ vector<Log> Controller::GetNews() {
     mark = logs.size();
 
     return news;
+}
+
+void Controller::RecoverMP(int player, int amount) {
+    players[player]->RecoverMP(amount);
+    logs.push_back(Log(LOG_MP, player, amount));
+}
+
+void Controller::ConsumeMP(int player, int amount) {
+    players[player]->ConsumeMP(amount);
+    logs.push_back(Log(LOG_CONSUME, player, amount));
+}
+
+void Controller::MakeMove(int subject, int object, int amount, std::string name, int point) {
+    players[subject]->ConsumeMP(amount);
+    logs.push_back(Log(subject, object, amount, name, point));
+}
+
+void Controller::SkipMove(int player) {
+    logs.push_back(Log(player));
+}
+
+void Controller::RecoverATK(int player, int amount) {
+    players[player]->RecoverATK(amount);
+    logs.push_back(Log(LOG_ATK, player, amount));
+}
+
+void Controller::RecoverHP(int player, int amount) {
+    players[player]->RecoverHP(amount);
+    logs.push_back(Log(LOG_HP, player, amount));
+}
+
+void Controller::TakeDamage(int subject, int object, ATTRIBUTE_TYPE attribute, int amount, bool physical) {
+    players[object]->TakeDamage(amount, physical);
+    logs.push_back(Log(subject, object, attribute, physical ? 0 : amount, physical ? amount : 0));
+}
+
+void Controller::DodgeSuccess(int subject, int object) {
+    players[object]->DodgeSuccess();
+    logs.push_back(Log(subject, object));
 }
