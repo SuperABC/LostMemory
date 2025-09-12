@@ -55,7 +55,8 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 continue;
             }
             else {
-                TakeDamage(i, j, actions[i].first->GetAttribute(), actions[i].first->GetPoint(), false);
+                TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
+                    actions[i].first->GetAttribute(), actions[i].first->GetPoint());
             }
         }
         else {
@@ -75,34 +76,41 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 }
 
                 if (point1 > point2) {
-                    TakeDamage(i, j, actions[i].first->GetAttribute(), point1 - point2, false);
+                    TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
+                        actions[i].first->GetAttribute(), point1 - point2);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
                         int penerate = point2 * ((PenetrateEffect*)effect)->GetRatio(actions[j].first->GetAttribute());
-                        players[j]->TakeDamage(penerate);
                         logs.push_back(Log(i, j, actions[i].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                        TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
+                            actions[i].first->GetAttribute(), penerate, false);
                     }
                     if (auto effect = actions[j].first->GetEffect(EFFECT_PENETRATE)) {
                         int penerate = point2 * ((PenetrateEffect*)effect)->GetRatio(actions[i].first->GetAttribute());
-                        players[i]->TakeDamage(penerate);
                         logs.push_back(Log(j, i, actions[j].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                        TakeDamage(j, i, actions[j].first->GetEffects(), actions[i].first->GetEffects(),
+                            actions[j].first->GetAttribute(), penerate, false);
                     }
                 }
                 else if (point2 > point1) {
-                    TakeDamage(j, i, actions[j].first->GetAttribute(), point2 - point1, false);
+                    TakeDamage(j, i, actions[j].first->GetEffects(), actions[i].first->GetEffects(),
+                        actions[j].first->GetAttribute(), point2 - point1);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
                         int penerate = point1 * ((PenetrateEffect*)effect)->GetRatio(actions[j].first->GetAttribute());
-                        players[j]->TakeDamage(penerate);
                         logs.push_back(Log(i, j, actions[i].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                        TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
+                            actions[i].first->GetAttribute(), penerate, false);
                     }
                     if (auto effect = actions[j].first->GetEffect(EFFECT_PENETRATE)) {
                         int penerate = point1 * ((PenetrateEffect*)effect)->GetRatio(actions[i].first->GetAttribute());
-                        players[i]->TakeDamage(penerate);
                         logs.push_back(Log(j, i, actions[j].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                        TakeDamage(j, i, actions[j].first->GetEffects(), actions[i].first->GetEffects(),
+                            actions[j].first->GetAttribute(), penerate, false);
                     }
                 }
             }
             else {
-                TakeDamage(i, j, actions[i].first->GetAttribute(), actions[i].first->GetPoint(), false);
+                TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
+                    actions[i].first->GetAttribute(), actions[i].first->GetPoint());
             }
         }
     }
@@ -124,41 +132,79 @@ vector<Log> Controller::GetNews() {
     return news;
 }
 
-void Controller::RecoverMP(int player, int amount) {
+void Controller::RecoverMP(int player, int amount, bool log) {
+    if (log)
+        logs.push_back(Log(LOG_MP, player, amount));
     players[player]->RecoverMP(amount);
-    logs.push_back(Log(LOG_MP, player, amount));
 }
 
-void Controller::ConsumeMP(int player, int amount) {
+void Controller::ConsumeMP(int player, int amount, bool log) {
+    if (log)
+        logs.push_back(Log(LOG_CONSUME, player, amount));
     players[player]->ConsumeMP(amount);
-    logs.push_back(Log(LOG_CONSUME, player, amount));
 }
 
-void Controller::MakeMove(int subject, int object, int amount, std::string name, int point) {
+void Controller::MakeMove(int subject, int object, int amount, std::string name, int point, bool log) {
+    if (log)
+        logs.push_back(Log(subject, object, amount, name, point));
     players[subject]->ConsumeMP(amount);
-    logs.push_back(Log(subject, object, amount, name, point));
 }
 
-void Controller::SkipMove(int player) {
-    logs.push_back(Log(player));
+void Controller::SkipMove(int player, bool log) {
+    if (log)
+        logs.push_back(Log(player));
 }
 
-void Controller::RecoverATK(int player, int amount) {
+void Controller::RecoverATK(int player, int amount, bool log) {
+    if (log)
+        logs.push_back(Log(LOG_ATK, player, amount));
     players[player]->RecoverATK(amount);
-    logs.push_back(Log(LOG_ATK, player, amount));
 }
 
-void Controller::RecoverHP(int player, int amount) {
+void Controller::RecoverHP(int player, int amount, bool log) {
+    if (log)
+        logs.push_back(Log(LOG_HP, player, amount));
     players[player]->RecoverHP(amount);
-    logs.push_back(Log(LOG_HP, player, amount));
 }
 
-void Controller::TakeDamage(int subject, int object, ATTRIBUTE_TYPE attribute, int amount, bool physical) {
+void Controller::TakeDamage(int subject, int object, std::vector<Effect*> offend, std::vector<Effect*> defend,
+    ATTRIBUTE_TYPE attribute, int amount, bool log) {
+    auto physical = std::find_if(offend.begin(), offend.end(), [](Effect* effect) {return effect->GetType() == EFFECT_PHYSICAL; });
+    if (log)
+        logs.push_back(Log(subject, object, attribute, physical != offend.end() ? 0 : amount, physical != offend.end() ? amount : 0));
+    players[object]->TakeDamage(amount, physical != offend.end());
+
+    auto rebound = std::find_if(defend.begin(), defend.end(), [](Effect* effect) {return effect->GetType() == EFFECT_REBOUND; });
+    if (rebound != defend.end()) {
+        int damage = amount * ((ReboundEffect*)*rebound)->GetRatio(attribute);
+        if (damage > 0) {
+            logs.push_back(Log(object, subject, attribute, physical != offend.end() ? 0 : damage, physical != offend.end() ? damage : 0, EFFECT_REBOUND));
+            TakeDamage(object, subject, defend, offend, attribute, physical != offend.end() ? 0 : damage, physical != offend.end() ? damage : 0, false);
+        }
+    }
+}
+
+void Controller::TakeDamage(int subject, int object, std::vector<Effect*> offend, std::vector<Effect*> defend,
+    ATTRIBUTE_TYPE attribute, int atk, int hp, bool log) {
+    int amount = atk > 0 ? atk : hp;
+    bool physical = hp > 0;
+
+    if (log)
+        logs.push_back(Log(subject, object, attribute, atk, hp));
     players[object]->TakeDamage(amount, physical);
-    logs.push_back(Log(subject, object, attribute, physical ? 0 : amount, physical ? amount : 0));
+
+    auto rebound = std::find_if(defend.begin(), defend.end(), [](Effect* effect) {return effect->GetType() == EFFECT_REBOUND; });
+    if (rebound != defend.end()) {
+        int damage = amount * ((ReboundEffect*)*rebound)->GetRatio(attribute);
+        if (damage > 0) {
+            logs.push_back(Log(object, subject, attribute, physical ? 0 : damage, physical ? damage : 0, EFFECT_REBOUND));
+            TakeDamage(object, subject, defend, offend, attribute, physical ? 0 : damage, physical ? damage : 0, false);
+        }
+    }
 }
 
-void Controller::DodgeSuccess(int subject, int object) {
+void Controller::DodgeSuccess(int subject, int object, bool log) {
+    if(log)
+        logs.push_back(Log(subject, object));
     players[object]->DodgeSuccess();
-    logs.push_back(Log(subject, object));
 }

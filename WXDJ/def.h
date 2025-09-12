@@ -165,6 +165,7 @@ enum ACTION_TYPE {
 
 enum EFFECT_TYPE {
     EFFECT_NONE, // 无
+    EFFECT_PHYSICAL, // 物理伤害
     EFFECT_PENETRATE, // 穿透
     EFFECT_REBOUND, // 反弹
     EFFECT_ABSORB, // 吸收真气

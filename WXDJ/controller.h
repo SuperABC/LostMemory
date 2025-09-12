@@ -64,12 +64,15 @@ public:
 
     std::vector<Log> GetNews();
 
-    void RecoverMP(int player, int amount);
-    void ConsumeMP(int player, int amount);
-    void MakeMove(int subject, int object, int amount, std::string name, int point);
-    void SkipMove(int player);
-    void RecoverATK(int player, int amount);
-    void RecoverHP(int player, int treat);
-    void TakeDamage(int subject, int object, ATTRIBUTE_TYPE attribute, int amount, bool physical = false);
-    void DodgeSuccess(int subject, int object);
+    void RecoverMP(int player, int amount, bool log = true);
+    void ConsumeMP(int player, int amount, bool log = true);
+    void MakeMove(int subject, int object, int amount, std::string name, int point, bool log = true);
+    void SkipMove(int player, bool log = true);
+    void RecoverATK(int player, int amount, bool log = true);
+    void RecoverHP(int player, int amount, bool log = true);
+    void TakeDamage(int subject, int object, std::vector<Effect *> offend, std::vector<Effect*> defend,
+        ATTRIBUTE_TYPE attribute, int amount, bool log = true);
+    void TakeDamage(int subject, int object, std::vector<Effect*> offend, std::vector<Effect*> defend,
+        ATTRIBUTE_TYPE attribute, int atk, int hp, bool log = true);
+    void DodgeSuccess(int subject, int object, bool log = true);
 };

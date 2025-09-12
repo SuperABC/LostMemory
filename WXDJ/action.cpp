@@ -11,6 +11,11 @@ EFFECT_TYPE Effect::GetType() {
     return type;
 }
 
+PhysicalEffect::PhysicalEffect() :
+    Effect(EFFECT_PHYSICAL) {
+
+}
+
 PenetrateEffect::PenetrateEffect(float none, float metal, float wood, float water, float fire, float earth, float all) :
     Effect(EFFECT_PENETRATE) {
     if (none > 0)ratios.emplace_back(make_pair(ATTRIBUTE_NONE, none));
@@ -22,8 +27,15 @@ PenetrateEffect::PenetrateEffect(float none, float metal, float wood, float wate
     if (all > 0)ratios.emplace_back(make_pair(ATTRIBUTE_ALL, all));
 }
 
-ReboundEffect::ReboundEffect() : Effect(EFFECT_REBOUND) {
-
+ReboundEffect::ReboundEffect(float none, float metal, float wood, float water, float fire, float earth, float all) :
+    Effect(EFFECT_REBOUND) {
+    if (none > 0)ratios.emplace_back(make_pair(ATTRIBUTE_NONE, none));
+    if (metal > 0)ratios.emplace_back(make_pair(ATTRIBUTE_METAL, metal));
+    if (wood > 0)ratios.emplace_back(make_pair(ATTRIBUTE_WOOD, wood));
+    if (water > 0)ratios.emplace_back(make_pair(ATTRIBUTE_WATER, water));
+    if (fire > 0)ratios.emplace_back(make_pair(ATTRIBUTE_FIRE, fire));
+    if (earth > 0)ratios.emplace_back(make_pair(ATTRIBUTE_EARTH, earth));
+    if (all > 0)ratios.emplace_back(make_pair(ATTRIBUTE_ALL, all));
 }
 
 AbsorbEffect::AbsorbEffect() : Effect(EFFECT_ABSORB) {
@@ -51,7 +63,7 @@ RecoverEffect::RecoverEffect() : Effect(EFFECT_RECOVER) {
 }
 
 Action::Action(ACTION_TYPE type, ATTRIBUTE_TYPE attribute, int point, int power, std::vector<Effect*> effects = {})
-    : type(type), attribute(attribute), point(point), power(power) {
+    : type(type), attribute(attribute), point(point), power(power), effects(effects) {
 }
 
 ACTION_TYPE Action::GetType() const {
@@ -79,13 +91,17 @@ Effect* Action::GetEffect(EFFECT_TYPE type) {
     return nullptr;
 }
 
+std::vector<Effect*>& Action::GetEffects() {
+    return effects;
+}
+
 SkipAction::SkipAction() : Action(ACTION_SKIP, ATTRIBUTE_NONE, 0, 0) {
 
 }
 
 SingleAction::SingleAction(const string& name, ATTRIBUTE_TYPE attribute, int point, int power, Realm realm,
     vector<Effect*>effects)
-    : name(name), realm(realm), effects(effects), Action(ACTION_SINGLE, attribute, point, power) {
+    : name(name), realm(realm), Action(ACTION_SINGLE, attribute, point, power, effects) {
 }
 
 string SingleAction::GetName() const {
@@ -114,4 +130,3 @@ SingleAction* DualAction::GetAction1() {
 SingleAction* DualAction::GetAction2() {
     return action2;
 }
-
