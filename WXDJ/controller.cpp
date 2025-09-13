@@ -55,6 +55,7 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 continue;
             }
             else {
+                HitSuccess(i, j, actions[i].first);
                 TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
                     actions[i].first->GetAttribute(), actions[i].first->GetPoint());
             }
@@ -76,6 +77,8 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 }
 
                 if (point1 > point2) {
+                    HitSuccess(i, j, actions[i].first);
+                    HitSuccess(j, i, actions[j].first);
                     TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
                         actions[i].first->GetAttribute(), point1 - point2);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
@@ -92,6 +95,8 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                     }
                 }
                 else if (point2 > point1) {
+                    HitSuccess(i, j, actions[i].first);
+                    HitSuccess(j, i, actions[j].first);
                     TakeDamage(j, i, actions[j].first->GetEffects(), actions[i].first->GetEffects(),
                         actions[j].first->GetAttribute(), point2 - point1);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
@@ -107,8 +112,25 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                             actions[j].first->GetAttribute(), penerate, false);
                     }
                 }
+                else {
+                    HitSuccess(i, j, actions[i].first);
+                    HitSuccess(j, i, actions[j].first);
+                    if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
+                        int penerate = point2 * ((PenetrateEffect*)effect)->GetRatio(actions[j].first->GetAttribute());
+                        logs.push_back(Log(i, j, actions[i].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                        TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
+                            actions[i].first->GetAttribute(), penerate, false);
+                    }
+                    if (auto effect = actions[j].first->GetEffect(EFFECT_PENETRATE)) {
+                        int penerate = point1 * ((PenetrateEffect*)effect)->GetRatio(actions[i].first->GetAttribute());
+                        logs.push_back(Log(j, i, actions[j].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
+                        TakeDamage(j, i, actions[j].first->GetEffects(), actions[i].first->GetEffects(),
+                            actions[j].first->GetAttribute(), penerate, false);
+                    }
+                }
             }
             else {
+                HitSuccess(i, j, actions[i].first);
                 TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
                     actions[i].first->GetAttribute(), actions[i].first->GetPoint());
             }
@@ -167,6 +189,10 @@ void Controller::RecoverHP(int player, int amount, bool log) {
     players[player]->RecoverHP(amount);
 }
 
+void Controller::HitSuccess(int subject, int object, Action* action, bool log) {
+
+}
+
 void Controller::TakeDamage(int subject, int object, std::vector<Effect*> offend, std::vector<Effect*> defend,
     ATTRIBUTE_TYPE attribute, int amount, bool log) {
     auto physical = std::find_if(offend.begin(), offend.end(), [](Effect* effect) {return effect->GetType() == EFFECT_PHYSICAL; });
@@ -181,6 +207,13 @@ void Controller::TakeDamage(int subject, int object, std::vector<Effect*> offend
             logs.push_back(Log(object, subject, attribute, physical != offend.end() ? 0 : damage, physical != offend.end() ? damage : 0, EFFECT_REBOUND));
             TakeDamage(object, subject, defend, offend, attribute, physical != offend.end() ? 0 : damage, physical != offend.end() ? damage : 0, false);
         }
+    }
+
+    auto absorb = std::find_if(defend.begin(), defend.end(), [](Effect* effect) {return effect->GetType() == EFFECT_ABSORB; });
+    if (absorb != defend.end()) {
+        int mp = amount * ((AbsorbEffect*)*absorb)->GetRatio(attribute);
+        logs.push_back(Log(object, subject, mp, EFFECT_ABSORB));
+        RecoverMP(object, mp);
     }
 }
 

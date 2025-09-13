@@ -38,8 +38,14 @@ ReboundEffect::ReboundEffect(float none, float metal, float wood, float water, f
     if (all > 0)ratios.emplace_back(make_pair(ATTRIBUTE_ALL, all));
 }
 
-AbsorbEffect::AbsorbEffect() : Effect(EFFECT_ABSORB) {
-
+AbsorbEffect::AbsorbEffect(float none, float metal, float wood, float water, float fire, float earth, float all) : Effect(EFFECT_ABSORB) {
+    if (none > 0)ratios.emplace_back(make_pair(ATTRIBUTE_NONE, none));
+    if (metal > 0)ratios.emplace_back(make_pair(ATTRIBUTE_METAL, metal));
+    if (wood > 0)ratios.emplace_back(make_pair(ATTRIBUTE_WOOD, wood));
+    if (water > 0)ratios.emplace_back(make_pair(ATTRIBUTE_WATER, water));
+    if (fire > 0)ratios.emplace_back(make_pair(ATTRIBUTE_FIRE, fire));
+    if (earth > 0)ratios.emplace_back(make_pair(ATTRIBUTE_EARTH, earth));
+    if (all > 0)ratios.emplace_back(make_pair(ATTRIBUTE_ALL, all));
 }
 
 RebateEffect::RebateEffect() : Effect(EFFECT_REBATE) {

@@ -55,10 +55,27 @@ public:
 class AbsorbEffect : public Effect {
 private:
     std::vector<std::pair<ATTRIBUTE_TYPE, float>> ratios;
-    std::vector<std::pair<ATTRIBUTE_TYPE, int>> limit;
 
 public:
-    AbsorbEffect();
+    AbsorbEffect(float none, float metal, float wood, float water, float fire, float earth, float all);
+
+    float GetRatio(ATTRIBUTE_TYPE attribute) {
+        for (auto ratio : ratios) {
+            if (ratio.first == attribute)return ratio.second;
+        }
+
+        return 0.0f;
+    }
+};
+
+class LockEffect : public Effect {
+private:
+    bool lockBegin;
+    bool lockMove;
+    bool lockEnd;
+
+public:
+    LockEffect();
 };
 
 class RebateEffect : public Effect {
@@ -71,16 +88,6 @@ private:
 
 public:
     RebateEffect();
-};
-
-class LockEffect : public Effect {
-private:
-    bool lockBegin;
-    bool lockMove;
-    bool lockEnd;
-
-public:
-    LockEffect();
 };
 
 class DotEffect : public Effect {
@@ -540,26 +547,66 @@ static std::vector<SingleAction*> actions = {
     new SingleAction("荒星第十九式", ATTRIBUTE_EARTH, 488, 214, Realm::HEAVEN_LATE_PEAK),
     new SingleAction("荒星第二十式", ATTRIBUTE_EARTH, 560, 240, Realm::HEAVEN_LATE_PEAK),
 
-    new SingleAction("地狱阴魔拳第一式", ATTRIBUTE_EARTH, 72, 40, Realm::EARTH_INIT),
-    new SingleAction("地狱阴魔拳第二式", ATTRIBUTE_EARTH, 80, 43, Realm::EARTH_INIT_PEAK),
-    new SingleAction("地狱阴魔拳第三式", ATTRIBUTE_EARTH, 88, 47, Realm::EARTH_MID),
-    new SingleAction("地狱阴魔拳第四式", ATTRIBUTE_EARTH, 92, 50, Realm::EARTH_MID_PEAK),
-    new SingleAction("地狱阴魔拳第五式", ATTRIBUTE_EARTH, 104, 55, Realm::EARTH_LATE),
-    new SingleAction("地狱阴魔拳第六式", ATTRIBUTE_EARTH, 112, 59, Realm::EARTH_LATE_PEAK),
-    new SingleAction("地狱阴魔拳第七式", ATTRIBUTE_EARTH, 122, 64, Realm::HEAVEN_INIT),
-    new SingleAction("地狱阴魔拳第八式", ATTRIBUTE_EARTH, 135, 70, Realm::HEAVEN_INIT),
-    new SingleAction("地狱阴魔拳第九式", ATTRIBUTE_EARTH, 150, 77, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("地狱阴魔拳第十式", ATTRIBUTE_EARTH, 168, 85, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("地狱阴魔拳第十一式", ATTRIBUTE_EARTH, 192, 95, Realm::HEAVEN_MID),
-    new SingleAction("地狱阴魔拳第十二式", ATTRIBUTE_EARTH, 216, 106, Realm::HEAVEN_MID),
-    new SingleAction("地狱阴魔拳第十三式", ATTRIBUTE_EARTH, 244, 118, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("地狱阴魔拳第十四式", ATTRIBUTE_EARTH, 280, 132, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("地狱阴魔拳第十五式", ATTRIBUTE_EARTH, 310, 145, Realm::HEAVEN_LATE),
-    new SingleAction("地狱阴魔拳第十六式", ATTRIBUTE_EARTH, 346, 160, Realm::HEAVEN_LATE),
-    new SingleAction("地狱阴魔拳第十七式", ATTRIBUTE_EARTH, 388, 176, Realm::HEAVEN_LATE),
-    new SingleAction("地狱阴魔拳第十八式", ATTRIBUTE_EARTH, 436, 194, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("地狱阴魔拳第十九式", ATTRIBUTE_EARTH, 488, 214, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("地狱阴魔拳第二十式", ATTRIBUTE_EARTH, 560, 240, Realm::HEAVEN_LATE_PEAK),
+    new SingleAction("地狱阴魔拳第一式", ATTRIBUTE_EARTH, 72, 40, Realm::EARTH_INIT, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第二式", ATTRIBUTE_EARTH, 80, 43, Realm::EARTH_INIT_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第三式", ATTRIBUTE_EARTH, 88, 47, Realm::EARTH_MID, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第四式", ATTRIBUTE_EARTH, 92, 50, Realm::EARTH_MID_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第五式", ATTRIBUTE_EARTH, 104, 55, Realm::EARTH_LATE, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第六式", ATTRIBUTE_EARTH, 112, 59, Realm::EARTH_LATE_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第七式", ATTRIBUTE_EARTH, 122, 64, Realm::HEAVEN_INIT, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第八式", ATTRIBUTE_EARTH, 135, 70, Realm::HEAVEN_INIT, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第九式", ATTRIBUTE_EARTH, 150, 77, Realm::HEAVEN_INIT_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十式", ATTRIBUTE_EARTH, 168, 85, Realm::HEAVEN_INIT_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十一式", ATTRIBUTE_EARTH, 192, 95, Realm::HEAVEN_MID, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十二式", ATTRIBUTE_EARTH, 216, 106, Realm::HEAVEN_MID, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十三式", ATTRIBUTE_EARTH, 244, 118, Realm::HEAVEN_MID_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十四式", ATTRIBUTE_EARTH, 280, 132, Realm::HEAVEN_MID_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十五式", ATTRIBUTE_EARTH, 310, 145, Realm::HEAVEN_LATE, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十六式", ATTRIBUTE_EARTH, 346, 160, Realm::HEAVEN_LATE, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十七式", ATTRIBUTE_EARTH, 388, 176, Realm::HEAVEN_LATE, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十八式", ATTRIBUTE_EARTH, 436, 194, Realm::HEAVEN_LATE_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第十九式", ATTRIBUTE_EARTH, 488, 214, Realm::HEAVEN_LATE_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
+    new SingleAction("地狱阴魔拳第二十式", ATTRIBUTE_EARTH, 560, 240, Realm::HEAVEN_LATE_PEAK, {
+            new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
+        }),
 
     new SingleAction("五行八卦掌第一式", ATTRIBUTE_EARTH, 72, 40, Realm::EARTH_INIT),
     new SingleAction("五行八卦掌第二式", ATTRIBUTE_EARTH, 80, 43, Realm::EARTH_INIT_PEAK),

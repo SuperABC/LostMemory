@@ -84,6 +84,9 @@ void PrintNews(vector<Log> news, vector<Player*> players) {
                     cout << n.pointHp << "点反弹物理伤害" << endl;
                 }
                 break;
+            case EFFECT_ABSORB:
+                cout << players[n.subject]->GetName() << "吸收" << n.amount << "点真气" << endl;
+                break;
             default:
                 break;
             }
@@ -137,8 +140,10 @@ int main() {
         }
 #endif // RANDOM_MOVE
 #ifdef SPECIFIC_MOVE
-        action1 = new DualAction(actions[31], actions[172]);;
-        action2 = new DualAction(actions[49], actions[189]);;
+        action1 = actions[20];
+        //action1 = new DualAction(actions[31], actions[172]);
+        action2 = actions[240];
+        //action2 = new DualAction(actions[49], actions[189]);
 #endif
         game.ActionTurn({ { action1, 1 }, { action2, 0 } });
         PrintNews(game.GetNews(), players);

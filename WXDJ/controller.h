@@ -29,6 +29,9 @@ public:
     Log(int subject, int object, ATTRIBUTE_TYPE attribute, int pointAtk, int pointHp, EFFECT_TYPE effect) : type(LOG_EFFECT),
         subject(subject), object(object), attribute(attribute), pointAtk(pointAtk), pointHp(pointHp), effect(effect) {
     }
+    Log(int subject, int object, int amount, EFFECT_TYPE effect) : type(LOG_EFFECT),
+        subject(subject), object(object), amount(amount), effect(effect) {
+    }
 
     LOG_TYPE type;
 
@@ -70,6 +73,7 @@ public:
     void SkipMove(int player, bool log = true);
     void RecoverATK(int player, int amount, bool log = true);
     void RecoverHP(int player, int amount, bool log = true);
+    void HitSuccess(int subject, int object, Action *action, bool log = true);
     void TakeDamage(int subject, int object, std::vector<Effect *> offend, std::vector<Effect*> defend,
         ATTRIBUTE_TYPE attribute, int amount, bool log = true);
     void TakeDamage(int subject, int object, std::vector<Effect*> offend, std::vector<Effect*> defend,
