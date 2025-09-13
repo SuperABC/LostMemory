@@ -90,6 +90,12 @@ void PrintNews(vector<Log> news, vector<Player*> players) {
             case EFFECT_LOCK:
                 cout << players[n.object]->GetName() << "被" << players[n.subject]->GetName() << "禁锢" << endl;
                 break;
+            case EFFECT_REBATE:
+                cout << players[n.subject]->GetName() << "恢复" << n.amount << "点真气" << endl;
+                break;
+            case EFFECT_DOT:
+                cout << players[n.object]->GetName() << "受到" << n.amount << "点持续武力伤害" << endl;
+                break;
             default:
                 break;
             }
@@ -145,7 +151,7 @@ int main() {
 #ifdef SPECIFIC_MOVE
         action1 = actions[20];
         //action1 = new DualAction(actions[31], actions[172]);
-        action2 = actions[220];
+        action2 = actions[80];
         //action2 = new DualAction(actions[49], actions[189]);
 #endif
         game.ActionTurn({ { action1, 1 }, { action2, 0 } });

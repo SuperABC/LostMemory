@@ -53,12 +53,68 @@ LockEffect::LockEffect(float prob) :
 
 }
 
-RebateEffect::RebateEffect() : Effect(EFFECT_REBATE) {
-
+RebateEffect::RebateEffect(int instant, int continuous, int rounds, int interval) :
+    instantRebate(instant), continuousRebate(continuous), rebateRounds(rounds), rebateInterval(interval), Effect(EFFECT_REBATE) {
+    currentRound = 0;
 }
 
-DotEffect::DotEffect() : Effect(EFFECT_DOT) {
+bool RebateEffect::NeedHit() {
+    return hitNecessary;
+}
 
+int RebateEffect::RebateInstant() {
+    return instantRebate;
+}
+
+int RebateEffect::RebateContinuous() {
+    return continuousRebate;
+}
+
+int RebateEffect::RebateOnce() {
+    currentRound++;
+    if (currentRound >= rebateInterval && rebateRounds > 0) {
+        rebateRounds--;
+        currentRound = 0;
+        return continuousRebate;
+    }
+
+    return 0;
+}
+
+bool RebateEffect::UseUp() {
+    return rebateRounds <= 0;
+}
+
+DotEffect::DotEffect(int instant, int continuous, int rounds, int interval) :
+    instantDot(instant), continuousDot(continuous), dotRounds(rounds), dotInterval(interval), Effect(EFFECT_DOT) {
+    currentRound = 0;
+}
+
+bool DotEffect::NeedHit() {
+    return hitNecessary;
+}
+
+int DotEffect::DotInstant() {
+    return instantDot;
+}
+
+int DotEffect::DotContinuous() {
+    return continuousDot;
+}
+
+int DotEffect::DotOnce() {
+    currentRound++;
+    if (currentRound >= dotInterval && dotRounds > 0) {
+        dotRounds--;
+        currentRound = 0;
+        return continuousDot;
+    }
+
+    return 0;
+}
+
+bool DotEffect::UseUp() {
+    return dotRounds <= 0;
 }
 
 ReduceEffect::ReduceEffect() : Effect(EFFECT_REDUCE) {

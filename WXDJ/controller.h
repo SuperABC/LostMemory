@@ -85,7 +85,7 @@ public:
     void SkipMove(int player, bool log = true);
     void RecoverATK(int player, int amount, bool log = true);
     void RecoverHP(int player, int amount, bool log = true);
-    void HitSuccess(int subject, int object, Action *action, bool log = true);
+    void HitSuccess(int subject, int object, Action *offend, Action* defend, bool log = true);
     void TakeDamage(int subject, int object, std::vector<Effect *> offend, std::vector<Effect*> defend,
         ATTRIBUTE_TYPE attribute, int amount, bool log = true);
     void TakeDamage(int subject, int object, std::vector<Effect*> offend, std::vector<Effect*> defend,

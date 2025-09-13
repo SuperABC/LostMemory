@@ -46,6 +46,24 @@ void Controller::ActionTurn(vector<pair<Action*, int>> actions) {
     for (int i = 0; i < players.size(); i++) {
         if (actions[i].first->GetType() != ACTION_SKIP && !(status[i] & 0x01)) {
             MakeMove(i, actions[i].second, actions[i].first->GetPower(), actions[i].first->GetText(), actions[i].first->GetPoint());
+
+            auto rebate = actions[i].first->GetEffect(EFFECT_REBATE);
+            if (rebate && !((RebateEffect*)rebate)->NeedHit()) {
+                int amount = ((RebateEffect*)rebate)->RebateInstant();
+                logs.push_back(Log(i, -1, amount, EFFECT_REBATE));
+                RecoverMP(i, amount);
+                AddEffect(i, new RebateEffect(*(RebateEffect*)rebate));
+            }
+
+            auto dot = actions[i].first->GetEffect(EFFECT_DOT);
+            if (dot && !((DotEffect*)dot)->NeedHit()) {
+                int amount = ((DotEffect*)dot)->DotInstant();
+                int object = actions[i].second;
+                logs.push_back(Log(i, object, amount, EFFECT_DOT));
+                TakeDamage(i, object, actions[i].first->GetEffects(), actions[object].first->GetEffects(),
+                    actions[i].first->GetAttribute(), amount);
+                AddEffect(object, new DotEffect(*(DotEffect*)dot));
+            }
         }
         else {
             SkipMove(i);
@@ -72,7 +90,7 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 continue;
             }
             else {
-                HitSuccess(i, j, actions[i].first);
+                HitSuccess(i, j, actions[i].first, actions[j].first);
                 TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
                     actions[i].first->GetAttribute(), actions[i].first->GetPoint());
             }
@@ -94,8 +112,8 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 }
 
                 if (point1 > point2) {
-                    HitSuccess(i, j, actions[i].first);
-                    HitSuccess(j, i, actions[j].first);
+                    HitSuccess(i, j, actions[i].first, actions[j].first);
+                    HitSuccess(j, i, actions[j].first, actions[i].first);
                     TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
                         actions[i].first->GetAttribute(), point1 - point2);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
@@ -112,8 +130,8 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                     }
                 }
                 else if (point2 > point1) {
-                    HitSuccess(i, j, actions[i].first);
-                    HitSuccess(j, i, actions[j].first);
+                    HitSuccess(i, j, actions[i].first, actions[j].first);
+                    HitSuccess(j, i, actions[j].first, actions[i].first);
                     TakeDamage(j, i, actions[j].first->GetEffects(), actions[i].first->GetEffects(),
                         actions[j].first->GetAttribute(), point2 - point1);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
@@ -130,8 +148,8 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                     }
                 }
                 else {
-                    HitSuccess(i, j, actions[i].first);
-                    HitSuccess(j, i, actions[j].first);
+                    HitSuccess(i, j, actions[i].first, actions[j].first);
+                    HitSuccess(j, i, actions[j].first, actions[i].first);
                     if (auto effect = actions[i].first->GetEffect(EFFECT_PENETRATE)) {
                         int penerate = point2 * ((PenetrateEffect*)effect)->GetRatio(actions[j].first->GetAttribute());
                         logs.push_back(Log(i, j, actions[i].first->GetAttribute(), penerate, 0, EFFECT_PENETRATE));
@@ -147,7 +165,7 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
                 }
             }
             else {
-                HitSuccess(i, j, actions[i].first);
+                HitSuccess(i, j, actions[i].first, actions[j].first);
                 TakeDamage(i, j, actions[i].first->GetEffects(), actions[j].first->GetEffects(),
                     actions[i].first->GetAttribute(), actions[i].first->GetPoint());
             }
@@ -178,6 +196,37 @@ void Controller::ExecEffect(STAGE_TYPE stage) {
                         effects[i][k - 1] = effects[i][k];
                     }
                     effects[i].pop_back();
+                    j--;
+                }
+                break;
+            case EFFECT_REBATE:
+                if (stage == STAGE_START) {
+                    int amount = ((RebateEffect*)effects[i][j])->RebateOnce();
+                    if (amount == 0)break;
+                    logs.push_back(Log(i, -1, amount, EFFECT_REBATE));
+                    RecoverMP(i, amount, false);
+                    if (((RebateEffect*)effects[i][j])->UseUp()) {
+                        for (int k = j + 1; k < effects[i].size(); k++) {
+                            effects[i][k - 1] = effects[i][k];
+                        }
+                        effects[i].pop_back();
+                        j--;
+                    }
+                }
+                break;
+            case EFFECT_DOT:
+                if (stage == STAGE_START) {
+                    int amount = ((DotEffect*)effects[i][j])->DotOnce();
+                    if (amount == 0)break;
+                    logs.push_back(Log(-1, i, amount, EFFECT_DOT));
+                    TakeDamage(-1, i, {}, {}, ATTRIBUTE_NONE, amount, false);
+                    if (((DotEffect*)effects[i][j])->UseUp()) {
+                        for (int k = j + 1; k < effects[i].size(); k++) {
+                            effects[i][k - 1] = effects[i][k];
+                        }
+                        effects[i].pop_back();
+                        j--;
+                    }
                 }
                 break;
             default:
@@ -232,8 +281,8 @@ void Controller::RecoverHP(int player, int amount, bool log) {
     players[player]->RecoverHP(amount);
 }
 
-void Controller::HitSuccess(int subject, int object, Action* action, bool log) {
-    auto lock = action->GetEffect(EFFECT_LOCK);
+void Controller::HitSuccess(int subject, int object, Action* offend, Action* defend, bool log) {
+    auto lock = offend->GetEffect(EFFECT_LOCK);
     if (lock) {
         float prob = ((LockEffect*)lock)->GetProb();
         uniform_real_distribution<double> dist(0.0, 1.0);
@@ -242,6 +291,24 @@ void Controller::HitSuccess(int subject, int object, Action* action, bool log) {
                 logs.push_back(Log(subject, object, 0, EFFECT_LOCK));
             AddEffect(object, lock);
         }
+    }
+
+    auto rebate = offend->GetEffect(EFFECT_REBATE);
+    if (rebate && ((RebateEffect*)rebate)->NeedHit()) {
+        int amount = ((RebateEffect*)rebate)->RebateInstant();
+        if (log)
+            logs.push_back(Log(subject, -1, amount, EFFECT_REBATE));
+        RecoverMP(subject, amount);
+        AddEffect(subject, new RebateEffect(*(RebateEffect*)rebate));
+    }
+
+    auto dot = offend->GetEffect(EFFECT_DOT);
+    if (dot && ((DotEffect*)dot)->NeedHit()) {
+        int amount = ((DotEffect*)dot)->DotInstant();
+        if (log)
+            logs.push_back(Log(subject, object, amount, EFFECT_DOT));
+        TakeDamage(subject, object, offend->GetEffects(), defend->GetEffects(), offend->GetAttribute(), amount);
+        AddEffect(object, new DotEffect(*(DotEffect*)dot));
     }
 }
 

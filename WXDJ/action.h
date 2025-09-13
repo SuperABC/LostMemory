@@ -83,25 +83,41 @@ public:
 class RebateEffect : public Effect {
 private:
     int instantRebate;
-    int beginRebate;
-    int endRebate;
+    int continuousRebate;
     int rebateRounds;
     int rebateInterval;
+    bool hitNecessary = false;
+
+    int currentRound;
 
 public:
-    RebateEffect();
+    RebateEffect(int instant, int continuous = 0, int rounds = 0, int interval = 1);
+
+    bool NeedHit();
+    int RebateInstant();
+    int RebateContinuous();
+    int RebateOnce();
+    bool UseUp();
 };
 
 class DotEffect : public Effect {
 private:
     int instantDot;
-    int beginDot;
-    int endDot;
+    int continuousDot;
     int dotRounds;
     int dotInterval;
+    bool hitNecessary = false;
+
+    int currentRound;
 
 public:
-    DotEffect();
+    DotEffect(int instant, int continuous = 0, int rounds = 0, int interval = 1);
+
+    bool NeedHit();
+    int DotInstant();
+    int DotContinuous();
+    int DotOnce();
+    bool UseUp();
 };
 
 class ReduceEffect : public Effect {
@@ -341,26 +357,66 @@ static std::vector<SingleAction*> actions = {
     new SingleAction("伏羲九针第十九式", ATTRIBUTE_METAL, 488, 214, Realm::HEAVEN_LATE_PEAK),
     new SingleAction("伏羲九针第二十式", ATTRIBUTE_METAL, 560, 240, Realm::HEAVEN_LATE_PEAK),
 
-    new SingleAction("千刃斩第一式", ATTRIBUTE_METAL, 72, 40, Realm::EARTH_INIT),
-    new SingleAction("千刃斩第二式", ATTRIBUTE_METAL, 80, 43, Realm::EARTH_INIT_PEAK),
-    new SingleAction("千刃斩第三式", ATTRIBUTE_METAL, 88, 47, Realm::EARTH_MID),
-    new SingleAction("千刃斩第四式", ATTRIBUTE_METAL, 92, 50, Realm::EARTH_MID_PEAK),
-    new SingleAction("千刃斩第五式", ATTRIBUTE_METAL, 104, 55, Realm::EARTH_LATE),
-    new SingleAction("千刃斩第六式", ATTRIBUTE_METAL, 112, 59, Realm::EARTH_LATE_PEAK),
-    new SingleAction("千刃斩第七式", ATTRIBUTE_METAL, 122, 64, Realm::HEAVEN_INIT),
-    new SingleAction("千刃斩第八式", ATTRIBUTE_METAL, 135, 70, Realm::HEAVEN_INIT),
-    new SingleAction("千刃斩第九式", ATTRIBUTE_METAL, 150, 77, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("千刃斩第十式", ATTRIBUTE_METAL, 168, 85, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("千刃斩第十一式", ATTRIBUTE_METAL, 192, 95, Realm::HEAVEN_MID),
-    new SingleAction("千刃斩第十二式", ATTRIBUTE_METAL, 216, 106, Realm::HEAVEN_MID),
-    new SingleAction("千刃斩第十三式", ATTRIBUTE_METAL, 244, 118, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("千刃斩第十四式", ATTRIBUTE_METAL, 280, 132, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("千刃斩第十五式", ATTRIBUTE_METAL, 310, 145, Realm::HEAVEN_LATE),
-    new SingleAction("千刃斩第十六式", ATTRIBUTE_METAL, 346, 160, Realm::HEAVEN_LATE),
-    new SingleAction("千刃斩第十七式", ATTRIBUTE_METAL, 388, 176, Realm::HEAVEN_LATE),
-    new SingleAction("千刃斩第十八式", ATTRIBUTE_METAL, 436, 194, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("千刃斩第十九式", ATTRIBUTE_METAL, 488, 214, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("千刃斩第二十式", ATTRIBUTE_METAL, 560, 240, Realm::HEAVEN_LATE_PEAK),
+    new SingleAction("千刃斩第一式", ATTRIBUTE_METAL, 72, 40, Realm::EARTH_INIT, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第二式", ATTRIBUTE_METAL, 80, 43, Realm::EARTH_INIT_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第三式", ATTRIBUTE_METAL, 88, 47, Realm::EARTH_MID, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第四式", ATTRIBUTE_METAL, 92, 50, Realm::EARTH_MID_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第五式", ATTRIBUTE_METAL, 104, 55, Realm::EARTH_LATE, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第六式", ATTRIBUTE_METAL, 112, 59, Realm::EARTH_LATE_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第七式", ATTRIBUTE_METAL, 122, 64, Realm::HEAVEN_INIT, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第八式", ATTRIBUTE_METAL, 135, 70, Realm::HEAVEN_INIT, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第九式", ATTRIBUTE_METAL, 150, 77, Realm::HEAVEN_INIT_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十式", ATTRIBUTE_METAL, 168, 85, Realm::HEAVEN_INIT_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十一式", ATTRIBUTE_METAL, 192, 95, Realm::HEAVEN_MID, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十二式", ATTRIBUTE_METAL, 216, 106, Realm::HEAVEN_MID, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十三式", ATTRIBUTE_METAL, 244, 118, Realm::HEAVEN_MID_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十四式", ATTRIBUTE_METAL, 280, 132, Realm::HEAVEN_MID_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十五式", ATTRIBUTE_METAL, 310, 145, Realm::HEAVEN_LATE, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十六式", ATTRIBUTE_METAL, 346, 160, Realm::HEAVEN_LATE, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十七式", ATTRIBUTE_METAL, 388, 176, Realm::HEAVEN_LATE, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十八式", ATTRIBUTE_METAL, 436, 194, Realm::HEAVEN_LATE_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第十九式", ATTRIBUTE_METAL, 488, 214, Realm::HEAVEN_LATE_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("千刃斩第二十式", ATTRIBUTE_METAL, 560, 240, Realm::HEAVEN_LATE_PEAK, {
+            new DotEffect(20, 20, 3, 2)
+        }),
 
     new SingleAction("砍柴功第一式", ATTRIBUTE_WOOD, 72, 40, Realm::EARTH_INIT),
     new SingleAction("砍柴功第二式", ATTRIBUTE_WOOD, 80, 43, Realm::EARTH_INIT_PEAK),
@@ -425,26 +481,66 @@ static std::vector<SingleAction*> actions = {
     new SingleAction("海龙金身第十九式", ATTRIBUTE_WATER, 488, 214, Realm::HEAVEN_LATE_PEAK),
     new SingleAction("海龙金身第二十式", ATTRIBUTE_WATER, 560, 240, Realm::HEAVEN_LATE_PEAK),
 
-    new SingleAction("天降春雨第一式", ATTRIBUTE_WATER, 72, 40, Realm::EARTH_INIT),
-    new SingleAction("天降春雨第二式", ATTRIBUTE_WATER, 80, 43, Realm::EARTH_INIT_PEAK),
-    new SingleAction("天降春雨第三式", ATTRIBUTE_WATER, 88, 47, Realm::EARTH_MID),
-    new SingleAction("天降春雨第四式", ATTRIBUTE_WATER, 92, 50, Realm::EARTH_MID_PEAK),
-    new SingleAction("天降春雨第五式", ATTRIBUTE_WATER, 104, 55, Realm::EARTH_LATE),
-    new SingleAction("天降春雨第六式", ATTRIBUTE_WATER, 112, 59, Realm::EARTH_LATE_PEAK),
-    new SingleAction("天降春雨第七式", ATTRIBUTE_WATER, 122, 64, Realm::HEAVEN_INIT),
-    new SingleAction("天降春雨第八式", ATTRIBUTE_WATER, 135, 70, Realm::HEAVEN_INIT),
-    new SingleAction("天降春雨第九式", ATTRIBUTE_WATER, 150, 77, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("天降春雨第十式", ATTRIBUTE_WATER, 168, 85, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("天降春雨第十一式", ATTRIBUTE_WATER, 192, 95, Realm::HEAVEN_MID),
-    new SingleAction("天降春雨第十二式", ATTRIBUTE_WATER, 216, 106, Realm::HEAVEN_MID),
-    new SingleAction("天降春雨第十三式", ATTRIBUTE_WATER, 244, 118, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("天降春雨第十四式", ATTRIBUTE_WATER, 280, 132, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("天降春雨第十五式", ATTRIBUTE_WATER, 310, 145, Realm::HEAVEN_LATE),
-    new SingleAction("天降春雨第十六式", ATTRIBUTE_WATER, 346, 160, Realm::HEAVEN_LATE),
-    new SingleAction("天降春雨第十七式", ATTRIBUTE_WATER, 388, 176, Realm::HEAVEN_LATE),
-    new SingleAction("天降春雨第十八式", ATTRIBUTE_WATER, 436, 194, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("天降春雨第十九式", ATTRIBUTE_WATER, 488, 214, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("天降春雨第二十式", ATTRIBUTE_WATER, 560, 240, Realm::HEAVEN_LATE_PEAK),
+    new SingleAction("天降春雨第一式", ATTRIBUTE_WATER, 72, 40, Realm::EARTH_INIT, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第二式", ATTRIBUTE_WATER, 80, 43, Realm::EARTH_INIT_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第三式", ATTRIBUTE_WATER, 88, 47, Realm::EARTH_MID, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第四式", ATTRIBUTE_WATER, 92, 50, Realm::EARTH_MID_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第五式", ATTRIBUTE_WATER, 104, 55, Realm::EARTH_LATE, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第六式", ATTRIBUTE_WATER, 112, 59, Realm::EARTH_LATE_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第七式", ATTRIBUTE_WATER, 122, 64, Realm::HEAVEN_INIT, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第八式", ATTRIBUTE_WATER, 135, 70, Realm::HEAVEN_INIT, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第九式", ATTRIBUTE_WATER, 150, 77, Realm::HEAVEN_INIT_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十式", ATTRIBUTE_WATER, 168, 85, Realm::HEAVEN_INIT_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十一式", ATTRIBUTE_WATER, 192, 95, Realm::HEAVEN_MID, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十二式", ATTRIBUTE_WATER, 216, 106, Realm::HEAVEN_MID, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十三式", ATTRIBUTE_WATER, 244, 118, Realm::HEAVEN_MID_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十四式", ATTRIBUTE_WATER, 280, 132, Realm::HEAVEN_MID_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十五式", ATTRIBUTE_WATER, 310, 145, Realm::HEAVEN_LATE, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十六式", ATTRIBUTE_WATER, 346, 160, Realm::HEAVEN_LATE, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十七式", ATTRIBUTE_WATER, 388, 176, Realm::HEAVEN_LATE, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十八式", ATTRIBUTE_WATER, 436, 194, Realm::HEAVEN_LATE_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第十九式", ATTRIBUTE_WATER, 488, 214, Realm::HEAVEN_LATE_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
+    new SingleAction("天降春雨第二十式", ATTRIBUTE_WATER, 560, 240, Realm::HEAVEN_LATE_PEAK, {
+            new RebateEffect(20, 20, 3, 2)
+        }),
 
     new SingleAction("焚天第一式", ATTRIBUTE_FIRE, 72, 40, Realm::EARTH_INIT, {
             new ReboundEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
