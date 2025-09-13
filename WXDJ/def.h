@@ -157,6 +157,13 @@ const std::map<Realm, int> REALM_ATK_REQUIREMENTS = {
     {Realm::HEAVEN_LATE_PEAK, 1200}
 };
 
+enum STAGE_TYPE {
+    STAGE_START,
+    STAGE_ACTION,
+    STAGE_CHECK,
+    STAGE_END
+};
+
 enum ACTION_TYPE {
     ACTION_SKIP, // 跳过回合
     ACTION_SINGLE, // 单发招式

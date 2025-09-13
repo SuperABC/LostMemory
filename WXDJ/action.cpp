@@ -48,11 +48,12 @@ AbsorbEffect::AbsorbEffect(float none, float metal, float wood, float water, flo
     if (all > 0)ratios.emplace_back(make_pair(ATTRIBUTE_ALL, all));
 }
 
-RebateEffect::RebateEffect() : Effect(EFFECT_REBATE) {
+LockEffect::LockEffect(float prob) :
+    Effect(EFFECT_LOCK), prob(prob) {
 
 }
 
-LockEffect::LockEffect() : Effect(EFFECT_LOCK) {
+RebateEffect::RebateEffect() : Effect(EFFECT_REBATE) {
 
 }
 

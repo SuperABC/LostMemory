@@ -18,17 +18,24 @@ enum LOG_TYPE {
 
 class Log {
 public:
+    //状态变化
     Log(LOG_TYPE type, int player, int amount) : type(type), subject(player), amount(amount) {}
+    //跳过回合
     Log(int player) : type(LOG_SKIP), subject(player) {}
+    //出招
     Log(int subject, int object, int amount, std::string name, int point) : type(LOG_MOVE),
         subject(subject), object(object), amount(amount), name(name), pointAtk(point) {}
+    //造成伤害
     Log(int subject, int object, ATTRIBUTE_TYPE attribute, int pointAtk, int pointHp) : type(LOG_DAMAGE),
         subject(subject), object(object), attribute(attribute), pointAtk(pointAtk), pointHp(pointHp) {
     }
+    //闪避成功
     Log(int subject, int object) : type(LOG_DODGE), subject(subject), object(object) {}
+    //即时伤害效果
     Log(int subject, int object, ATTRIBUTE_TYPE attribute, int pointAtk, int pointHp, EFFECT_TYPE effect) : type(LOG_EFFECT),
         subject(subject), object(object), attribute(attribute), pointAtk(pointAtk), pointHp(pointHp), effect(effect) {
     }
+    //即时动作效果
     Log(int subject, int object, int amount, EFFECT_TYPE effect) : type(LOG_EFFECT),
         subject(subject), object(object), amount(amount), effect(effect) {
     }
@@ -47,7 +54,8 @@ public:
 class Controller {
 private:
     std::vector<Player *> players;
-    std::vector<Effect * >effects;
+    std::vector<std::vector<Effect *>>effects;
+    std::vector<int> status;
 
     int mark = 0;
     std::vector<Log> logs;
@@ -60,10 +68,14 @@ private:
 public:
     Controller(std::vector<Player*> players);
 
+    void ResetRound();
     void StartTurn();
     void ActionTurn(std::vector<std::pair<Action*, int>> actions);
     void CheckTurn(std::vector<std::pair<Action*, int>> actions);
     void EndTurn();
+
+    void AddEffect(int player, Effect* effect);
+    void ExecEffect(STAGE_TYPE stage);
 
     std::vector<Log> GetNews();
 

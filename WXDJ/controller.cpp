@@ -15,10 +15,23 @@ double Controller::DodgeChance(int attackerAGI, int defenderAGI) {
 }
 
 Controller::Controller(vector<Player*> players) : players(players) {
+    effects.resize(players.size());
+    status.resize(players.size());
+
     rng.seed(random_device()());
 }
 
+void Controller::ResetRound() {
+    for (auto& s : status) {
+        s = 0;
+    }
+}
+
 void Controller::StartTurn() {
+    ResetRound();
+
+    ExecEffect(STAGE_START);
+
     for (int i = 0; i < players.size(); i++) {
         RecoverMP(i, -1);
     }
@@ -28,8 +41,10 @@ void Controller::ActionTurn(vector<pair<Action*, int>> actions) {
     if (actions.size() != players.size())
         throw runtime_error("Players and actions mismatch.");
 
+    ExecEffect(STAGE_ACTION);
+
     for (int i = 0; i < players.size(); i++) {
-        if (actions[i].first->GetType() != ACTION_SKIP) {
+        if (actions[i].first->GetType() != ACTION_SKIP && !(status[i] & 0x01)) {
             MakeMove(i, actions[i].second, actions[i].first->GetPower(), actions[i].first->GetText(), actions[i].first->GetPoint());
         }
         else {
@@ -42,15 +57,17 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
     if (actions.size() != players.size())
         throw runtime_error("Players and actions mismatch.");
 
+    ExecEffect(STAGE_CHECK);
+
     for (int i = 0; i < players.size(); i++) {
-        if (actions[i].first->GetType() == ACTION_SKIP)continue;
+        if (actions[i].first->GetType() == ACTION_SKIP || (status[i] & 0x01))continue;
 
         int j = actions[i].second;
 
-        if (actions[j].first->GetType() == ACTION_SKIP) {
+        if (actions[j].first->GetType() == ACTION_SKIP || (status[j] & 0x01)) {
             uniform_real_distribution<double> dist(0.0, 1.0);
             double dodgeChance = DodgeChance(players[i]->GetAGI(), players[j]->GetAGI());
-            if (dist(rng) < dodgeChance) {
+            if (!(status[j] & 0x01) && dist(rng) < dodgeChance) {
                 DodgeSuccess(i, j);
                 continue;
             }
@@ -139,8 +156,34 @@ void Controller::CheckTurn(vector<pair<Action*, int>> actions) {
 }
 
 void Controller::EndTurn() {
+    ExecEffect(STAGE_END);
+
     for (auto player : players) {
         player->UpdateRealm();
+    }
+}
+
+void Controller::AddEffect(int player, Effect* effect) {
+    effects[player].push_back(effect);
+}
+
+void Controller::ExecEffect(STAGE_TYPE stage) {
+    for (int i = 0; i < effects.size(); i++) {
+        for (int j = 0; j < effects[i].size(); j++) {
+            switch (effects[i][j]->GetType()) {
+            case EFFECT_LOCK:
+                if (stage == STAGE_START) {
+                    status[i] |= 0x01;
+                    for (int k = j + 1; k < effects[i].size(); k++) {
+                        effects[i][k - 1] = effects[i][k];
+                    }
+                    effects[i].pop_back();
+                }
+                break;
+            default:
+                break;
+            }
+        }
     }
 }
 
@@ -190,7 +233,16 @@ void Controller::RecoverHP(int player, int amount, bool log) {
 }
 
 void Controller::HitSuccess(int subject, int object, Action* action, bool log) {
-
+    auto lock = action->GetEffect(EFFECT_LOCK);
+    if (lock) {
+        float prob = ((LockEffect*)lock)->GetProb();
+        uniform_real_distribution<double> dist(0.0, 1.0);
+        if (dist(rng) < prob) {
+            if (log)
+                logs.push_back(Log(subject, object, 0, EFFECT_LOCK));
+            AddEffect(object, lock);
+        }
+    }
 }
 
 void Controller::TakeDamage(int subject, int object, std::vector<Effect*> offend, std::vector<Effect*> defend,
@@ -233,6 +285,13 @@ void Controller::TakeDamage(int subject, int object, std::vector<Effect*> offend
             logs.push_back(Log(object, subject, attribute, physical ? 0 : damage, physical ? damage : 0, EFFECT_REBOUND));
             TakeDamage(object, subject, defend, offend, attribute, physical ? 0 : damage, physical ? damage : 0, false);
         }
+    }
+
+    auto absorb = std::find_if(defend.begin(), defend.end(), [](Effect* effect) {return effect->GetType() == EFFECT_ABSORB; });
+    if (absorb != defend.end()) {
+        int mp = amount * ((AbsorbEffect*)*absorb)->GetRatio(attribute);
+        logs.push_back(Log(object, subject, mp, EFFECT_ABSORB));
+        RecoverMP(object, mp);
     }
 }
 

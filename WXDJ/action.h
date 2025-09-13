@@ -70,12 +70,14 @@ public:
 
 class LockEffect : public Effect {
 private:
-    bool lockBegin;
-    bool lockMove;
-    bool lockEnd;
+    float prob;
 
 public:
-    LockEffect();
+    LockEffect(float prob);
+
+    float GetProb() {
+        return prob;
+    }
 };
 
 class RebateEffect : public Effect {
@@ -526,26 +528,66 @@ static std::vector<SingleAction*> actions = {
     new SingleAction("狂火拳第十九式", ATTRIBUTE_FIRE, 488, 214, Realm::HEAVEN_LATE_PEAK),
     new SingleAction("狂火拳第二十式", ATTRIBUTE_FIRE, 560, 240, Realm::HEAVEN_LATE_PEAK),
 
-    new SingleAction("荒星第一式", ATTRIBUTE_EARTH, 72, 40, Realm::EARTH_INIT),
-    new SingleAction("荒星第二式", ATTRIBUTE_EARTH, 80, 43, Realm::EARTH_INIT_PEAK),
-    new SingleAction("荒星第三式", ATTRIBUTE_EARTH, 88, 47, Realm::EARTH_MID),
-    new SingleAction("荒星第四式", ATTRIBUTE_EARTH, 92, 50, Realm::EARTH_MID_PEAK),
-    new SingleAction("荒星第五式", ATTRIBUTE_EARTH, 104, 55, Realm::EARTH_LATE),
-    new SingleAction("荒星第六式", ATTRIBUTE_EARTH, 112, 59, Realm::EARTH_LATE_PEAK),
-    new SingleAction("荒星第七式", ATTRIBUTE_EARTH, 122, 64, Realm::HEAVEN_INIT),
-    new SingleAction("荒星第八式", ATTRIBUTE_EARTH, 135, 70, Realm::HEAVEN_INIT),
-    new SingleAction("荒星第九式", ATTRIBUTE_EARTH, 150, 77, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("荒星第十式", ATTRIBUTE_EARTH, 168, 85, Realm::HEAVEN_INIT_PEAK),
-    new SingleAction("荒星第十一式", ATTRIBUTE_EARTH, 192, 95, Realm::HEAVEN_MID),
-    new SingleAction("荒星第十二式", ATTRIBUTE_EARTH, 216, 106, Realm::HEAVEN_MID),
-    new SingleAction("荒星第十三式", ATTRIBUTE_EARTH, 244, 118, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("荒星第十四式", ATTRIBUTE_EARTH, 280, 132, Realm::HEAVEN_MID_PEAK),
-    new SingleAction("荒星第十五式", ATTRIBUTE_EARTH, 310, 145, Realm::HEAVEN_LATE),
-    new SingleAction("荒星第十六式", ATTRIBUTE_EARTH, 346, 160, Realm::HEAVEN_LATE),
-    new SingleAction("荒星第十七式", ATTRIBUTE_EARTH, 388, 176, Realm::HEAVEN_LATE),
-    new SingleAction("荒星第十八式", ATTRIBUTE_EARTH, 436, 194, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("荒星第十九式", ATTRIBUTE_EARTH, 488, 214, Realm::HEAVEN_LATE_PEAK),
-    new SingleAction("荒星第二十式", ATTRIBUTE_EARTH, 560, 240, Realm::HEAVEN_LATE_PEAK),
+    new SingleAction("荒星第一式", ATTRIBUTE_EARTH, 72, 40, Realm::EARTH_INIT, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第二式", ATTRIBUTE_EARTH, 80, 43, Realm::EARTH_INIT_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第三式", ATTRIBUTE_EARTH, 88, 47, Realm::EARTH_MID, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第四式", ATTRIBUTE_EARTH, 92, 50, Realm::EARTH_MID_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第五式", ATTRIBUTE_EARTH, 104, 55, Realm::EARTH_LATE, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第六式", ATTRIBUTE_EARTH, 112, 59, Realm::EARTH_LATE_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第七式", ATTRIBUTE_EARTH, 122, 64, Realm::HEAVEN_INIT, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第八式", ATTRIBUTE_EARTH, 135, 70, Realm::HEAVEN_INIT, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第九式", ATTRIBUTE_EARTH, 150, 77, Realm::HEAVEN_INIT_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十式", ATTRIBUTE_EARTH, 168, 85, Realm::HEAVEN_INIT_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十一式", ATTRIBUTE_EARTH, 192, 95, Realm::HEAVEN_MID, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十二式", ATTRIBUTE_EARTH, 216, 106, Realm::HEAVEN_MID, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十三式", ATTRIBUTE_EARTH, 244, 118, Realm::HEAVEN_MID_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十四式", ATTRIBUTE_EARTH, 280, 132, Realm::HEAVEN_MID_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十五式", ATTRIBUTE_EARTH, 310, 145, Realm::HEAVEN_LATE, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十六式", ATTRIBUTE_EARTH, 346, 160, Realm::HEAVEN_LATE, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十七式", ATTRIBUTE_EARTH, 388, 176, Realm::HEAVEN_LATE, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十八式", ATTRIBUTE_EARTH, 436, 194, Realm::HEAVEN_LATE_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第十九式", ATTRIBUTE_EARTH, 488, 214, Realm::HEAVEN_LATE_PEAK, {
+            new LockEffect(0.5f)
+        }),
+    new SingleAction("荒星第二十式", ATTRIBUTE_EARTH, 560, 240, Realm::HEAVEN_LATE_PEAK, {
+            new LockEffect(0.5f)
+        }),
 
     new SingleAction("地狱阴魔拳第一式", ATTRIBUTE_EARTH, 72, 40, Realm::EARTH_INIT, {
             new AbsorbEffect(0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f, 0.1f)
